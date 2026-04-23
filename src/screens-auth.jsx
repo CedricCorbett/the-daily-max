@@ -16,7 +16,7 @@ const AUTH_PHRASES = [
   "Yesterday is paid.",
   "One set is still a day.",
   "The only person you outwork is yesterday-you.",
-  "Quiet reps, loud life.",
+  "Show up for you.",
   "Partial reps are reps.",
   "Don't stack tomorrow.",
   "Small today is still today.",

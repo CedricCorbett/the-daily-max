@@ -15,8 +15,16 @@ function HomeScreen({ state, setState, go, openTweaks }) {
   const [breakReason, setBreakReason] = useState('');
 
   const submitBreakReason = (reason) => {
+    // Optimistic — close modal + mark local state immediately so the user never
+    // sees a spinner on a confessional screen. Fire the server call in the
+    // background; if it fails, we silently leave the local flag so the modal
+    // doesn't re-open (rally_board already has the user listed via streak-sweep).
     setState(s => ({ ...s, breakReasonLogged: true, lastBreakReason: reason }));
     setShowBreakModal(false);
+    const api = window.api;
+    if (api && api.enabled) {
+      api.postBreakReason({ reason }).catch(() => {});
+    }
   };
 
   // Collapsible context row

@@ -213,9 +213,21 @@
 
     async postCrewRoundup({ title, cue, hours = 24 }) {
       if (!client) return null;
-      return client.rpc('post_crew_roundup', {
+      const res = await client.rpc('post_crew_roundup', {
         p_title: title, p_cue: cue, p_hours: hours,
       });
+      // Fire push fan-out in the background — don't block the UI on it.
+      // The edge function is idempotent per roundup_id; a failed invoke
+      // just means members won't get a push (they'll still see it next
+      // time they open the Crew page).
+      const roundupId = res && res.data && (res.data.id || res.data.roundup_id);
+      if (roundupId) {
+        try {
+          client.functions.invoke('roundup-push', { body: { roundup_id: roundupId } })
+            .catch(() => {});
+        } catch (_) { /* ignore */ }
+      }
+      return res;
     },
 
     async listCrewRoundups() {
@@ -236,6 +248,11 @@
     async listRallyBoard() {
       if (!client) return null;
       return client.rpc('list_rally_board');
+    },
+
+    async postBreakReason({ reason, note = null }) {
+      if (!client) return null;
+      return client.rpc('post_break_reason', { p_reason: reason, p_note: note });
     },
 
     async myInbox() {

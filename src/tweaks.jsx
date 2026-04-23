@@ -2,6 +2,38 @@
 
 function TweaksPanel({ state, setState, onClose }) {
   const [diag, setDiag] = useState({ email: null, userId: null, apiEnabled: false, lastWorkout: null, streak: null, probing: false });
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState('');
+  const historyCount = (state.history || []).filter(h => h && h.date).length;
+  const syncHistory = async () => {
+    setSyncing(true); setSyncMsg('');
+    try {
+      const api = window.api;
+      if (!api || !api.enabled) { setSyncMsg('API disabled — sign in first.'); return; }
+      const u = await api.getUser();
+      if (!u) { setSyncMsg('Sign in first.'); return; }
+      const res = await api.backfillHistory(state.history || []);
+      if (res && res.error) {
+        setSyncMsg('Error: ' + (res.error.message || 'unknown'));
+      } else {
+        const d = res && res.data;
+        setSyncMsg(d ? `Synced ${d.inserted} day(s). Server streak: ${d.current_streak} (best ${d.longest_streak}).` : 'Synced.');
+        // Pull server streak back into local state so the Home screen reflects it.
+        if (d && typeof d.current_streak === 'number') {
+          setState(s => ({
+            ...s,
+            streak: d.current_streak,
+            bestStreak: Math.max(s.bestStreak || 0, d.longest_streak || 0),
+            lastLoggedDate: d.last_day || s.lastLoggedDate,
+          }));
+        }
+      }
+    } catch (e) {
+      setSyncMsg('Threw: ' + (e.message || 'unknown'));
+    } finally {
+      setSyncing(false);
+    }
+  };
   useEffect(() => {
     (async () => {
       const api = window.api;
@@ -127,6 +159,22 @@ function TweaksPanel({ state, setState, onClose }) {
               }}>{state.referralCode}</div>
               <GhostBtn onClick={() => { navigator.clipboard && navigator.clipboard.writeText(`dailymax.app/${state.referralCode}`); }}>COPY LINK</GhostBtn>
             </div>
+          </Section>
+
+          <Section title="SYNC LOCAL HISTORY">
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
+              Pushes every locally-logged day to the server at once. Use this if your reps are on this device but not on the leaderboard. Safe to run more than once. <span style={{ color: 'var(--text)' }}>{historyCount}</span> local day(s) on file.
+            </div>
+            <GhostBtn onClick={syncHistory}>{syncing ? 'SYNCING…' : '↑ SYNC HISTORY'}</GhostBtn>
+            {syncMsg && (
+              <div className="mono" style={{
+                marginTop: 8, padding: '8px 10px',
+                background: 'var(--card)', border: '1px solid var(--border)',
+                color: 'var(--text-dim)', fontSize: 10, lineHeight: 1.5,
+              }}>
+                {syncMsg}
+              </div>
+            )}
           </Section>
 
           <Section title="DIAGNOSTIC">

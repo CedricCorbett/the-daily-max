@@ -153,6 +153,24 @@
       });
     },
 
+    // Push the entire local history to the server in one call. Fills in every
+    // day the fire-and-forget client skipped, rebuilds PBs, and recomputes the
+    // streak server-side. Safe to re-run — greatest(...) on conflict means
+    // re-submitting never regresses.
+    async backfillHistory(history) {
+      if (!client) return { data: null, error: { message: 'API disabled.' } };
+      const entries = (Array.isArray(history) ? history : [])
+        .filter(h => h && h.date)
+        .map(h => ({
+          day: h.date,
+          pushups:    Number(h.pushups) || 0,
+          squats:     Number(h.squats) || 0,
+          hollow_sec: Number(h.hollow || h.hollow_sec) || 0,
+          pullups:    Number(h.pullups) || 0,
+        }));
+      return client.rpc('backfill_workouts', { p_entries: entries });
+    },
+
     async listLeaderboard({ bracket = null, day = null, limit = 25 } = {}) {
       if (!client) return { data: null, error: null };
       return client.rpc('list_leaderboard', {

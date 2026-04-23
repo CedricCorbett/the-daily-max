@@ -91,6 +91,8 @@ function App() {
           setState(s => ({
             ...s,
             clanId: row.clan.id,
+            clanName: row.clan.name || null,
+            clanTag: row.clan.tag || null,
             clanRole: row.role,
             clanIsSystem: !!row.clan.is_system,
           }));
@@ -192,11 +194,15 @@ function App() {
         if (p) {
           setState(s => ({
             ...s,
-            voice:     p.voice     || s.voice,
-            aesthetic: p.aesthetic || s.aesthetic,
-            slot:      p.slot      || s.slot,
-            partner:   p.partner   || s.partner,
-            city:      p.city      || s.city,
+            // Prefer the server's display_name so "Hello X" is personal even
+            // after the user clears storage or opens on a new device.
+            name:      p.display_name || s.name,
+            username:  p.username     || s.username,
+            voice:     p.voice        || s.voice,
+            aesthetic: p.aesthetic    || s.aesthetic,
+            slot:      p.slot         || s.slot,
+            partner:   p.partner      || s.partner,
+            city:      p.city         || s.city,
           }));
           if (p.aesthetic) {
             const map = { oxblood: '#8B1A1A', gold: '#C9A24A', crimson: '#B32121', graphite: '#6B6159' };

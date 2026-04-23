@@ -349,6 +349,8 @@ const defaultState = {
   username: null,
   regionState: '',
   clanId: null,
+  clanName: null,       // display name of the user's crew, for Max Card + home
+  clanTag: null,        // short tag (e.g. "DMX") if set
   clanRole: null,       // 'leader' | 'member' | null
   clanIsSystem: false,  // true when only in The DM Clan
 };

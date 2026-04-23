@@ -29,8 +29,8 @@ function HomeScreen({ state, setState, go, openTweaks }) {
     <Shell>
       <TopBar
         left={<IconBtn onClick={openTweaks}>≡</IconBtn>}
-        title={`HELLO, ${state.name.toUpperCase() || 'CREW'}`}
-        sub={`${state.city.toUpperCase()} · ${state.ageBracket} BRACKET`}
+        title={`HELLO, ${(state.name || state.username || '').toUpperCase() || 'FRIEND'}`}
+        sub={`${(state.city || '').toUpperCase()}${state.city ? ' · ' : ''}${state.ageBracket || ''}${state.ageBracket ? ' BRACKET' : ''}`.trim() || (state.clanName ? `CREW · ${state.clanName.toUpperCase()}` : '')}
         right={<IconBtn onClick={() => go('leaderboard')}>🏆</IconBtn>}
       />
       <HazardBar height={4} />

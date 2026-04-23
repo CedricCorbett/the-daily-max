@@ -242,8 +242,18 @@ function MaxCardScreen({ state, go }) {
           <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: '#666' }}>THE DAILY MAX</div>
-              <div className="display" style={{ fontSize: 20, color: '#0A0A0A', marginTop: 2 }}>{state.name.toUpperCase() || 'CREW MEMBER'}</div>
-              <div className="mono" style={{ fontSize: 10, color: '#666', marginTop: 2 }}>{state.city.toUpperCase()} · {state.ageBracket}</div>
+              <div className="display" style={{ fontSize: 20, color: '#0A0A0A', marginTop: 2 }}>
+                {(state.name || state.username || 'FRIEND').toUpperCase()}
+              </div>
+              <div className="mono" style={{ fontSize: 10, color: '#666', marginTop: 2 }}>
+                {(state.city || '').toUpperCase()}{state.city && state.ageBracket ? ' · ' : ''}{state.ageBracket || ''}
+              </div>
+              {/* Crew line. Hidden when solo or only in the catch-all system clan. */}
+              {state.clanName && !state.clanIsSystem && (
+                <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)', marginTop: 6, fontWeight: 700 }}>
+                  ◆ CREW · {state.clanName}{state.clanTag ? ` · ${state.clanTag}` : ''}
+                </div>
+              )}
             </div>
             <div style={{ textAlign: 'right' }}>
               <div className="mono" style={{ fontSize: 9, color: '#666' }}>DAY</div>

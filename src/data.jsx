@@ -253,6 +253,43 @@ const EXERCISE_CUES = {
   },
 };
 
+// ───────────────── KICKOFF 30 — 30-DAY RAMP ─────────────────
+// Each day adds ONE bonus on top of your Daily Max. No skipping. No catching up.
+// Miss a day and that number is gone forever. Keep it short, physical, doable in
+// a hallway. On-brand: stoic, crew-coded, zero fluff.
+const KICKOFF_BONUSES = [
+  { name: "The Loaded Carry",        cue: "60-second farmer carry. Groceries, a backpack, whatever's heaviest in reach. One trip." },
+  { name: "The Dead Hang",           cue: "60 seconds hanging from a bar. One grip. If you drop, you start over." },
+  { name: "The Wall Sit",            cue: "90 seconds. Back flat. Knees at 90. Don't slide. Don't bargain." },
+  { name: "The Cold Minute",         cue: "60 seconds cold shower at the end. Breathe slow through the nose. Don't flinch." },
+  { name: "The Plank Lock",          cue: "2 minutes in a plank. Ribs down, glutes tight. Unbroken or you redo it." },
+  { name: "The Single-Leg Stand",    cue: "60 seconds per leg, eyes closed. Balance is a skill you've been losing." },
+  { name: "The Bear Crawl",          cue: "50 feet forward, 50 feet back. Knees an inch off the floor the whole way." },
+  { name: "The Jump Rope",           cue: "300 jumps. No rope? Fake it. Light on the balls of the feet." },
+  { name: "The Hinge Hundred",       cue: "100 good-mornings, bodyweight. Hinge at the hip, not the back. Teach your posterior chain who it is." },
+  { name: "The Stair Climb",         cue: "10 flights straight up, no stopping. No stairs? 100 step-ups on any ledge." },
+  { name: "The Towel Row",           cue: "50 slow rows with a towel around a door handle. Pull the elbows past the ribs." },
+  { name: "The Shoulder Carry",      cue: "60 seconds overhead hold with any weight. Backpack, jug, toddler. Arms locked." },
+  { name: "The Lunge Mile",          cue: "100 walking lunges. Back knee kisses the floor. No racing — earn every step." },
+  { name: "The Burpee Tax",          cue: "30 burpees. Chest to floor, jump at the top. Pay it all at once or in 3 sets of 10." },
+  { name: "The Breath Ladder",       cue: "5 rounds: 20 seconds max inhale hold, 20 seconds easy breathing. Calm under pressure." },
+  { name: "The Handstand Hold",      cue: "60 cumulative seconds nose-to-wall handstand. Shoulders in your ears. Stack." },
+  { name: "The Hollow Double",       cue: "Add a second hollow hold to your Daily Max. Same duration. Back to back. No rest." },
+  { name: "The Sprint Six",          cue: "6 × 20-second all-out sprints. Hill, driveway, or in place. 40 seconds walk between." },
+  { name: "The L-Sit",               cue: "60 cumulative seconds. Two chairs, palms down, legs out. Fail, reset, keep the clock." },
+  { name: "The Pull-Up Double",      cue: "Add a second pull-up set to your Daily Max. Match your first rep count or go to failure." },
+  { name: "The Goblet Hold",         cue: "90 seconds holding a heavy object at your chest in a deep squat. Quiet breath. Still hips." },
+  { name: "The Push-Up Ladder",      cue: "Count up: 1, 2, 3 … until you fail a number. Rest 10s between rungs. That's your new ceiling." },
+  { name: "The Silent Mile",         cue: "Walk one mile. No phone. No music. No pod. Just your head and the road." },
+  { name: "The Reverse Plank",       cue: "90 seconds. Heels down, hips up, chest open. Undoes everything your desk did." },
+  { name: "The Hollow Mile",         cue: "Accumulate 5 minutes of hollow hold today. 30s sets until you hit it. Low back never leaves the floor." },
+  { name: "The Squat Century",       cue: "100 air squats, unbroken. If you stop, the set restarts. No exceptions. No complaints." },
+  { name: "The Carry Complex",       cue: "60s overhead hold → 60s front rack → 60s farmer carry. Same weight. No set-downs between." },
+  { name: "The Cold + Quiet",        cue: "2 minutes cold shower. Nasal breathing only. Day 4's breath. Day 28's composure." },
+  { name: "The Crew Rally",          cue: "Send one rally to a crew member today. Name them. Tell them you saw it. Then train." },
+  { name: "The Promise Kept",        cue: "30 days. You showed up. Today, double your Daily Max. One time. For the record. For the crew." },
+];
+
 // ───────────────── CLAN PREVIEW SEED ─────────────────
 // Empty shape; real clan data comes from Supabase. Left as `null` so ClanScreen
 // redirects to the join/create entry flow for users not in a real crew yet.
@@ -350,7 +387,7 @@ function saveState(s) {
 }
 
 Object.assign(window, {
-  CORE_EXERCISES, VARIANTS, NIGHT_FLOW, MAX_CARD_CAPTIONS, EXERCISE_CUES,
+  CORE_EXERCISES, VARIANTS, NIGHT_FLOW, KICKOFF_BONUSES, MAX_CARD_CAPTIONS, EXERCISE_CUES,
   MILESTONES_BY_EXERCISE, milestoneProgress, LEADERBOARD,
   RALLY_ENCOURAGEMENTS, RALLY_BOARD_SEED, RALLY_INBOX_SEED, RALLY_PUSH_CAP,
   MANTRAS, pickMantra,

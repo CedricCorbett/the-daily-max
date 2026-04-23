@@ -1,6 +1,9 @@
 // Service worker — shell cache + push handler.
-// Bump CACHE_VERSION to invalidate the cache on deploy.
-const CACHE_VERSION = 'dm-v5';
+// Bump CACHE_VERSION to invalidate the cache on deploy. The build version
+// below is also embedded in index.html as a cache-buster on the JSX src URLs,
+// so bumping it here AND in index.html kicks stale clients off the old code
+// without requiring the user to delete their bookmark.
+const CACHE_VERSION = 'dm-v6';
 const SHELL = [
   '/',
   '/index.html',
@@ -31,7 +34,11 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Network-first for HTML (so deploys roll out fast); cache-first for static assets.
+// Strategy:
+//   HTML docs          → network-first (fall back to cache when offline)
+//   /src/*  (JSX code) → network-first. The app is babel-in-browser; stale
+//                        JSX is the #1 cause of "I'm on an old build".
+//   everything else    → stale-while-revalidate (serve cache, update in bg)
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
@@ -41,25 +48,34 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   const isDoc = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
-  if (isDoc) {
+  const isSrc = url.pathname.startsWith('/src/');
+
+  if (isDoc || isSrc) {
     event.respondWith(
       fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE_VERSION).then(c => c.put(req, copy));
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE_VERSION).then(c => c.put(req, copy));
+        }
         return res;
-      }).catch(() => caches.match(req).then(r => r || caches.match('/index.html')))
+      }).catch(() => caches.match(req).then(r => r || (isDoc ? caches.match('/index.html') : Response.error())))
     );
     return;
   }
 
+  // stale-while-revalidate for static assets — serve cached copy immediately,
+  // fetch in background and replace the cache for next time.
   event.respondWith(
-    caches.match(req).then(hit => hit || fetch(req).then(res => {
-      if (res.ok) {
-        const copy = res.clone();
-        caches.open(CACHE_VERSION).then(c => c.put(req, copy));
-      }
-      return res;
-    }))
+    caches.match(req).then(hit => {
+      const networked = fetch(req).then(res => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE_VERSION).then(c => c.put(req, copy));
+        }
+        return res;
+      }).catch(() => hit);
+      return hit || networked;
+    })
   );
 });
 

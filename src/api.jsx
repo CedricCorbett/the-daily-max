@@ -153,6 +153,15 @@
       });
     },
 
+    async listLeaderboard({ bracket = null, day = null, limit = 25 } = {}) {
+      if (!client) return { data: null, error: null };
+      return client.rpc('list_leaderboard', {
+        p_bracket: bracket,
+        p_day: day,
+        p_limit: limit,
+      });
+    },
+
     async sendRally(toUser, msg, cap = 7) {
       if (!client) return null;
       return client.rpc('send_rally', { p_to: toUser, p_msg: msg, p_cap: cap });

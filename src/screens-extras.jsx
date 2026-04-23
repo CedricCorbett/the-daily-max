@@ -165,31 +165,85 @@ function MaxCardScreen({ state, go }) {
 
 function LeaderboardScreen({ state, setState, go }) {
   const bracket = state.ageBracket || '30s';
-  const list = (LEADERBOARD[bracket] || [])
-    .map(p => p.isYou ? { ...p, pu: state.bests.pushups, sq: state.bests.squats, ho: state.bests.hollow, pl: state.bests.pullups, streak: state.streak } : p)
-    .map(p => ({ ...p, total: (p.pu || 0) + (p.sq || 0) + (p.ho || 0) + (p.pl || 0) }))
-    .sort((a, b) => b.total - a.total);
+  const api = window.api;
+  const apiEnabled = api && api.enabled;
+
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
+
+  const load = async () => {
+    if (!apiEnabled) { setRows([]); return; }
+    setLoading(true); setErr('');
+    try {
+      const { data, error } = await api.listLeaderboard({ bracket });
+      if (error) { setErr(error.message || 'Could not load.'); setRows([]); }
+      else setRows(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setErr(e.message || 'Network error.');
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, [bracket]);
+  // Re-pull on tab-visible so the board updates after the user logs a day.
+  useEffect(() => {
+    const onVis = () => { if (!document.hidden) load(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [bracket]);
+
+  // Normalize RPC shape → display shape.
+  const list = rows.map(r => ({
+    id: r.user_id,
+    name: r.display_name || r.handle || 'CREW',
+    city: r.city || '—',
+    streak: r.streak || 0,
+    pu: r.pushups || 0,
+    sq: r.squats || 0,
+    ho: r.hollow_sec || 0,
+    pl: r.pullups || 0,
+    total: r.total || 0,
+    isYou: !!r.is_you,
+  }));
 
   return (
     <Shell>
-      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="CREW LEADERBOARD" sub="YOUR BRACKET" />
+      <TopBar
+        left={<IconBtn onClick={() => go('home')}>←</IconBtn>}
+        title="CREW LEADERBOARD"
+        sub="YOUR BRACKET"
+        right={<IconBtn onClick={load}>↻</IconBtn>}
+      />
       <HazardBar height={4} />
       <div style={{ padding: '14px 20px 80px', flex: 1 }}>
         <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
-          {['20s', '30s', '40s', '50s'].map(b => (
+          {['20s', '30s', '40s', '50s', '60+'].map(b => (
             <button key={b} onClick={() => setState(s => ({ ...s, ageBracket: b }))} style={{
               flex: 1, padding: '10px 0',
               background: bracket === b ? 'var(--accent)' : 'var(--card)',
               border: `1px solid ${bracket === b ? 'var(--accent)' : 'var(--border)'}`,
               color: bracket === b ? '#0A0A0A' : 'var(--text-dim)',
-              fontFamily: 'Archivo Black', fontSize: 12, letterSpacing: 2,
+              fontFamily: 'Archivo Black', fontSize: 11, letterSpacing: 1.5,
             }}>{b}</button>
           ))}
         </div>
         <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
-          RANKED BY TOTAL WORK (TODAY)
+          RANKED BY TOTAL WORK (TODAY){loading ? ' · LOADING…' : ''}
         </div>
-        {list.length === 0 && (
+
+        {err && (
+          <div className="mono" style={{
+            fontSize: 10, color: '#FF6B6B', padding: '8px 10px',
+            border: '1px solid #5A1F1F', background: '#1F0D0D', marginBottom: 10, letterSpacing: 1.5,
+          }}>
+            {err}
+          </div>
+        )}
+
+        {!loading && list.length === 0 && (
           <div style={{
             background: 'var(--card)', border: '1px dashed var(--border-2)',
             padding: '28px 18px', textAlign: 'center',
@@ -198,14 +252,15 @@ function LeaderboardScreen({ state, setState, go }) {
               NO ONE HERE YET.
             </div>
             <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
-              The board fills in as the crew logs their first day.<br/>
-              Start the 6. Be the first pin on the map.
+              The board fills in as the crew logs today's max.<br/>
+              Be the first pin on the map.
             </div>
           </div>
         )}
+
         <div style={{ background: list.length ? 'var(--card)' : 'transparent', border: list.length ? '1px solid var(--border)' : 'none' }}>
           {list.map((p, i) => (
-            <div key={p.name} style={{
+            <div key={p.id || p.name + i} style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
               borderBottom: i < list.length - 1 ? '1px solid var(--border)' : 'none',
               background: p.isYou ? 'var(--accent-dim)' : 'transparent',
@@ -214,8 +269,8 @@ function LeaderboardScreen({ state, setState, go }) {
                 width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 14, color: i < 3 ? 'var(--accent)' : 'var(--text-mute)',
               }}>{i + 1}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: p.isYou ? 'var(--accent)' : 'var(--text)' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: p.isYou ? 'var(--accent)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {p.name} {p.isYou && <span className="mono" style={{ fontSize: 9, marginLeft: 4, color: 'var(--accent)' }}>· YOU</span>}
                 </div>
                 <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 1 }}>
@@ -396,49 +451,74 @@ function NightScreen({ state, go }) {
   );
 }
 
-// KICKOFF 24 — formerly Dadvent. 24-day ramp-in challenge.
+// KICKOFF 30 — 30-day ramp-in challenge. One bonus per day, built-to-miss.
 function KickoffScreen({ state, go }) {
   // Day N: past days (< N) are done, day N is current, day N+... is locked.
   // At kickoffDay = 1, nothing is done yet — day 1 is the one to open.
-  const days = Array.from({ length: 24 }, (_, i) => ({
+  const TOTAL = 30;
+  const bonuses = (typeof KICKOFF_BONUSES !== 'undefined' && KICKOFF_BONUSES) ? KICKOFF_BONUSES : [];
+  const today = Math.min(Math.max(1, state.kickoffDay || 1), TOTAL);
+  const days = Array.from({ length: TOTAL }, (_, i) => ({
     day: i + 1,
-    done: i + 1 < state.kickoffDay,
-    locked: i + 1 > state.kickoffDay,
-    current: i + 1 === state.kickoffDay,
+    done: i + 1 < today,
+    locked: i + 1 > today,
+    current: i + 1 === today,
   }));
+  const [pickedDay, setPickedDay] = useState(today);
+  const selected = Math.min(Math.max(1, pickedDay), TOTAL);
+  const bonus = bonuses[selected - 1] || { name: 'TBD', cue: 'Bonus loading…' };
+  const isToday = selected === today;
+  const isFuture = selected > today;
   return (
     <Shell>
-      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="KICKOFF 24" sub="24-DAY RAMP" />
+      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="KICKOFF 30" sub="30-DAY RAMP" />
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
-        <div className="display" style={{ fontSize: 32, lineHeight: 1 }}>24 DAYS.<br/>ONE TO OPEN.</div>
+        <div className="display" style={{ fontSize: 32, lineHeight: 1 }}>30 DAYS.<br/>ONE TO OPEN.</div>
         <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8, marginBottom: 16 }}>
-          Each day unlocks a crew-proven challenge. Skip one and it's gone.
+          Each day adds one bonus on top of your Daily Max. Skip one and it's gone — no make-ups.
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
-          {days.map(d => (
-            <div key={d.day} style={{
-              aspectRatio: '1',
-              background: d.current ? 'var(--accent)' : d.done ? 'var(--card)' : 'var(--bg-2)',
-              border: `1px solid ${d.current ? 'var(--accent)' : d.done ? 'var(--streak)' : 'var(--border)'}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexDirection: 'column',
-            }}>
-              <div className="display" style={{
-                fontSize: 20,
-                color: d.current ? '#0A0A0A' : d.done ? 'var(--streak)' : 'var(--text-mute)',
-              }}>{d.day}</div>
-              <div className="mono" style={{ fontSize: 8, color: d.current ? '#0A0A0A' : 'var(--text-mute)', marginTop: 2 }}>
-                {d.current ? 'TODAY' : d.done ? '✓' : '◯'}
-              </div>
-            </div>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
+          {days.map(d => {
+            const isSelected = d.day === selected;
+            return (
+              <button
+                key={d.day}
+                onClick={() => setPickedDay(d.day)}
+                style={{
+                  aspectRatio: '1',
+                  background: d.current ? 'var(--accent)' : d.done ? 'var(--card)' : 'var(--bg-2)',
+                  border: `${isSelected ? 2 : 1}px solid ${d.current ? 'var(--accent)' : d.done ? 'var(--streak)' : isSelected ? 'var(--text)' : 'var(--border)'}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexDirection: 'column', cursor: 'pointer', padding: 0,
+                }}
+              >
+                <div className="display" style={{
+                  fontSize: 16,
+                  color: d.current ? '#0A0A0A' : d.done ? 'var(--streak)' : 'var(--text-mute)',
+                }}>{d.day}</div>
+                <div className="mono" style={{ fontSize: 7, color: d.current ? '#0A0A0A' : 'var(--text-mute)', marginTop: 1 }}>
+                  {d.current ? 'TODAY' : d.done ? '✓' : '◯'}
+                </div>
+              </button>
+            );
+          })}
         </div>
-        <div style={{ marginTop: 20, background: 'var(--card)', border: '1px solid var(--accent)', padding: 14 }}>
-          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)' }}>DAY {state.kickoffDay} · TODAY</div>
-          <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>The Loaded Carry</div>
+        <div style={{
+          marginTop: 20,
+          background: 'var(--card)',
+          border: `1px solid ${isToday ? 'var(--accent)' : isFuture ? 'var(--border)' : 'var(--streak)'}`,
+          padding: 14,
+        }}>
+          <div className="mono uppercase" style={{
+            fontSize: 9, letterSpacing: 2,
+            color: isToday ? 'var(--accent)' : isFuture ? 'var(--text-mute)' : 'var(--streak)',
+          }}>
+            DAY {selected} · {isToday ? 'TODAY' : isFuture ? 'LOCKED' : 'DONE'}
+          </div>
+          <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>{bonus.name}</div>
           <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.4 }}>
-            Finish your Daily Max with a 60-second farmer carry. Groceries, a backpack, whatever's heaviest in reach.
+            {isFuture ? 'Finish today first. No peeking ahead.' : bonus.cue}
           </div>
         </div>
       </div>

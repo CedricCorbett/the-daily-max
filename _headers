@@ -16,3 +16,8 @@
 
 /manifest.json
   Cache-Control: no-cache
+
+# JSX source files run via Babel-in-browser (no build step). Must revalidate
+# every request or users get wedged on a stale bundle until they clear storage.
+/src/*
+  Cache-Control: no-cache

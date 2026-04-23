@@ -94,6 +94,25 @@ function TweaksPanel({ state, setState, onClose }) {
             </div>
           </Section>
 
+          <Section title="BUILD">
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
+              Running <span style={{ color: 'var(--streak)' }}>{window.APP_BUILD || 'dev'}</span>. Stuck on an old version? Force a clean reload — unregisters the service worker and clears the cache.
+            </div>
+            <GhostBtn onClick={async () => {
+              try {
+                if ('serviceWorker' in navigator) {
+                  const regs = await navigator.serviceWorker.getRegistrations();
+                  await Promise.all(regs.map(r => r.unregister()));
+                }
+                if (window.caches) {
+                  const keys = await caches.keys();
+                  await Promise.all(keys.map(k => caches.delete(k)));
+                }
+              } catch {}
+              location.reload();
+            }}>↻ FORCE REFRESH</GhostBtn>
+          </Section>
+
           <Section title="RESET">
             <GhostBtn onClick={() => {
               if (confirm('Wipe all progress?')) {

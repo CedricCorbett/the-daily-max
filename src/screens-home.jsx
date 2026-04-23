@@ -34,7 +34,7 @@ function HomeScreen({ state, setState, go, openTweaks }) {
       />
       <HazardBar height={4} />
 
-      <div style={{ padding: '20px 20px 150px', flex: 1 }}>
+      <div style={{ padding: '20px 20px 40px', flex: 1 }}>
 
         {/* STREAK HERO */}
         <div style={{
@@ -132,6 +132,30 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           </div>
         )}
 
+        {/* PRIMARY CTA — start / review */}
+        <div style={{ marginBottom: 14 }}>
+          {doneToday ? (
+            <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ background: 'var(--streak-dim)', border: '1px solid var(--streak)', padding: '12px 16px', textAlign: 'center' }}>
+                <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)' }}>TODAY: LOGGED ✓</div>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>
+                  {state.today.pushups}/{state.today.squats}/{state.today.hollow}s/{state.today.pullups} · Come back tomorrow.
+                </div>
+              </div>
+              <PrimaryBtn onClick={() => go('share')} color="var(--bone)">SHARE MAX CARD →</PrimaryBtn>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: 6 }}>
+              <PrimaryBtn onClick={() => go('timer')}>START THE 6 →</PrimaryBtn>
+              <button onClick={() => go('log')} className="mono uppercase" style={{
+                width: '100%', padding: '14px 0', background: 'transparent',
+                border: '1px solid var(--border-2)', color: 'var(--text-dim)',
+                fontSize: 11, letterSpacing: 2, cursor: 'pointer',
+              }}>ALREADY DID IT? QUICK LOG</button>
+            </div>
+          )}
+        </div>
+
         {/* TODAY'S 4 STATIONS PREVIEW */}
         <StationsPreview state={state} />
 
@@ -185,34 +209,6 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           />
         </div>
 
-      </div>
-
-      {/* STICKY GO BUTTON */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        background: 'linear-gradient(to top, #0A0A0A 70%, rgba(10,10,10,0))',
-        padding: '16px 20px 24px',
-      }}>
-        {doneToday ? (
-          <div style={{ display: 'grid', gap: 8 }}>
-            <div style={{ background: 'var(--streak-dim)', border: '1px solid var(--streak)', padding: '12px 16px', textAlign: 'center' }}>
-              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)' }}>TODAY: LOGGED ✓</div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>
-                {state.today.pushups}/{state.today.squats}/{state.today.situps}/{state.today.pullups} · Come back tomorrow.
-              </div>
-            </div>
-            <PrimaryBtn onClick={() => go('share')} color="var(--bone)">SHARE DAD CARD →</PrimaryBtn>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gap: 6 }}>
-            <PrimaryBtn onClick={() => go('timer')}>START THE 6 →</PrimaryBtn>
-            <button onClick={() => go('log')} className="mono uppercase" style={{
-              width: '100%', padding: '14px 0', background: 'transparent',
-              border: '1px solid var(--border-2)', color: 'var(--text-dim)',
-              fontSize: 11, letterSpacing: 2, cursor: 'pointer',
-            }}>ALREADY DID IT? QUICK LOG</button>
-          </div>
-        )}
       </div>
 
       {/* BREAK-REASON MODAL */}

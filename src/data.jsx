@@ -291,7 +291,7 @@ const KICKOFF_BONUSES = [
   { name: "The Squat Century",       cue: "100 air squats, unbroken. If you stop, the set restarts. No exceptions. No complaints." },
   { name: "The Carry Complex",       cue: "60s overhead hold → 60s front rack → 60s farmer carry. Same weight. No set-downs between." },
   { name: "The Cold + Quiet",        cue: "2 minutes cold shower. Nasal breathing only. Day 4's breath. Day 28's composure." },
-  { name: "The Crew Rally",          cue: "Send one rally to a crew member today. Name them. Tell them you saw it. Then train." },
+  { name: "The Dress Rehearsal",     cue: "Your full Daily Max, then a second round at 50% of each station. No rest between rounds. Tomorrow's the double — today you feel where it lives." },
   { name: "The Promise Kept",        cue: "30 days. You showed up. Today, double your Daily Max. One time. For the record. For the crew." },
 ];
 

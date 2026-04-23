@@ -1,5 +1,9 @@
 // Tweaks panel — aesthetic/voice/mods, plus spouse-notify config
 
+// Dev-only sections (Sync History, Diagnostic, Build/Force Refresh) are
+// hidden for beta. Flip to `true` to see them again during development.
+const SHOW_DEV_TOOLS = false;
+
 function TweaksPanel({ state, setState, onClose }) {
   const [diag, setDiag] = useState({ email: null, userId: null, apiEnabled: false, lastWorkout: null, streak: null, probing: false });
   const [syncing, setSyncing] = useState(false);
@@ -161,54 +165,58 @@ function TweaksPanel({ state, setState, onClose }) {
             </div>
           </Section>
 
-          <Section title="SYNC LOCAL HISTORY">
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
-              Pushes every locally-logged day to the server at once. Use this if your reps are on this device but not on the leaderboard. Safe to run more than once. <span style={{ color: 'var(--text)' }}>{historyCount}</span> local day(s) on file.
-            </div>
-            <GhostBtn onClick={syncHistory}>{syncing ? 'SYNCING…' : '↑ SYNC HISTORY'}</GhostBtn>
-            {syncMsg && (
-              <div className="mono" style={{
-                marginTop: 8, padding: '8px 10px',
-                background: 'var(--card)', border: '1px solid var(--border)',
-                color: 'var(--text-dim)', fontSize: 11, lineHeight: 1.5,
-              }}>
-                {syncMsg}
-              </div>
-            )}
-          </Section>
+          {SHOW_DEV_TOOLS && (
+            <>
+              <Section title="SYNC LOCAL HISTORY">
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
+                  Pushes every locally-logged day to the server at once. Use this if your reps are on this device but not on the leaderboard. Safe to run more than once. <span style={{ color: 'var(--text)' }}>{historyCount}</span> local day(s) on file.
+                </div>
+                <GhostBtn onClick={syncHistory}>{syncing ? 'SYNCING…' : '↑ SYNC HISTORY'}</GhostBtn>
+                {syncMsg && (
+                  <div className="mono" style={{
+                    marginTop: 8, padding: '8px 10px',
+                    background: 'var(--card)', border: '1px solid var(--border)',
+                    color: 'var(--text-dim)', fontSize: 11, lineHeight: 1.5,
+                  }}>
+                    {syncMsg}
+                  </div>
+                )}
+              </Section>
 
-          <Section title="DIAGNOSTIC">
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-              API: <span style={{ color: diag.apiEnabled ? 'var(--streak)' : '#FF8E8E' }}>{diag.apiEnabled ? 'ENABLED' : 'DISABLED'}</span><br/>
-              Email: <span style={{ color: 'var(--text)' }}>{diag.email || '— (guest)'}</span><br/>
-              User ID: <span style={{ color: 'var(--text)' }}>{diag.userId ? diag.userId.slice(0, 8) + '…' : '—'}</span><br/>
-              Local streak: <span style={{ color: 'var(--streak)' }}>{state.streak}</span> · last log: <span style={{ color: 'var(--text)' }}>{state.lastLoggedDate || '—'}</span><br/>
-              Server last workout: <span style={{ color: 'var(--text)' }}>{diag.lastWorkout || '— (tap PROBE)'}</span><br/>
-              Server streak: <span style={{ color: 'var(--text)' }}>{diag.streak || '— (tap PROBE)'}</span>
-            </div>
-            <div style={{ marginTop: 8 }}>
-              <GhostBtn onClick={probeServer}>{diag.probing ? 'PROBING…' : 'PROBE SERVER'}</GhostBtn>
-            </div>
-          </Section>
+              <Section title="DIAGNOSTIC">
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                  API: <span style={{ color: diag.apiEnabled ? 'var(--streak)' : '#FF8E8E' }}>{diag.apiEnabled ? 'ENABLED' : 'DISABLED'}</span><br/>
+                  Email: <span style={{ color: 'var(--text)' }}>{diag.email || '— (guest)'}</span><br/>
+                  User ID: <span style={{ color: 'var(--text)' }}>{diag.userId ? diag.userId.slice(0, 8) + '…' : '—'}</span><br/>
+                  Local streak: <span style={{ color: 'var(--streak)' }}>{state.streak}</span> · last log: <span style={{ color: 'var(--text)' }}>{state.lastLoggedDate || '—'}</span><br/>
+                  Server last workout: <span style={{ color: 'var(--text)' }}>{diag.lastWorkout || '— (tap PROBE)'}</span><br/>
+                  Server streak: <span style={{ color: 'var(--text)' }}>{diag.streak || '— (tap PROBE)'}</span>
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <GhostBtn onClick={probeServer}>{diag.probing ? 'PROBING…' : 'PROBE SERVER'}</GhostBtn>
+                </div>
+              </Section>
 
-          <Section title="BUILD">
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
-              Running <span style={{ color: 'var(--streak)' }}>{window.APP_BUILD || 'dev'}</span>. Stuck on an old version? Force a clean reload — unregisters the service worker and clears the cache.
-            </div>
-            <GhostBtn onClick={async () => {
-              try {
-                if ('serviceWorker' in navigator) {
-                  const regs = await navigator.serviceWorker.getRegistrations();
-                  await Promise.all(regs.map(r => r.unregister()));
-                }
-                if (window.caches) {
-                  const keys = await caches.keys();
-                  await Promise.all(keys.map(k => caches.delete(k)));
-                }
-              } catch {}
-              location.reload();
-            }}>↻ FORCE REFRESH</GhostBtn>
-          </Section>
+              <Section title="BUILD">
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
+                  Running <span style={{ color: 'var(--streak)' }}>{window.APP_BUILD || 'dev'}</span>. Stuck on an old version? Force a clean reload — unregisters the service worker and clears the cache.
+                </div>
+                <GhostBtn onClick={async () => {
+                  try {
+                    if ('serviceWorker' in navigator) {
+                      const regs = await navigator.serviceWorker.getRegistrations();
+                      await Promise.all(regs.map(r => r.unregister()));
+                    }
+                    if (window.caches) {
+                      const keys = await caches.keys();
+                      await Promise.all(keys.map(k => caches.delete(k)));
+                    }
+                  } catch {}
+                  location.reload();
+                }}>↻ FORCE REFRESH</GhostBtn>
+              </Section>
+            </>
+          )}
 
           <Section title="ACCOUNT">
             <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>

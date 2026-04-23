@@ -506,6 +506,14 @@ function Manifesto() {
         that breaks the streak.
       </P>
 
+      <H>The Why</H>
+      <P>
+        You're busy. So is everyone here. The Daily Max is the bridge between
+        "I don't have time" and the 45-minute workout — six honest minutes a
+        day, a crew carving out the same, and a real path to commitment,
+        mobility, and the habit you stop having to force.
+      </P>
+
       <H color="var(--gold, #C9A24A)">The Point</H>
       <P>
         You compete against yourself. Effort is capped at 100% of your own PR,

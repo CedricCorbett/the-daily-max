@@ -193,6 +193,46 @@
       });
     },
 
+    // ───────── crew ops (0010_crew.sql) ─────────
+
+    async crewTotals(clanId, day) {
+      if (!client) return null;
+      return client.rpc('crew_totals', {
+        p_clan_id: clanId,
+        p_day: day ?? new Date().toISOString().slice(0, 10),
+      });
+    },
+
+    async crewRoster(clanId, day) {
+      if (!client) return null;
+      return client.rpc('crew_roster', {
+        p_clan_id: clanId,
+        p_day: day ?? new Date().toISOString().slice(0, 10),
+      });
+    },
+
+    async postCrewRoundup({ title, cue, hours = 24 }) {
+      if (!client) return null;
+      return client.rpc('post_crew_roundup', {
+        p_title: title, p_cue: cue, p_hours: hours,
+      });
+    },
+
+    async listCrewRoundups() {
+      if (!client) return null;
+      return client.rpc('list_crew_roundups');
+    },
+
+    async checkinCrewRoundup(roundupId) {
+      if (!client) return null;
+      return client.rpc('checkin_crew_roundup', { p_roundup_id: roundupId });
+    },
+
+    async endCrewRoundup(roundupId) {
+      if (!client) return null;
+      return client.rpc('end_crew_roundup', { p_roundup_id: roundupId });
+    },
+
     async listRallyBoard() {
       if (!client) return null;
       return client.rpc('list_rally_board');

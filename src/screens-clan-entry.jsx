@@ -74,7 +74,7 @@ function ClanEntryScreen({ state, setState, go }) {
                   cursor: 'pointer',
                 }}
               >
-                STAY IN THE DM CLAN FOR NOW
+                STAY IN THE DM CREW FOR NOW
               </button>
             </div>
           </div>

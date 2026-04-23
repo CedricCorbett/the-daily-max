@@ -392,7 +392,7 @@ function ScreenJumper({ current, go }) {
     { id: 'night',       label: 'NIGHT' },
     { id: 'kickoff',     label: 'KICKOFF' },
     { id: 'rally',       label: 'RALLY' },
-    { id: 'clan',        label: 'CLAN' },
+    { id: 'clan',        label: 'CREW' },
     { id: 'clan-entry',  label: 'CREW ENTRY' },
     { id: 'clan-settings', label: 'CREW SET' },
   ];

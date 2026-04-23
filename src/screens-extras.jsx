@@ -249,10 +249,10 @@ function MaxCardScreen({ state, go }) {
                 {(state.city || '').toUpperCase()}{state.city && state.ageBracket ? ' · ' : ''}{state.ageBracket || ''}
               </div>
               {/* Crew line. Always shows something so no one feels solo —
-                  falls back to the default DM Clan when the user hasn't
+                  falls back to the default DM Crew when the user hasn't
                   joined a custom crew yet. */}
               <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)', marginTop: 6, fontWeight: 700 }}>
-                ◆ CREW · {(state.clanName || 'DM CLAN').toUpperCase()}{state.clanTag ? ` · ${state.clanTag}` : ''}
+                ◆ CREW · {(state.clanName || 'DM CREW').toUpperCase()}{state.clanTag ? ` · ${state.clanTag}` : ''}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>

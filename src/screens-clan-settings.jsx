@@ -18,7 +18,7 @@ function ClanSettingsScreen({ state, setState, go }) {
     }
     const { data: mine } = await api.myClan();
     if (!mine || !mine.clan) {
-      setErr('No clan found.');
+      setErr('No crew found.');
       return;
     }
     setClan(mine.clan);
@@ -213,7 +213,7 @@ function ClanSettingsScreen({ state, setState, go }) {
         <ConfirmModal
           title={confirm.kind === 'leave' ? 'LEAVE THIS CREW?' : `KICK ${confirm.name?.toUpperCase()}?`}
           body={confirm.kind === 'leave'
-            ? 'You\'ll drop back to The DM Clan until you find another.'
+            ? 'You\'ll drop back to The DM Crew until you find another.'
             : 'They\'ll need an invite to rejoin.'}
           onCancel={() => setConfirm(null)}
           onConfirm={() => confirm.kind === 'leave' ? leave() : kick(confirm.user)}

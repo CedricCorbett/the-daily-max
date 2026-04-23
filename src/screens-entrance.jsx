@@ -75,15 +75,9 @@ function EntranceScreen({ state, setState, go }) {
       <div className="hazard-stripe" style={{ height: 5, width: '100%', flexShrink: 0 }} />
       <FilmGrain />
 
-      {/* Small emblem + label */}
-      <div style={{ textAlign: 'center', padding: '14px 0 2px', flexShrink: 0, zIndex: 2 }}>
+      {/* Small emblem — generous breathing room below so the mantras don't crowd the lockup */}
+      <div style={{ textAlign: 'center', padding: '18px 0 6px', flexShrink: 0, zIndex: 2 }}>
         <Emblem scale={0.38} />
-      </div>
-      <div className="mono uppercase" style={{
-        fontSize: 10, letterSpacing: 4, color: 'var(--streak)',
-        textAlign: 'center', padding: '0 0 6px', flexShrink: 0, zIndex: 2,
-      }}>
-        ◇ MINDSET TAP ◇
       </div>
 
       {/* Cascading mantra feed */}
@@ -93,7 +87,7 @@ function EntranceScreen({ state, setState, go }) {
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          padding: '14px 26px 28px',
+          padding: '44px 26px 28px',
           WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 8%, #000 88%, transparent 100%)',
           maskImage: 'linear-gradient(to bottom, transparent 0%, #000 8%, #000 88%, transparent 100%)',
         }}

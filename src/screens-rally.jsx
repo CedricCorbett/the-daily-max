@@ -65,6 +65,21 @@ function RallyScreen({ state, setState, go }) {
               Crew members who broke their streak. Pick one. Send a rally. Bring them back. You've sent <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{state.ralliesSent}</span> this month.
             </div>
 
+            {board.length === 0 && (
+              <div style={{
+                background: 'var(--card)', border: '1px dashed var(--border-2)',
+                padding: '24px 16px', textAlign: 'center', marginBottom: 14,
+              }}>
+                <div className="display" style={{ fontSize: 18, color: 'var(--text)', letterSpacing: '-0.01em' }}>
+                  NO ONE'S DOWN.
+                </div>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+                  The crew is holding. Keep your streak alive<br/>
+                  and this board stays empty.
+                </div>
+              </div>
+            )}
+
             {board.map(dad => (
               <div key={dad.id} style={{
                 background: 'var(--card)',

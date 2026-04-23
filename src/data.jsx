@@ -110,37 +110,13 @@ function milestoneProgress(exId, count) {
   return { earned, next, pct };
 }
 
-// Leaderboard mock — mixed names, 20s/30s/40s/50s brackets.
-// ho = hollow seconds, pu/sq/pl = reps.
+// Leaderboard — empty until real users populate it via the backend.
+// Structure kept intact so brackets still render; add seed rows here for local demos.
 const LEADERBOARD = {
-  '20s': [
-    { name: 'Alex K.',   city: 'Austin',    pu: 58, sq: 72, ho: 90, pl: 22, streak: 64  },
-    { name: 'Sam R.',    city: 'Brooklyn',  pu: 50, sq: 65, ho: 75, pl: 18, streak: 31  },
-    { name: 'YOU',       city: 'Charlotte', pu: 32, sq: 40, ho: 45, pl: 8,  streak: 1, isYou: true },
-    { name: 'Jordan P.', city: 'Denver',    pu: 45, sq: 60, ho: 70, pl: 15, streak: 102 },
-    { name: 'Mia T.',    city: 'LA',        pu: 38, sq: 58, ho: 95, pl: 12, streak: 47  },
-  ],
-  '30s': [
-    { name: 'Mike D.',  city: 'Austin',      pu: 52, sq: 68, ho: 80, pl: 18, streak: 142 },
-    { name: 'Raj P.',   city: 'Jersey City', pu: 48, sq: 62, ho: 75, pl: 16, streak: 89  },
-    { name: 'Priya S.', city: 'Seattle',     pu: 36, sq: 50, ho: 85, pl: 10, streak: 77  },
-    { name: 'Dev K.',   city: 'Seattle',     pu: 41, sq: 55, ho: 65, pl: 12, streak: 201 },
-    { name: 'Chris M.', city: 'Denver',      pu: 38, sq: 50, ho: 60, pl: 14, streak: 67  },
-  ],
-  '40s': [
-    { name: 'Cedric B.', city: 'Charlotte',  pu: 45, sq: 55, ho: 75, pl: 12, streak: 87  },
-    { name: 'Tom R.',    city: 'Portland',   pu: 41, sq: 51, ho: 70, pl: 10, streak: 156 },
-    { name: 'Lena V.',   city: 'Chicago',    pu: 34, sq: 48, ho: 90, pl: 8,  streak: 44  },
-    { name: 'Oscar L.',  city: 'Miami',      pu: 35, sq: 44, ho: 60, pl: 8,  streak: 23  },
-    { name: 'Marcus T.', city: 'Atlanta',    pu: 33, sq: 41, ho: 55, pl: 7,  streak: 112 },
-  ],
-  '50s': [
-    { name: 'Dave H.',  city: 'Boise',       pu: 38, sq: 44, ho: 65, pl: 7, streak: 311 },
-    { name: 'Paula S.', city: 'Phoenix',     pu: 32, sq: 42, ho: 80, pl: 6, streak: 180 },
-    { name: 'Rick F.',  city: 'Nashville',   pu: 31, sq: 37, ho: 50, pl: 5, streak: 72  },
-    { name: 'Brian O.', city: 'Minneapolis', pu: 28, sq: 34, ho: 45, pl: 4, streak: 49  },
-    { name: 'Ken W.',   city: 'Raleigh',     pu: 25, sq: 31, ho: 40, pl: 3, streak: 15  },
-  ],
+  '20s': [],
+  '30s': [],
+  '40s': [],
+  '50s': [],
 };
 
 // ───────────────── RALLY BOARD — crew members who broke their streak ─────────────────
@@ -155,17 +131,10 @@ const RALLY_ENCOURAGEMENTS = [
   "Missed a day? Fine. Don't miss two.",
 ];
 
-const RALLY_BOARD_SEED = [
-  { id: 'r1', name: 'Tom R.',    city: 'Portland',    avatar: 'T', streakLost: 156, daysOff: 2, rallies: 18, sentByYou: false, note: "Lost the bar after a work trip. Starting over tomorrow.", bestExercise: 'pushups', bestCount: 41 },
-  { id: 'r2', name: 'Priya S.',  city: 'Seattle',     avatar: 'P', streakLost: 23,  daysOff: 1, rallies: 4,  sentByYou: false, note: "Got sick. Missed 1. Don't want to miss 2.",             bestExercise: 'squats',  bestCount: 50 },
-  { id: 'r3', name: 'Brian O.',  city: 'Minneapolis', avatar: 'B', streakLost: 49,  daysOff: 3, rallies: 11, sentByYou: false, note: "Back tweaked. Need a nudge to try back-ok mode.",       bestExercise: 'pullups', bestCount: 4  },
-  { id: 'r4', name: 'Marcus T.', city: 'Atlanta',     avatar: 'M', streakLost: 112, daysOff: 4, rallies: 27, sentByYou: false, note: "This one hurts. 112 down the drain. Help.",            bestExercise: 'hollow',  bestCount: 55 },
-];
-
-const RALLY_INBOX_SEED = [
-  { from: 'Cedric B.', city: 'Charlotte',   msg: "Six minutes. Before the day starts. You got this.", when: '2h ago' },
-  { from: 'Raj P.',    city: 'Jersey City', msg: "Day 1 again > day never. See you tomorrow.",        when: '5h ago' },
-];
+// Rally board + inbox — empty until real users break their streaks and the
+// backend populates them. Seed arrays kept empty so the UI shows true zero.
+const RALLY_BOARD_SEED = [];
+const RALLY_INBOX_SEED = [];
 
 // Rally notification cap — first N send a push; the rest collect inside the app.
 // Keeps the Rally a nudge, not a harassment.
@@ -285,26 +254,14 @@ const EXERCISE_CUES = {
 };
 
 // ───────────────── CLAN PREVIEW SEED ─────────────────
+// Empty shape; real clan data comes from Supabase. Left as `null` so ClanScreen
+// redirects to the join/create entry flow for users not in a real crew yet.
+const CLAN_SEED = null;
 
-const CLAN_SEED = {
-  id: 'crew-charlotte',
-  name: 'CHARLOTTE CREW',
-  members: [
-    { name: 'YOU',     prTotal: 125, contributedToday: 0,    isYou: true  },
-    { name: 'Raj P.',  prTotal: 201, contributedToday: 0.82, isYou: false },
-    { name: 'Lena V.', prTotal: 180, contributedToday: 1.00, isYou: false },
-    { name: 'Dev K.',  prTotal: 173, contributedToday: 0.00, isYou: false },
-    { name: 'Sam R.',  prTotal: 208, contributedToday: 0.65, isYou: false },
-  ],
-  battleAgainst: {
-    id: 'crew-austin',
-    name: 'AUSTIN CREW',
-    memberCount: 5,
-    contributedCount: 3,
-    meanScore: 0.74,
-  },
-  battleEndsAt: Date.now() + 1000 * 60 * 60 * 18,
-};
+// ───────────────── FEATURE FLAGS ─────────────────
+// Accountability partner (streak-break SMS/email) — hidden until the
+// notification pipeline is wired. Set to true to re-enable the UI.
+const ACCOUNTABILITY_ENABLED = false;
 
 // ───────────────── STATE STORE ─────────────────
 
@@ -333,7 +290,7 @@ const defaultState = {
   voice: 'auto',
   aesthetic: 'oxblood',
   referralCode: 'CREW-' + (Math.random().toString(36).slice(2, 6).toUpperCase()),
-  kickoffDay: 3,
+  kickoffDay: 1,
   rallyBoard: RALLY_BOARD_SEED,
   rallyInbox: RALLY_INBOX_SEED,
   ralliesSent: 0,
@@ -398,4 +355,5 @@ Object.assign(window, {
   MANTRAS, pickMantra,
   showedUpScore, effortScore, dayTotal, prSum, draftInClass, clanClass, tierStyle,
   CLAN_SEED, defaultState, loadState, saveState, dateOffset,
+  ACCOUNTABILITY_ENABLED,
 });

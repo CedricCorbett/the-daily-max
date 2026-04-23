@@ -9,12 +9,14 @@ function OnboardScreen({ state, setState, go }) {
   const [modifier, setModifier] = useState(state.modifier || 'none');
   const [spouse, setSpouse] = useState(state.spouse || '');
 
+  // `spouse` step is the accountability-partner capture. Hidden until the
+  // SMS/email pipeline is wired (see ACCOUNTABILITY_ENABLED in data.jsx).
   const steps = [
     { id: 'name',    canNext: name.trim().length > 0 },
     { id: 'where',   canNext: city.trim().length > 0 && !!bracket },
     { id: 'bar',     canNext: hasBar !== null },
     { id: 'context', canNext: !!modifier },
-    { id: 'spouse',  canNext: true }, // optional
+    ...(ACCOUNTABILITY_ENABLED ? [{ id: 'spouse', canNext: true }] : []),
     { id: 'oath',    canNext: true },
   ];
   const current = steps[step];

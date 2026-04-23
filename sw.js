@@ -1,6 +1,6 @@
 // Service worker — shell cache + push handler.
 // Bump CACHE_VERSION to invalidate the cache on deploy.
-const CACHE_VERSION = 'dm-v3';
+const CACHE_VERSION = 'dm-v4';
 const SHELL = [
   '/',
   '/index.html',
@@ -22,6 +22,13 @@ self.addEventListener('activate', (event) => {
       Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
+});
+
+// Let the page ask the waiting worker to take over immediately.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Network-first for HTML (so deploys roll out fast); cache-first for static assets.

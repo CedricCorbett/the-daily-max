@@ -1,0 +1,18 @@
+# Cloudflare Pages custom headers.
+# Keeps the PWA shell from getting stuck on old builds:
+# - sw.js MUST NOT be cached by the browser HTTP layer, or users never
+#   see new service workers on home-screen-installed apps.
+# - index.html is revalidated on every load so the SW can pick up new
+#   asset hashes quickly.
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/index.html
+  Cache-Control: no-cache
+
+/
+  Cache-Control: no-cache
+
+/manifest.json
+  Cache-Control: no-cache

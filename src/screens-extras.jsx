@@ -104,7 +104,21 @@ function LeaderboardScreen({ state, setState, go }) {
         <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
           RANKED BY TOTAL WORK (TODAY)
         </div>
-        <div style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+        {list.length === 0 && (
+          <div style={{
+            background: 'var(--card)', border: '1px dashed var(--border-2)',
+            padding: '28px 18px', textAlign: 'center',
+          }}>
+            <div className="display" style={{ fontSize: 18, color: 'var(--text)', letterSpacing: '-0.01em' }}>
+              NO ONE HERE YET.
+            </div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+              The board fills in as the crew logs their first day.<br/>
+              Start the 6. Be the first pin on the map.
+            </div>
+          </div>
+        )}
+        <div style={{ background: list.length ? 'var(--card)' : 'transparent', border: list.length ? '1px solid var(--border)' : 'none' }}>
           {list.map((p, i) => (
             <div key={p.name} style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
@@ -185,8 +199,12 @@ function DraftScreen({ state, go }) {
         </div>
 
         {filtered.length === 0 && (
-          <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: 14, textAlign: 'center' }}>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>NO OPPONENTS IN THIS BAND. TRY ANOTHER MODE.</div>
+          <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+              {pool.length === 0
+                ? "NO CREW IN YOUR BRACKET YET.\nINVITE SOMEONE AND PICK A FIGHT."
+                : "NO OPPONENTS IN THIS BAND. TRY ANOTHER MODE."}
+            </div>
           </div>
         )}
 
@@ -295,9 +313,11 @@ function NightScreen({ state, go }) {
 
 // KICKOFF 24 — formerly Dadvent. 24-day ramp-in challenge.
 function KickoffScreen({ state, go }) {
+  // Day N: past days (< N) are done, day N is current, day N+... is locked.
+  // At kickoffDay = 1, nothing is done yet — day 1 is the one to open.
   const days = Array.from({ length: 24 }, (_, i) => ({
     day: i + 1,
-    done: i < state.kickoffDay,
+    done: i + 1 < state.kickoffDay,
     locked: i + 1 > state.kickoffDay,
     current: i + 1 === state.kickoffDay,
   }));

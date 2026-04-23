@@ -22,10 +22,44 @@ function App() {
   }, [screen]);
 
   // Service worker registration — PWA install + push delivery.
+  // Also aggressively checks for updates so the home-screen app refreshes
+  // when we deploy: re-check on focus, on visibility, and hourly.
+  // When a new SW activates, auto-reload so the user sees the latest build.
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
-    navigator.serviceWorker.register('/sw.js').catch(err => {
+
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
+
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      const checkForUpdate = () => { reg.update().catch(() => {}); };
+
+      // Check on focus / tab-visible — covers returning to the home-screen app.
+      window.addEventListener('focus', checkForUpdate);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) checkForUpdate();
+      });
+      // And a slow heartbeat for long-running sessions.
+      setInterval(checkForUpdate, 60 * 60 * 1000);
+
+      // When a new SW is installed and the page already has a controller,
+      // tell it to activate immediately. controllerchange will reload us.
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            // A new version is ready — activate now.
+            nw.postMessage && nw.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+    }).catch(err => {
       console.warn('[sw] register failed', err);
     });
   }, []);

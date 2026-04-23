@@ -66,21 +66,23 @@ function TweaksPanel({ state, setState, onClose }) {
             </div>
           </Section>
 
-          <Section title="ACCOUNTABILITY PARTNER · STREAK BREAK">
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
-              If you break the streak, we text this person. Extra accountability or pure chaos — your call.
-            </div>
-            <input
-              value={state.partner}
-              onChange={e => setState(s => ({ ...s, partner: e.target.value }))}
-              placeholder="Name or phone"
-              style={{
-                width: '100%', padding: '10px 12px', background: 'var(--card)',
-                border: '1px solid var(--border-2)', color: 'var(--text)',
-                fontFamily: 'JetBrains Mono', fontSize: 12,
-              }}
-            />
-          </Section>
+          {ACCOUNTABILITY_ENABLED && (
+            <Section title="ACCOUNTABILITY PARTNER · STREAK BREAK">
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
+                If you break the streak, we text this person. Extra accountability or pure chaos — your call.
+              </div>
+              <input
+                value={state.partner}
+                onChange={e => setState(s => ({ ...s, partner: e.target.value }))}
+                placeholder="Name or phone"
+                style={{
+                  width: '100%', padding: '10px 12px', background: 'var(--card)',
+                  border: '1px solid var(--border-2)', color: 'var(--text)',
+                  fontFamily: 'JetBrains Mono', fontSize: 12,
+                }}
+              />
+            </Section>
+          )}
 
           <Section title="REFERRAL CODE">
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

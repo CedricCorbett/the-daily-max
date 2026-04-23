@@ -618,9 +618,18 @@ function ClaimRacePanel({ claim }) {
     return () => clearInterval(i);
   }, [claim.id, claim.seconds_left]);
   const isDethrone = claim.kind === 'dethrone';
-  const cScore = claim.claimant_score || 0;
-  const dScore = claim.defender_score || 0;
-  const top = Math.max(cScore, dScore, 1);
+  // scoring_kind = 'reps' (in class) | 'effort' (cross class). Falls back
+  // to 'reps' for claim-kind races and when the DB doesn't expose it.
+  const scoring = claim.scoring_kind || 'reps';
+  const isEffort = scoring === 'effort';
+  // Pick the live numbers the scoreboard should display.
+  const cRaw = claim.claimant_score || 0;
+  const dRaw = claim.defender_score || 0;
+  const cEff = Number(claim.claimant_effort || 0);
+  const dEff = Number(claim.defender_effort || 0);
+  const cScore = isEffort ? cEff : cRaw;
+  const dScore = isEffort ? dEff : dRaw;
+  const top = Math.max(cScore, dScore, isEffort ? 0.001 : 1);
   const WINDOW_SECS = 3 * 24 * 3600;
   const elapsedPct = Math.min(100, Math.max(0, (1 - tick / WINDOW_SECS) * 100));
   return (
@@ -640,8 +649,15 @@ function ClaimRacePanel({ claim }) {
         </div>
       </div>
       <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4, letterSpacing: 0.5 }}>
-        3-DAY WINDOW · POST A NUMBER · HIGHER TOTAL WINS{isDethrone ? ' · TIES GO TO THE DEFENDER' : ''}
+        3-DAY WINDOW · {isEffort
+          ? 'CROSS CLASS · MEAN % OF PR · CAP 100%'
+          : 'IN CLASS · HIGHER TOTAL REPS WINS'}{isDethrone ? ' · TIES GO TO DEFENDER' : ''}
       </div>
+      {isDethrone && (claim.claimant_pr || claim.defender_pr) && (
+        <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 3, letterSpacing: 1 }}>
+          CREW PRs · CLAIMANT {claim.claimant_pr || 0} · DEFENDER {claim.defender_pr || 0}
+        </div>
+      )}
 
       {/* SCORES */}
       <div style={{ marginTop: 10, display: 'grid', gap: 6 }}>
@@ -651,6 +667,7 @@ function ClaimRacePanel({ claim }) {
           ratio={cScore / top}
           color="var(--accent)"
           role={isDethrone ? 'CLAIMANT' : 'CLAIMING'}
+          kind={scoring}
         />
         {isDethrone && (
           <ClaimBar
@@ -659,6 +676,7 @@ function ClaimRacePanel({ claim }) {
             ratio={dScore / top}
             color="var(--streak)"
             role="DEFENDER"
+            kind={scoring}
           />
         )}
       </div>
@@ -681,7 +699,11 @@ function ClaimRacePanel({ claim }) {
   );
 }
 
-function ClaimBar({ label, score, ratio, color, role }) {
+function ClaimBar({ label, score, ratio, color, role, kind }) {
+  // Format depends on scoring kind: reps = integer count, effort = % of PR.
+  const fmt = (v) => kind === 'effort'
+    ? `${Math.round(Math.min(1, v) * 100)}%`
+    : (v || 0).toLocaleString();
   return (
     <div>
       <div className="mono uppercase" style={{
@@ -689,7 +711,7 @@ function ClaimBar({ label, score, ratio, color, role }) {
         fontSize: 9, letterSpacing: 1.5, color: 'var(--text-dim)', marginBottom: 3,
       }}>
         <span>{role} · {label}</span>
-        <span className="display" style={{ fontSize: 14, color, letterSpacing: '-0.01em' }}>{score.toLocaleString()}</span>
+        <span className="display" style={{ fontSize: 14, color, letterSpacing: '-0.01em' }}>{fmt(score)}</span>
       </div>
       <div style={{ height: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', position: 'relative' }}>
         <div style={{
@@ -1000,7 +1022,7 @@ function StateChampModal({
             }}>
               <div><span style={{ color: 'var(--accent)' }}>1.</span> Champs must stay warm. A crew with zero active members in the last 7 days loses the crown — the state re-opens automatically.</div>
               <div style={{ marginTop: 4 }}><span style={{ color: 'var(--accent)' }}>2.</span> A champ who auto-declines a challenge has <span style={{ color: 'var(--streak)' }}>24 hours</span> to re-challenge the contender — or forfeits the crown.</div>
-              <div style={{ marginTop: 4 }}><span style={{ color: 'var(--accent)' }}>3.</span> Roster locks on accept. 7-day window. In class: raw reps win. Cross class: highest % of own PR wins (cap 100%).</div>
+              <div style={{ marginTop: 4 }}><span style={{ color: 'var(--accent)' }}>3.</span> Claim & Dethrone races run <span style={{ color: 'var(--streak)' }}>3 days</span>. In class (crew PRs within ±10%): raw total reps wins. Cross class: mean % of PR wins (cap 100% per day).</div>
             </div>
           </div>
         </div>

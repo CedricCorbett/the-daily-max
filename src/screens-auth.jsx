@@ -465,15 +465,15 @@ function AuthScreen({ onAuthed }) {
 function Manifesto() {
   const H = ({ children, color }) => (
     <div className="mono uppercase" style={{
-      fontSize: 10, letterSpacing: 3, color: color || 'var(--accent, #8B1A1A)',
-      marginBottom: 6, marginTop: 16,
+      fontSize: 12, letterSpacing: 3, color: color || 'var(--streak, #C9A24A)',
+      marginBottom: 8, marginTop: 20,
     }}>
       {children}
     </div>
   );
   const P = ({ children }) => (
     <div style={{
-      fontSize: 13, lineHeight: 1.55, color: 'var(--text-dim, #E5E0D6)',
+      fontSize: 15, lineHeight: 1.6, color: 'var(--text-dim, #E5E0D6)',
       letterSpacing: 0.2,
     }}>
       {children}
@@ -485,15 +485,15 @@ function Manifesto() {
       borderTop: '1px solid var(--border, #2A1B1B)',
     }}>
       <div className="display" style={{
-        fontSize: 22, letterSpacing: '-0.01em',
+        fontSize: 26, letterSpacing: '-0.01em',
         color: 'var(--text, #FFFFFF)', textAlign: 'center',
         marginBottom: 4,
       }}>
         THE DAILY MAX
       </div>
       <div className="mono uppercase" style={{
-        fontSize: 10, letterSpacing: 4, textAlign: 'center',
-        color: 'var(--gold, #C9A24A)', marginBottom: 18,
+        fontSize: 12, letterSpacing: 4, textAlign: 'center',
+        color: 'var(--streak, #C9A24A)', marginBottom: 18,
       }}>
         SIX MINUTES · FOUR STATIONS · EVERY DAY
       </div>
@@ -514,7 +514,7 @@ function Manifesto() {
         mobility, and the habit you stop having to force.
       </P>
 
-      <H color="var(--gold, #C9A24A)">The Point</H>
+      <H>The Point</H>
       <P>
         You compete against yourself. Effort is capped at 100% of your own PR,
         so no one can out-work you by being bigger. Your ceiling rises every
@@ -530,11 +530,26 @@ function Manifesto() {
       </P>
 
       <div className="mono uppercase" style={{
-        fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)',
-        textAlign: 'center', marginTop: 20, lineHeight: 1.6,
+        fontSize: 12, letterSpacing: 3, color: 'var(--text-mute, #8F857A)',
+        textAlign: 'center', marginTop: 24, lineHeight: 1.6,
       }}>
         TODAY'S MAX IS WHATEVER WAS IN YOU TODAY.<br/>
         THAT IS ENOUGH.
+      </div>
+
+      <div style={{
+        fontSize: 12, color: 'var(--text-mute, #8F857A)',
+        textAlign: 'center', marginTop: 20, paddingTop: 16,
+        borderTop: '1px solid var(--border, #2A1B1B)',
+        lineHeight: 1.5,
+      }}>
+        Please report any bugs to{' '}
+        <a
+          href="mailto:cedric@defaultfail.com"
+          style={{ color: 'var(--streak, #C9A24A)', textDecoration: 'none' }}
+        >
+          cedric@defaultfail.com
+        </a>
       </div>
     </div>
   );

@@ -60,7 +60,10 @@ function HomeScreen({ state, setState, go, openTweaks }) {
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <StreakDots history={state.history.concat(state.today && state.today.date === today ? [state.today] : [])} days={14} />
+            <Cycle14Bar
+              history={state.history.concat(state.today && state.today.date === today ? [state.today] : [])}
+              cycleStart={state.cycleStart}
+            />
           </div>
           <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between' }}>
             <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>

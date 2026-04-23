@@ -15,6 +15,14 @@ function App() {
   const [tweaksOpen, setTweaksOpen] = useState(false);
 
   useEffect(() => { saveState(state); }, [state]);
+
+  // Anchor the 14-day cycle on first app open. Once set, it never moves —
+  // the bar walks forward 14 days at a time from this date.
+  useEffect(() => {
+    if (state.cycleStart) return;
+    const todayISO = new Date().toISOString().split('T')[0];
+    setState(s => s.cycleStart ? s : { ...s, cycleStart: todayISO });
+  }, [state.cycleStart]);
   useEffect(() => {
     if (screen !== 'entrance') {
       try { localStorage.setItem('dailymax:entrance', new Date().toISOString().split('T')[0]); } catch {}

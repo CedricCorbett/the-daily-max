@@ -94,6 +94,83 @@ function BigNum({ n, unit, color = 'var(--text)', size = 72 }) {
   );
 }
 
+// Forward-looking 14-day cycle bar. Anchored on first app open
+// (state.cycleStart). The bar walks forward 14 days at a time — once
+// the user passes day 14, the next cycle starts automatically.
+// Box states:
+//   · gold filled    → logged + volume > 0
+//   · dim filled     → past day in this cycle, missed
+//   · oxblood ring   → today
+//   · outlined       → future day in this cycle
+function Cycle14Bar({ history, cycleStart }) {
+  const todayISO = new Date().toISOString().split('T')[0];
+  const anchor = cycleStart || todayISO;
+
+  const toDate = (iso) => { const d = new Date(iso + 'T00:00:00'); d.setHours(0,0,0,0); return d; };
+  const toISO = (d) => d.toISOString().split('T')[0];
+
+  const today = toDate(todayISO);
+  const a = toDate(anchor);
+  const daysSince = Math.floor((today - a) / 86400000);
+  const cycleNum = Math.max(0, Math.floor(daysSince / 14));
+  const startIdx = cycleNum * 14;
+  const cycleStartDate = new Date(a); cycleStartDate.setDate(a.getDate() + startIdx);
+
+  const logged = new Set(
+    (history || [])
+      .filter(h => h && h.date && ((h.pushups||0)+(h.squats||0)+(h.hollow||0)+(h.pullups||0)) > 0)
+      .map(h => h.date)
+  );
+
+  const boxes = [];
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(cycleStartDate); d.setDate(cycleStartDate.getDate() + i);
+    const iso = toISO(d);
+    const isFuture = d > today;
+    const isToday = iso === todayISO;
+    const hit = logged.has(iso);
+    boxes.push({ iso, isFuture, isToday, hit, dayNum: startIdx + i + 1 });
+  }
+
+  const dayOf = daysSince - startIdx + 1; // 1..14 within current cycle
+  const loggedInCycle = boxes.filter(b => b.hit).length;
+
+  const style = (b) => {
+    if (b.hit) {
+      return { background: 'var(--streak)', border: b.isToday ? '1px solid var(--accent)' : 'none' };
+    }
+    if (b.isToday) {
+      return { background: 'var(--card-2)', border: '1.5px solid var(--accent)' };
+    }
+    if (b.isFuture) {
+      return { background: 'transparent', border: '1px dashed var(--border-2)' };
+    }
+    return { background: 'var(--card-2)', border: '1px solid var(--border)' };
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 3 }}>
+        {boxes.map((b, i) => (
+          <div key={i} title={b.iso} style={{
+            flex: 1, height: 20, borderRadius: 2,
+            ...style(b),
+          }} />
+        ))}
+      </div>
+      <div className="mono" style={{
+        display: 'flex', justifyContent: 'space-between',
+        marginTop: 6, fontSize: 9, letterSpacing: 1.5, color: 'var(--text-mute)',
+      }}>
+        <span>DAY {Math.min(14, Math.max(1, dayOf))} / 14 · CYCLE {cycleNum + 1}</span>
+        <span style={{ color: loggedInCycle > 0 ? 'var(--streak)' : 'var(--text-mute)' }}>
+          {loggedInCycle} LOGGED
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // Streak row (heat dots). Reads left-to-right, first box = today.
 // Going right = earlier days. Mirrors the user's mental model:
 // "my first box on the left is today, older history trails right."
@@ -290,6 +367,6 @@ function HowStation({ n, name, detail }) {
 }
 
 Object.assign(window, {
-  Shell, TopBar, IconBtn, HazardBar, Chip, Stat, PrimaryBtn, GhostBtn, BigNum, StreakDots, HistoryBars,
+  Shell, TopBar, IconBtn, HazardBar, Chip, Stat, PrimaryBtn, GhostBtn, BigNum, StreakDots, Cycle14Bar, HistoryBars,
   HowToModal,
 });

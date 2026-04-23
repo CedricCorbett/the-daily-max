@@ -334,6 +334,10 @@ const defaultState = {
   aesthetic: 'oxblood',
   referralCode: 'CREW-' + (Math.random().toString(36).slice(2, 6).toUpperCase()),
   kickoffDay: 1,
+  // Anchor for the 14-day forward cycle bar on the dashboard.
+  // Set on first app open after dm-v12 ships. Every cycle is exactly
+  // 14 days from this anchor, so the bar resets automatically.
+  cycleStart: null,
   rallyBoard: RALLY_BOARD_SEED,
   rallyInbox: RALLY_INBOX_SEED,
   ralliesSent: 0,

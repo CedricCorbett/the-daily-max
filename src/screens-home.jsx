@@ -53,8 +53,10 @@ function HomeScreen({ state, setState, go, openTweaks }) {
             </div>
             <div style={{ textAlign: 'right' }}>
               <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>SHOWED UP</div>
-              <div className="display" style={{ fontSize: 28, color: su >= 60 ? 'var(--streak)' : 'var(--text)', lineHeight: 1, marginTop: 4 }}>{su}</div>
-              <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', marginTop: 2 }}>7-DAY</div>
+              <div className="display" style={{ fontSize: 28, color: su >= 5 ? 'var(--streak)' : 'var(--text)', lineHeight: 1, marginTop: 4 }}>
+                {su}<span className="mono" style={{ fontSize: 14, color: 'var(--text-mute)' }}> / 7</span>
+              </div>
+              <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', marginTop: 2 }}>LAST 7 DAYS</div>
             </div>
           </div>
           <div style={{ marginTop: 14 }}>

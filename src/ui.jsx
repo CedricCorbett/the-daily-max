@@ -94,10 +94,12 @@ function BigNum({ n, unit, color = 'var(--text)', size = 72 }) {
   );
 }
 
-// Streak row (heat dots)
+// Streak row (heat dots). Reads left-to-right, first box = today.
+// Going right = earlier days. Mirrors the user's mental model:
+// "my first box on the left is today, older history trails right."
 function StreakDots({ history, days = 14 }) {
   const dots = [];
-  for (let i = days - 1; i >= 0; i--) {
+  for (let i = 0; i < days; i++) {
     const d = dateOffset(-i);
     const hit = history.find(h => h.date === d);
     dots.push({ date: d, hit });

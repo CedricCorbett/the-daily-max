@@ -170,18 +170,23 @@ function pickMantra(streak, queue = []) {
   return { mantra: MANTRAS[pick], idx: pick };
 }
 
-// SHOWED UP score — 7-day (consistency × avg % of PR). Not raw volume.
-// Showing up at 60% of your PR beats PRing on day 1 and vanishing.
-// Effort capped at 1.0 per day — no ego carry.
-function showedUpScore(history, bests) {
-  const last7 = (history || []).slice(-7);
-  if (!last7.length) return 0;
-  const prTotal = prSum(bests);
-  const effortDays = last7.map(h => Math.min(1, dayTotal(h) / Math.max(1, prTotal)));
-  const consistency = last7.length / 7;
-  const avgEffort = effortDays.reduce((a, b) => a + b, 0) / effortDays.length;
-  // Weight consistency slightly heavier than intensity — showing up is the point.
-  return Math.round((consistency * 0.55 + avgEffort * 0.45) * 100);
+// SHOWED UP score — how many of the last 7 calendar days you logged. 0..7.
+// Simple and honest: one box per day. No effort math, no ego carry.
+// The old score mixed consistency with avg % of PR, which produced
+// misleading numbers like "53" when you logged one PR-setting day.
+function showedUpScore(history, _bests) {
+  if (!history || !history.length) return 0;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const set = new Set();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    set.add(d.toISOString().split('T')[0]);
+  }
+  let n = 0;
+  for (const h of history) {
+    if (h && h.date && set.has(h.date) && dayTotal(h) > 0) n++;
+  }
+  return n;
 }
 
 function dayTotal(day) {

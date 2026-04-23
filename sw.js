@@ -1,6 +1,6 @@
 // Service worker — shell cache + push handler.
 // Bump CACHE_VERSION to invalidate the cache on deploy.
-const CACHE_VERSION = 'dm-v4';
+const CACHE_VERSION = 'dm-v5';
 const SHELL = [
   '/',
   '/index.html',

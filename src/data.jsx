@@ -277,6 +277,7 @@ const defaultState = {
   streak: 0,
   bestStreak: 0,
   totalDays: 0,
+  lastLoggedDate: null,
   totalReps: 0, // mixed unit lifetime "work" number — reps + held seconds
   lifetimeBreakdown: { pushups: 0, squats: 0, hollow: 0, pullups: 0 },
   bests: { pushups: 0, squats: 0, hollow: 0, pullups: 0 },

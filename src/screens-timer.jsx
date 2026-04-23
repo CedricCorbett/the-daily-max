@@ -29,6 +29,7 @@ function TimerScreen({ state, go, setState, setDraft }) {
   const [coffeeSync, setCoffeeSync] = useState(false);
   const [taps, setTaps] = useState({ pushups: 0, squats: 0, hollow: 0, pullups: 0 });
   const [holding, setHolding] = useState(true); // for hollow station: true until user drops
+  const [howOpen, setHowOpen] = useState(false);
   const ref = useRef(null);
 
   const step = SEQUENCE[stepIdx];
@@ -135,9 +136,21 @@ function TimerScreen({ state, go, setState, setDraft }) {
             ☕ COFFEE CLOCK {coffeeSync ? 'SYNCED' : 'OFF'} · start when espresso pulls
           </button>
 
+          <button onClick={() => setHowOpen(true)} className="mono uppercase" style={{
+            marginTop: 8, padding: '10px 12px',
+            background: 'transparent',
+            border: '1px dashed var(--border-2)',
+            color: 'var(--text-mute)',
+            fontSize: 10, letterSpacing: 2.5,
+            cursor: 'pointer',
+          }}>
+            ◇ HOW TO DO THE DAILY MAX
+          </button>
+
           <div style={{ flex: 1 }} />
           <PrimaryBtn onClick={() => setRunning(true)}>GO →</PrimaryBtn>
         </div>
+        {howOpen && <HowToModal onClose={() => setHowOpen(false)} />}
       </Shell>
     );
   }

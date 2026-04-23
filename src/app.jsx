@@ -138,7 +138,7 @@ function App() {
     case 'entrance':    view = <EntranceScreen state={state} setState={setState} go={go} />; break;
     case 'home':        view = <HomeScreen state={state} setState={setState} go={go} openTweaks={() => setTweaksOpen(true)} />; break;
     case 'timer':       view = <TimerScreen state={state} setState={setState} go={go} setDraft={setDraft} />; break;
-    case 'log':         view = <LogScreen state={state} setState={setState} draft={draft} go={go} />; break;
+    case 'log':         view = <LogScreen state={state} setState={setState} draft={draft} setDraft={setDraft} go={go} />; break;
     case 'done':        view = <DoneScreen state={state} go={go} />; break;
     case 'share':       view = <MaxCardScreen state={state} go={go} />; break;
     case 'leaderboard': view = <LeaderboardScreen state={state} setState={setState} go={go} />; break;

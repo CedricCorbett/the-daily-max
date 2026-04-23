@@ -4,13 +4,86 @@ function MaxCardScreen({ state, go }) {
   const t = state.today || { pushups: state.bests.pushups, squats: state.bests.squats, hollow: state.bests.hollow, pullups: state.bests.pullups };
   const total = t.pushups + t.squats + t.hollow + t.pullups;
   const caption = MAX_CARD_CAPTIONS[state.streak % MAX_CARD_CAPTIONS.length].replace('%STREAK%', state.streak);
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState(''); // '', 'rendering', 'saved', 'shared', 'error'
+  const cardRef = useRef(null);
+
+  const renderCard = async () => {
+    if (!window.html2canvas) throw new Error('Card renderer not loaded yet. Try again in a moment.');
+    // 2× scale keeps the card crisp on retina feeds.
+    return window.html2canvas(cardRef.current, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
+  };
+
+  const filename = `daily-max-day-${state.streak || 0}-${(state.name || 'crew').replace(/\s+/g, '-').toLowerCase()}.png`;
+
+  const download = async () => {
+    setStatus('rendering');
+    try {
+      const canvas = await renderCard();
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setStatus('saved');
+      setTimeout(() => setStatus(''), 2200);
+    } catch (e) {
+      console.error(e);
+      setStatus('error');
+      setTimeout(() => setStatus(''), 2500);
+    }
+  };
+
+  const share = async () => {
+    setStatus('rendering');
+    try {
+      const canvas = await renderCard();
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
+      if (!blob) throw new Error('empty blob');
+      const file = new File([blob], filename, { type: 'image/png' });
+
+      // Prefer native share sheet (iOS/Android). Falls back to download.
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'The Daily Max',
+          text: `${caption}\nDay ${state.streak} · dailymax.app/${state.referralCode}`,
+        });
+        setStatus('shared');
+      } else {
+        // No share API — save the image so they can post it manually.
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setStatus('saved');
+      }
+      setTimeout(() => setStatus(''), 2200);
+    } catch (e) {
+      // Share sheet cancellation throws AbortError — treat that as silent
+      if (e && e.name === 'AbortError') { setStatus(''); return; }
+      console.error(e);
+      setStatus('error');
+      setTimeout(() => setStatus(''), 2500);
+    }
+  };
+
   return (
     <Shell>
       <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="MAX CARD" sub="SHARE TO THE CREW" />
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
-        <div style={{
+        <div ref={cardRef} style={{
           background: 'var(--bone)', color: '#0A0A0A', padding: 22,
           position: 'relative', boxShadow: '0 20px 40px rgba(201,162,74,0.25)',
         }}>
@@ -63,15 +136,27 @@ function MaxCardScreen({ state, go }) {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 16 }}>
-          <GhostBtn onClick={() => {
-            navigator.clipboard && navigator.clipboard.writeText(
-              `${caption}\n\n${t.pushups} push / ${t.squats} sq / ${t.hollow}s hold / ${t.pullups} pull\nDay ${state.streak} · dailymax.app/${state.referralCode}`
-            );
-            setCopied(true); setTimeout(() => setCopied(false), 2000);
-          }}>
-            {copied ? '✓ COPIED' : 'COPY TEXT'}
+          <GhostBtn onClick={download} disabled={status === 'rendering'}>
+            {status === 'rendering' ? '...' : status === 'saved' ? '✓ SAVED' : '↓ SAVE IMAGE'}
           </GhostBtn>
-          <GhostBtn onClick={() => alert('Share link copied to clipboard')}>SEND →</GhostBtn>
+          <GhostBtn onClick={share} disabled={status === 'rendering'}>
+            {status === 'rendering' ? '...' : status === 'shared' ? '✓ SHARED' : 'SHARE →'}
+          </GhostBtn>
+        </div>
+        {status === 'error' && (
+          <div className="mono uppercase" style={{
+            marginTop: 10, padding: '8px 10px',
+            background: '#1F0D0D', border: '1px solid #5A1F1F',
+            color: '#FF6B6B', fontSize: 10, letterSpacing: 1.5, textAlign: 'center',
+          }}>
+            COULDN'T RENDER THE CARD · TRY AGAIN
+          </div>
+        )}
+        <div className="mono" style={{
+          marginTop: 10, fontSize: 9, color: 'var(--text-mute)',
+          letterSpacing: 1.5, textAlign: 'center', lineHeight: 1.5,
+        }}>
+          SAVES A PNG TO YOUR PHOTOS · SHARE SENDS IT STRAIGHT TO THE CREW
         </div>
       </div>
     </Shell>

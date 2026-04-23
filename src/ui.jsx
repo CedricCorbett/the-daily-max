@@ -136,6 +136,158 @@ function HistoryBars({ history, dataKey, best, color = 'var(--accent)' }) {
   );
 }
 
+// ───────── HOW TO DO THE DAILY MAX ─────────
+// One-set, all-out, no mystery. Shown on demand from the home screen and
+// the pre-timer ready screen. Brutalist card, crew-voice copy.
+
+function HowToModal({ onClose }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'absolute', inset: 0, zIndex: 30,
+        background: 'rgba(0,0,0,0.78)',
+        display: 'flex', alignItems: 'flex-end',
+        animation: 'fade-up 0.2s ease-out',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%', maxHeight: '92%', overflowY: 'auto',
+          background: 'var(--bg)',
+          borderTop: '1px solid var(--border)',
+          animation: 'slide-up 0.28s ease-out',
+        }}
+      >
+        <div className="hazard-stripe" style={{ height: 4, width: '100%' }} />
+        <div style={{ padding: '18px 22px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--streak)' }}>
+            HOW TO DO THE DAILY MAX
+          </div>
+          <button onClick={onClose} style={{
+            background: 'transparent', border: 'none',
+            color: 'var(--text-mute)', fontSize: 22, cursor: 'pointer', padding: 0,
+          }}>×</button>
+        </div>
+
+        <div style={{ padding: '4px 22px 26px' }}>
+          <div className="display" style={{ fontSize: 28, lineHeight: 1.02, color: 'var(--text)', letterSpacing: '-0.02em' }}>
+            ONE SET.<br/>ALL YOU'VE GOT.<br/>THAT'S IT.
+          </div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 12, lineHeight: 1.55 }}>
+            Four stations. One honest set at each. Max reps until the rep before you'd break form — that's your number. Log it. Done for the day.
+          </div>
+
+          <div style={{
+            marginTop: 18, padding: 14,
+            background: 'var(--card)', border: '1px solid var(--border)',
+          }}>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)', marginBottom: 8 }}>
+              THE RULES
+            </div>
+            <HowRule n="1" title="ONE SET PER STATION.">
+              Not three. Not five. One. You pick a number of sets and you lied to yourself — that's why most apps fail dads.
+            </HowRule>
+            <HowRule n="2" title="MAX EFFORT, CLEAN FORM.">
+              Go until the next rep would break your form. That rep doesn't count — the one before it is your max.
+            </HowRule>
+            <HowRule n="3" title="ANY ORDER YOU WANT.">
+              Timer cues all four. If you only have a bar later, do push / squat / hold now and punch in pull-ups after lunch. Log at the end.
+            </HowRule>
+            <HowRule n="4" title="BACK-TO-BACK.">
+              Rest between stations is short on purpose — the guide gives you 15 seconds. If you need more, take it. Just don't turn it into two sessions.
+            </HowRule>
+            <HowRule n="5" title="LOG ONCE.">
+              Enter the real number. PR or 3 reps total, it still counts. Streak is built on showing up, not on hitting a target.
+            </HowRule>
+          </div>
+
+          <div style={{
+            marginTop: 14, padding: 14,
+            background: 'var(--bg-2)', border: '1px solid var(--border)',
+          }}>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)', marginBottom: 8 }}>
+              THE FOUR STATIONS
+            </div>
+            <HowStation n="1" name="PUSH-UPS"     detail="Chest down to fist, full lockout. Scale to knees or incline — just commit to one version." />
+            <HowStation n="2" name="AIR SQUATS"   detail="Hips below knees. Chest tall. Heels down. Swap for split squats if the bar's not there." />
+            <HowStation n="3" name="HOLLOW HOLD"  detail="Lower back pressed flat, arms and legs up. Logged in SECONDS, not reps. Drop early if form breaks." />
+            <HowStation n="4" name="PULL-UPS"     detail="Chin over bar, full hang. No bar? Swap for dead-bug, inverted row, or just log 0 and keep the streak." />
+          </div>
+
+          <div style={{
+            marginTop: 14, padding: '12px 14px',
+            background: 'var(--streak-dim)', border: '1px solid var(--streak)',
+          }}>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)' }}>
+              THE POINT
+            </div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.5 }}>
+              Six minutes. No programming to follow. No plate math. Your PR is the only bar — and it caps at 100% of itself. A titan can't carry a sleeping crew. Showing up, every day, is the whole game.
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="mono uppercase"
+            style={{
+              marginTop: 18, width: '100%', padding: '16px 0',
+              background: 'var(--accent)', color: '#0A0A0A', border: 'none',
+              fontFamily: 'Archivo Black', fontSize: 13, letterSpacing: 4, cursor: 'pointer',
+            }}
+          >
+            GOT IT · LET'S WORK
+          </button>
+        </div>
+        <div className="gold-stripe" style={{ height: 3, width: '100%' }} />
+      </div>
+    </div>
+  );
+}
+
+function HowRule({ n, title, children }) {
+  return (
+    <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+      <div className="display" style={{
+        width: 24, height: 24, background: 'var(--accent)', color: '#0A0A0A',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 13, flexShrink: 0,
+      }}>{n}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text)', fontWeight: 700 }}>
+          {title}
+        </div>
+        <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-mute)', marginTop: 3, lineHeight: 1.5 }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HowStation({ n, name, detail }) {
+  return (
+    <div style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
+      <div className="mono" style={{
+        width: 22, fontSize: 10, color: 'var(--streak)', fontWeight: 700,
+        letterSpacing: 1, flexShrink: 0, paddingTop: 1,
+      }}>
+        0{n}
+      </div>
+      <div style={{ flex: 1 }}>
+        <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, color: 'var(--text)', fontWeight: 700 }}>
+          {name}
+        </div>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2, lineHeight: 1.5 }}>
+          {detail}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 Object.assign(window, {
-  Shell, TopBar, IconBtn, HazardBar, Chip, Stat, PrimaryBtn, GhostBtn, BigNum, StreakDots, HistoryBars
+  Shell, TopBar, IconBtn, HazardBar, Chip, Stat, PrimaryBtn, GhostBtn, BigNum, StreakDots, HistoryBars,
+  HowToModal,
 });

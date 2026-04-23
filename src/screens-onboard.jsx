@@ -79,7 +79,7 @@ function OnboardScreen({ state, setState, go }) {
               WHAT DO<br/>THEY CALL YOU?
             </div>
             <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
-              First name, nickname, whatever shows up on the Dad Card.
+              First name, nickname, whatever shows up on your Max Card.
             </div>
             <input
               value={name}

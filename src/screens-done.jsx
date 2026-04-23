@@ -89,7 +89,7 @@ function DoneScreen({ state, go }) {
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
-          <GhostBtn onClick={() => go('share')}>SHARE DAD CARD</GhostBtn>
+          <GhostBtn onClick={() => go('share')}>SHARE MAX CARD</GhostBtn>
           <GhostBtn onClick={() => go('leaderboard')}>LEADERBOARD</GhostBtn>
         </div>
 

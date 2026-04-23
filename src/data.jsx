@@ -340,6 +340,13 @@ const defaultState = {
   ralliesReceived: 0,
   onRally: false,
   clan: CLAN_SEED,
+  // Backend-linked auth + crew (populated post-sign-in)
+  userId: null,
+  username: null,
+  regionState: '',
+  clanId: null,
+  clanRole: null,       // 'leader' | 'member' | null
+  clanIsSystem: false,  // true when only in The DM Clan
 };
 
 function dateOffset(n) {

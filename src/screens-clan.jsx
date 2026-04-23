@@ -28,7 +28,12 @@ function ClanScreen({ state, setState, go }) {
         left={<IconBtn onClick={() => go('home')}>←</IconBtn>}
         title={clan.name}
         sub={`CLASS ${cls} · ${members.length} CREW`}
-        right={<span className="mono" style={{ fontSize: 10, color: 'var(--accent)' }}>{hoursLeft}h</span>}
+        right={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="mono" style={{ fontSize: 10, color: 'var(--accent)' }}>{hoursLeft}h</span>
+            <IconBtn onClick={() => go('clan-settings')}>⚙</IconBtn>
+          </div>
+        }
       />
       <HazardBar height={4} />
 

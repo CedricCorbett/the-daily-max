@@ -248,7 +248,7 @@ function OnboardScreen({ state, setState, go }) {
               SIX<br/>MINUTES.<br/>EVERY DAY.
             </div>
             <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 14, lineHeight: 1.6 }}>
-              Four stations. Max reps in 75 seconds each. That's the whole app.
+              Four stations. All you've got on each. Six-minute guide, not a wall clock.
               Don't break the chain. {spouse ? `${spouse} knows.` : 'Your crew shows up when you do.'}
             </div>
 

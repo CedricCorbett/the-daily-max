@@ -1,5 +1,6 @@
-// TIMER screen — 4 stations × 75s + 15s transitions (inclusive of final whistle)
-// Total: 75+15+75+15+75+15+75 = 345s = 5:45 work, + 15s warmup = 6:00
+// TIMER screen — 4 stations × 75s + 15s transitions. 6 minutes total.
+// This is a GUIDE, not a wall clock. Keep going past the buzzer if you're mid-set —
+// the next station just pings on a timer; the timer doesn't stop your reps.
 
 const STATION_SECONDS = 75;
 const REST_SECONDS = 15;
@@ -101,8 +102,8 @@ function TimerScreen({ state, go, setState, setDraft }) {
         <HazardBar height={4} />
         <div style={{ padding: 24, flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ marginTop: 12 }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)' }}>SIX MINUTES. FOUR STATIONS.</div>
-            <div className="display" style={{ fontSize: 44, lineHeight: 1, marginTop: 8, color: 'var(--text)' }}>MAX OUT<br/>EACH SET.</div>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)' }}>FOUR STATIONS · SIX-MINUTE GUIDE</div>
+            <div className="display" style={{ fontSize: 44, lineHeight: 1, marginTop: 8, color: 'var(--text)' }}>ALL YOU'VE<br/>GOT TODAY.</div>
           </div>
 
           <div style={{ marginTop: 24, background: 'var(--card)', border: '1px solid var(--border)' }}>
@@ -116,7 +117,7 @@ function TimerScreen({ state, go, setState, setDraft }) {
                   }}>{i + 1}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 600 }}>{v.name}</div>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 1 }}>75s MAX · then 15s move</div>
+                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 1 }}>STATION · THEN TRANSITION</div>
                   </div>
                   <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)' }}>PB {state.bests[ex.id]}</div>
                 </div>

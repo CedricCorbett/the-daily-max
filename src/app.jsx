@@ -2,8 +2,9 @@
 
 function App() {
   const [state, setState] = useState(loadState);
+  const [authStatus, setAuthStatus] = useState('loading'); // 'loading' | 'authed' | 'guest' | 'out'
+  const [authUser, setAuthUser] = useState(null);
   const [screen, setScreen] = useState(() => {
-    // Show entrance once per day (or on firstRun)
     try {
       const last = localStorage.getItem('dailymax:entrance');
       const today = new Date().toISOString().split('T')[0];
@@ -20,7 +21,83 @@ function App() {
     }
   }, [screen]);
 
+  // Service worker registration — PWA install + push delivery.
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('[sw] register failed', err);
+    });
+  }, []);
+
+  // Auth bootstrap — if Supabase is wired, gate on session; else guest-through.
+  useEffect(() => {
+    const api = window.api;
+    if (!api || !api.enabled) {
+      setAuthStatus('guest');
+      return;
+    }
+    let cancelled = false;
+    const hydrate = async (user) => {
+      setAuthUser(user);
+      setState(s => ({ ...s, userId: user.id }));
+      setAuthStatus('authed');
+      try {
+        const res = await api.myClan();
+        const row = res && res.data;
+        if (row && row.clan) {
+          setState(s => ({
+            ...s,
+            clanId: row.clan.id,
+            clanRole: row.role,
+            clanIsSystem: !!row.clan.is_system,
+          }));
+        }
+      } catch {}
+    };
+    api.getSession().then(session => {
+      if (cancelled) return;
+      if (session && session.user) hydrate(session.user);
+      else setAuthStatus('out');
+    });
+    const unsub = api.onAuthChange((session) => {
+      if (session && session.user) hydrate(session.user);
+      else {
+        setAuthUser(null);
+        setAuthStatus('out');
+        setState(s => ({ ...s, userId: null, clanId: null, clanRole: null, clanIsSystem: false }));
+      }
+    });
+    return () => { cancelled = true; unsub && unsub(); };
+  }, []);
+
   const go = (s) => setScreen(s);
+
+  const onAuthed = ({ user, guest }) => {
+    if (guest) setAuthStatus('guest');
+    else {
+      setAuthUser(user);
+      setAuthStatus('authed');
+    }
+  };
+
+  // Auth gate — before anything else renders.
+  if (authStatus === 'loading') {
+    return (
+      <Shell bg="var(--bg)">
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--text-mute)', fontFamily: 'JetBrains Mono, monospace',
+          fontSize: 10, letterSpacing: 3,
+        }}>
+          LOADING
+        </div>
+      </Shell>
+    );
+  }
+  if (authStatus === 'out') {
+    return <AuthScreen onAuthed={onAuthed} />;
+  }
 
   let view;
   switch (screen) {
@@ -36,6 +113,8 @@ function App() {
     case 'kickoff':     view = <KickoffScreen state={state} go={go} />; break;
     case 'rally':       view = <RallyScreen state={state} setState={setState} go={go} />; break;
     case 'clan':        view = <ClanScreen state={state} setState={setState} go={go} />; break;
+    case 'clan-entry':  view = <ClanEntryScreen state={state} setState={setState} go={go} />; break;
+    case 'clan-settings': view = <ClanSettingsScreen state={state} setState={setState} go={go} />; break;
     default:            view = <HomeScreen state={state} setState={setState} go={go} openTweaks={() => setTweaksOpen(true)} />;
   }
 
@@ -64,6 +143,8 @@ function ScreenJumper({ current, go }) {
     { id: 'kickoff',     label: 'KICKOFF' },
     { id: 'rally',       label: 'RALLY' },
     { id: 'clan',        label: 'CLAN' },
+    { id: 'clan-entry',  label: 'CREW ENTRY' },
+    { id: 'clan-settings', label: 'CREW SET' },
   ];
   return (
     <div style={{ position: 'fixed', right: 14, bottom: 14, zIndex: 50, fontFamily: 'JetBrains Mono, monospace' }}>

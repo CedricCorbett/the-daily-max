@@ -4,6 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>THE DAILY MAX</title>
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#8B1A1A" />
+<meta name="description" content="Crew-based daily movement. Effort capped at 100% of your own PR." />
+
+<!-- iOS PWA (16.4+ needs these for web push after Add-to-Home-Screen) -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Daily Max" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="/icons/icon.svg" />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
@@ -109,15 +123,24 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<!-- Optional: set window.SUPABASE_URL + window.SUPABASE_ANON_KEY here, then uncomment
-     the supabase-js CDN + api.jsx lines below. Without them, app runs local-only. -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
-<!-- <script type="text/babel" src="./src/api.jsx"></script> -->
+<!-- Supabase config. Both values are safe to commit:
+     - URL is always public (hostname)
+     - ANON key is designed for browser exposure and is constrained by RLS
+     Leave blank to run in preview/local-only mode. -->
+<script>
+  window.SUPABASE_URL = '';      // e.g. 'https://xxx.supabase.co'
+  window.SUPABASE_ANON_KEY = ''; // publishable anon key
+  window.VAPID_PUBLIC_KEY = '';  // base64url — pair with VAPID_PRIVATE_KEY secret on rally-fanout
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="text/babel" src="./src/api.jsx"></script>
 
 <!-- Data + utilities -->
 <script type="text/babel" src="./src/data.jsx"></script>
 <script type="text/babel" src="./src/voice.jsx"></script>
 <script type="text/babel" src="./src/ui.jsx"></script>
+<script type="text/babel" src="./src/push.jsx"></script>
+<script type="text/babel" src="./src/screens-auth.jsx"></script>
 <script type="text/babel" src="./src/screens-entrance.jsx"></script>
 <script type="text/babel" src="./src/screens-home.jsx"></script>
 <script type="text/babel" src="./src/screens-timer.jsx"></script>
@@ -126,6 +149,8 @@
 <script type="text/babel" src="./src/screens-extras.jsx"></script>
 <script type="text/babel" src="./src/screens-rally.jsx"></script>
 <script type="text/babel" src="./src/screens-clan.jsx"></script>
+<script type="text/babel" src="./src/screens-clan-entry.jsx"></script>
+<script type="text/babel" src="./src/screens-clan-settings.jsx"></script>
 <script type="text/babel" src="./src/tweaks.jsx"></script>
 <script type="text/babel" src="./src/app.jsx"></script>
 

@@ -132,6 +132,9 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           </div>
         )}
 
+        {/* Push soft-prompt — one-shot, self-dismisses if already resolved */}
+        <PushSoftPrompt />
+
         {/* PRIMARY CTA — start / review */}
         <div style={{ marginBottom: 14 }}>
           {doneToday ? (
@@ -195,7 +198,14 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           COMMUNITY
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, marginBottom: 4 }}>
-          <CommunityTile onClick={() => go('clan')} icon="◆" label="CREW BATTLE" sub={state.clan?.battleAgainst?.name ? `vs ${state.clan.battleAgainst.name}` : 'No battle'} />
+          <CommunityTile
+            onClick={() => go(state.clanIsSystem || !state.clanId ? 'clan-entry' : 'clan')}
+            icon="◆"
+            label={state.clanIsSystem || !state.clanId ? 'FIND CREW' : 'CREW BATTLE'}
+            sub={state.clanIsSystem || !state.clanId
+              ? 'Join or create'
+              : (state.clan?.battleAgainst?.name ? `vs ${state.clan.battleAgainst.name}` : 'No battle')}
+          />
           <CommunityTile onClick={() => go('draft')} icon="⚔" label="DRAFT" sub="Tier-matched 1v1" />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
@@ -246,7 +256,7 @@ function StationsPreview({ state }) {
   return (
     <>
       <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginBottom: 8 }}>
-        TODAY · 4 STATIONS · 75s EACH
+        TODAY · 4 STATIONS · 6-MIN GUIDE
       </div>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
         {CORE_EXERCISES.map((ex, i) => {

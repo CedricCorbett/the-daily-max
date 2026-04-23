@@ -39,10 +39,25 @@ jobs:
           supabase functions deploy settle-battles --no-verify-jwt
           supabase functions deploy streak-sweep --no-verify-jwt
 
+  # Gate Cloudflare deploy on presence of API token. When absent (e.g. first-run before
+  # the token is added to repo secrets), skip cleanly so the workflow stays green.
+  cf-gate:
+    name: Cloudflare — check token
+    runs-on: ubuntu-latest
+    needs: supabase
+    outputs:
+      has_token: ${{ steps.gate.outputs.has_token }}
+    steps:
+      - id: gate
+        env:
+          HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        run: echo "has_token=$HAS_TOKEN" >> $GITHUB_OUTPUT
+
   cloudflare:
     name: Cloudflare Worker (cron)
     runs-on: ubuntu-latest
-    needs: supabase
+    needs: cf-gate
+    if: needs.cf-gate.outputs.has_token == 'true'
     defaults:
       run:
         working-directory: cloudflare
@@ -62,9 +77,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CRON_SHARED_SECRET: ${{ secrets.CRON_SHARED_SECRET }}
         run: |
-          echo "$SUPABASE_URL" | wrangler secret put SUPABASE_URL
-          echo "$SUPABASE_SERVICE_ROLE_KEY" | wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+          printf '%s' "$SUPABASE_URL"               | wrangler secret put SUPABASE_URL
+          printf '%s' "$SUPABASE_SERVICE_ROLE_KEY"  | wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+          printf '%s' "$CRON_SHARED_SECRET"         | wrangler secret put CRON_SHARED_SECRET
 
       - name: Deploy Worker
         env:

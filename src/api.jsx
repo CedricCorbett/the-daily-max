@@ -18,7 +18,7 @@
     });
   }
 
-  const SYNTH_DOMAIN = 'u.dailymax.app';
+  const SYNTH_DOMAIN = 'dailymax.app';
   const isEmail = (s) => typeof s === 'string' && s.includes('@');
 
   const api = {

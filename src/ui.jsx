@@ -266,7 +266,7 @@ function HowToModal({ onClose }) {
               THE RULES
             </div>
             <HowRule n="1" title="ONE SET PER STATION.">
-              Not three. Not five. One. You pick a number of sets and you lied to yourself — that's why most apps fail dads.
+              Not three. Not five. One. You pick a number of sets and you lied to yourself — that's why most apps fail people.
             </HowRule>
             <HowRule n="2" title="MAX EFFORT, CLEAN FORM.">
               Go until the next rep would break your form. That rep doesn't count — the one before it is your max.

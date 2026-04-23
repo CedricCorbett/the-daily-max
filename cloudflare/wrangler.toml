@@ -1,0 +1,16 @@
+name = "dailymax-cron"
+main = "worker.js"
+compatibility_date = "2025-10-01"
+
+# Secrets are set with: wrangler secret put SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
+# Do NOT commit secrets here.
+
+[triggers]
+crons = [
+  "0 10 * * *",   # 06:00 ET — rally fan-out (one combined nudge)
+  "5 4 * * *",    # 00:05 ET — nightly streak sweep (UTC 04:05)
+  "*/15 * * * *"  # every 15 min — settle any battles whose ends_at has passed
+]
+
+[observability]
+enabled = true

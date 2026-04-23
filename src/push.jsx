@@ -101,11 +101,11 @@ function PushSoftPrompt({ onResolved, tone = 'inline' }) {
       border: '1px solid var(--accent, #8B1A1A)',
     }}>
       <div className="mono uppercase" style={{
-        fontSize: 10, letterSpacing: 3, color: 'var(--gold, #C9A24A)', marginBottom: 6,
+        fontSize: 11, letterSpacing: 3, color: 'var(--gold, #C9A24A)', marginBottom: 6,
       }}>
         CREW NUDGES
       </div>
-      <div style={{ fontSize: 13, color: 'var(--text, #F2ECE2)', lineHeight: 1.45, marginBottom: 10 }}>
+      <div style={{ fontSize: 14, color: 'var(--text, #F2ECE2)', lineHeight: 1.45, marginBottom: 10 }}>
         Get a single nudge when the crew needs you — missed days, rallies, nothing else.
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
@@ -118,7 +118,7 @@ function PushSoftPrompt({ onResolved, tone = 'inline' }) {
             background: 'var(--accent, #8B1A1A)',
             border: '1px solid var(--accent, #8B1A1A)',
             color: '#F2ECE2',
-            fontSize: 11, letterSpacing: 2, fontWeight: 700,
+            fontSize: 12, letterSpacing: 2, fontWeight: 700,
             cursor: busy ? 'not-allowed' : 'pointer',
           }}
         >
@@ -132,7 +132,7 @@ function PushSoftPrompt({ onResolved, tone = 'inline' }) {
             background: 'transparent',
             border: '1px solid var(--border, #2A1B1B)',
             color: 'var(--text-mute, #8F857A)',
-            fontSize: 11, letterSpacing: 2,
+            fontSize: 12, letterSpacing: 2,
             cursor: 'pointer',
           }}
         >

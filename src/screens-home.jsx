@@ -54,17 +54,17 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 6, background: state.streak > 0 ? 'var(--streak)' : 'var(--border-2)' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)' }}>CURRENT STREAK</div>
+              <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--text-mute)' }}>CURRENT STREAK</div>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, marginTop: 6 }}>
                 <BigNum n={state.streak} unit="DAYS" color="var(--streak)" size={64} />
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>SHOWED UP</div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>SHOWED UP</div>
               <div className="display" style={{ fontSize: 28, color: su >= 5 ? 'var(--streak)' : 'var(--text)', lineHeight: 1, marginTop: 4 }}>
-                {su}<span className="mono" style={{ fontSize: 14, color: 'var(--text-mute)' }}> / 7</span>
+                {su}<span className="mono" style={{ fontSize: 15, color: 'var(--text-mute)' }}> / 7</span>
               </div>
-              <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', marginTop: 2 }}>LAST 7 DAYS</div>
+              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 2 }}>LAST 7 DAYS</div>
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
@@ -74,10 +74,10 @@ function HomeScreen({ state, setState, go, openTweaks }) {
             />
           </div>
           <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between' }}>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>
               BEST {state.bestStreak}d · LIFETIME {state.totalReps.toLocaleString()}
             </div>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)' }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>
               VIEW CALENDAR →
             </div>
           </div>
@@ -85,13 +85,13 @@ function HomeScreen({ state, setState, go, openTweaks }) {
             <div className="mono uppercase" style={{
               marginTop: 10, padding: '6px 8px',
               background: 'var(--streak-dim)', border: '1px solid var(--streak)',
-              color: 'var(--streak)', fontSize: 9, letterSpacing: 1.5,
+              color: 'var(--streak)', fontSize: 10, letterSpacing: 1.5,
               display: 'inline-block',
             }}>
               ◇ STREAK INSURANCE · {state.streakInsurance} SKIP{state.streakInsurance > 1 ? 'S' : ''} SAVED
             </div>
           )}
-          <div className="mono" style={{ marginTop: 10, fontSize: 9, color: 'var(--text-mute)', letterSpacing: 1.5, lineHeight: 1.5 }}>
+          <div className="mono" style={{ marginTop: 10, fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5, lineHeight: 1.5 }}>
             TODAY'S MAX IS WHATEVER WAS IN YOU TODAY. THAT'S ENOUGH.
           </div>
         </div>
@@ -101,10 +101,10 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           background: 'var(--bg-2)', borderLeft: '3px solid var(--accent)',
           padding: '12px 14px', marginBottom: 14,
         }}>
-          <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--accent)', marginBottom: 4 }}>
+          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)', marginBottom: 4 }}>
             VOICE · {voiceLabel(voiceCode)}
           </div>
-          <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.35, fontWeight: 500 }}>{line}</div>
+          <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.35, fontWeight: 500 }}>{line}</div>
         </div>
 
         {/* COMPACT MODE + CONTEXT ROW */}
@@ -114,15 +114,15 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           color: 'var(--text)', marginBottom: ctxOpen ? 0 : 14, textAlign: 'left',
         }}>
-          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>TODAY'S MODE</div>
+          <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text-mute)' }}>TODAY'S MODE</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="mono" style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>{modeLabel} · {ctxLabel}</span>
-            <span className="mono" style={{ fontSize: 12, color: 'var(--text-mute)' }}>{ctxOpen ? '▲' : '▼'}</span>
+            <span className="mono" style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{modeLabel} · {ctxLabel}</span>
+            <span className="mono" style={{ fontSize: 13, color: 'var(--text-mute)' }}>{ctxOpen ? '▲' : '▼'}</span>
           </div>
         </button>
         {ctxOpen && (
           <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border)', borderTop: 'none', padding: 12, marginBottom: 14 }}>
-            <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>ENERGY</div>
+            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>ENERGY</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, marginBottom: 10 }}>
               {[{id:'easy',l:'EASY'},{id:'medium',l:'MEDIUM'},{id:'hard',l:'HARD'}].map(m => (
                 <button key={m.id} onClick={() => setState(s => ({ ...s, mode: m.id }))} style={{
@@ -130,12 +130,12 @@ function HomeScreen({ state, setState, go, openTweaks }) {
                   background: state.mode === m.id ? 'var(--accent)' : 'var(--card)',
                   border: `1px solid ${state.mode === m.id ? 'var(--accent)' : 'var(--border-2)'}`,
                   color: state.mode === m.id ? '#0A0A0A' : 'var(--text)',
-                  fontFamily: 'Archivo Black', fontSize: 13, letterSpacing: 1,
+                  fontFamily: 'Archivo Black', fontSize: 14, letterSpacing: 1,
                   cursor: 'pointer',
                 }}>{m.l}</button>
               ))}
             </div>
-            <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>CONTEXT</div>
+            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>CONTEXT</div>
             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
               {[{id:'none',l:'STANDARD'},{id:'hotel',l:'HOTEL'},{id:'kid',l:'KID'},{id:'back',l:'BACK-OK'}].map(m => (
                 <Chip key={m.id} active={state.modifier === m.id} onClick={() => setState(s => ({ ...s, modifier: m.id }))}>
@@ -154,8 +154,8 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           {doneToday ? (
             <div style={{ display: 'grid', gap: 8 }}>
               <div style={{ background: 'var(--streak-dim)', border: '1px solid var(--streak)', padding: '12px 16px', textAlign: 'center' }}>
-                <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)' }}>TODAY: LOGGED ✓</div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>
+                <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--streak)' }}>TODAY: LOGGED ✓</div>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>
                   {state.today.pushups}/{state.today.squats}/{state.today.hollow}s/{state.today.pullups} · Come back tomorrow.
                 </div>
               </div>
@@ -167,7 +167,7 @@ function HomeScreen({ state, setState, go, openTweaks }) {
               <button onClick={() => go('log')} className="mono uppercase" style={{
                 width: '100%', padding: '14px 0', background: 'transparent',
                 border: '1px solid var(--border-2)', color: 'var(--text-dim)',
-                fontSize: 11, letterSpacing: 2, cursor: 'pointer',
+                fontSize: 12, letterSpacing: 2, cursor: 'pointer',
               }}>ALREADY DID IT? QUICK LOG</button>
             </div>
           )}
@@ -175,7 +175,7 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           <button onClick={() => setHowOpen(true)} className="mono uppercase" style={{
             width: '100%', padding: '10px 0', marginTop: 6, background: 'transparent',
             border: '1px dashed var(--border-2)', color: 'var(--text-mute)',
-            fontSize: 10, letterSpacing: 2.5, cursor: 'pointer',
+            fontSize: 11, letterSpacing: 2.5, cursor: 'pointer',
           }}>◇ HOW TO DO THE DAILY MAX</button>
         </div>
 
@@ -186,7 +186,7 @@ function HomeScreen({ state, setState, go, openTweaks }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, marginTop: 14, marginBottom: 14 }}>
           {CORE_EXERCISES.map(ex => (
             <div key={ex.id} style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '10px 8px' }}>
-              <div className="mono uppercase" style={{ fontSize: 7, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{ex.short} LIFE</div>
+              <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{ex.short} LIFE</div>
               <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1, marginTop: 4 }}>
                 {(state.lifetimeBreakdown[ex.id] || 0).toLocaleString()}
               </div>
@@ -204,17 +204,17 @@ function HomeScreen({ state, setState, go, openTweaks }) {
         }}>
           <div style={{ fontSize: 22 }}>{nightUnlocked ? '🌙' : '🔒'}</div>
           <div style={{ flex: 1 }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: nightUnlocked ? 'var(--streak)' : 'var(--text-mute)' }}>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: nightUnlocked ? 'var(--streak)' : 'var(--text-mute)' }}>
               LIGHTS OUT MOBILITY
             </div>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 2 }}>
               {nightUnlocked ? 'UNLOCKED · Four minutes before bed' : `Unlocks at streak 7 · ${7 - state.streak} days to go`}
             </div>
           </div>
         </button>
 
         {/* COMMUNITY ROW */}
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 14, marginBottom: 8 }}>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 14, marginBottom: 8 }}>
           COMMUNITY
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, marginBottom: 4 }}>
@@ -239,6 +239,26 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           />
         </div>
 
+        {/* ELITES + TITANS BOARDS — lifetime climb. Progress bars show
+            how close the user is to each per-station cutoff. Cleared
+            stations glow in-tier. Titan thresholds = 2× Elite. */}
+        <RankBoard
+          title="ELITES"
+          sub="LIFETIME · EARN THE TIER"
+          accent="var(--streak)"
+          accentBg="var(--streak-dim)"
+          thresholds={ELITE_THRESHOLDS}
+          lifetime={state.lifetimeBreakdown}
+        />
+        <RankBoard
+          title="TITANS"
+          sub="DOUBLE ELITE · LIFETIME"
+          accent="var(--accent-2)"
+          accentBg="var(--accent-dim)"
+          thresholds={TITAN_THRESHOLDS}
+          lifetime={state.lifetimeBreakdown}
+        />
+
       </div>
 
       {/* BREAK-REASON MODAL */}
@@ -257,6 +277,68 @@ function HomeScreen({ state, setState, go, openTweaks }) {
   );
 }
 
+// ELITE / TITAN board — one row per station, lifetime count vs cutoff.
+// Cleared rows light the tier color with a ✓; in-progress rows show a
+// neutral bar with percent climb. Lifetime values come from
+// state.lifetimeBreakdown, which the log pipeline already maintains.
+function RankBoard({ title, sub, accent, accentBg, thresholds, lifetime }) {
+  const rows = CORE_EXERCISES.map(ex => {
+    const count = (lifetime && lifetime[ex.id]) || 0;
+    const goal  = thresholds[ex.id] || 0;
+    const cleared = goal > 0 && count >= goal;
+    const pct = goal > 0 ? Math.round(Math.min(1, count / goal) * 100) : 0;
+    const unit = ex.unit === 'sec' ? 's' : '';
+    return { ex, count, goal, cleared, pct, unit };
+  });
+  const clearedAll = rows.every(r => r.cleared);
+  const clearedCount = rows.filter(r => r.cleared).length;
+
+  return (
+    <div style={{
+      background: clearedAll ? accentBg : 'var(--card)',
+      border: `1px solid ${clearedAll ? accent : 'var(--border)'}`,
+      padding: 14, marginTop: 10,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+        <div className="display" style={{ fontSize: 18, letterSpacing: '0.02em', color: accent, lineHeight: 1 }}>
+          {title}{clearedAll ? ' ★' : ''}
+        </div>
+        <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text-mute)' }}>
+          {clearedCount}/4 · {sub}
+        </div>
+      </div>
+      {rows.map((r, i) => (
+        <div key={r.ex.id} style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '7px 0',
+          borderTop: i === 0 ? 'none' : '1px solid var(--border)',
+        }}>
+          <div className="mono uppercase" style={{ width: 58, fontSize: 12, letterSpacing: 1.5, color: 'var(--text-dim)', fontWeight: 700 }}>
+            {r.ex.short}
+          </div>
+          <div style={{ flex: 1, height: 6, background: 'var(--border)', position: 'relative' }}>
+            <div style={{
+              height: '100%',
+              width: `${r.pct}%`,
+              background: r.cleared ? accent : 'var(--text-mute)',
+              transition: 'width 220ms ease',
+            }} />
+          </div>
+          <div className="mono" style={{
+            width: 120, textAlign: 'right', fontSize: 12,
+            color: r.cleared ? accent : 'var(--text)',
+            fontWeight: r.cleared ? 700 : 400,
+          }}>
+            {r.count.toLocaleString()}{r.unit}
+            <span style={{ color: 'var(--text-mute)' }}> / {r.goal.toLocaleString()}{r.unit}</span>
+            {r.cleared && <span style={{ marginLeft: 4 }}>✓</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function CommunityTile({ onClick, icon, label, sub, accent }) {
   return (
     <button onClick={onClick} style={{
@@ -267,8 +349,8 @@ function CommunityTile({ onClick, icon, label, sub, accent }) {
       gap: 6, minHeight: 86, color: 'var(--text)',
     }}>
       <div className="display" style={{ fontSize: 18, color: accent ? 'var(--accent)' : 'var(--text)', lineHeight: 1 }}>{icon}</div>
-      <div className="mono" style={{ fontSize: 10, letterSpacing: 1.5, fontWeight: 700 }}>{label}</div>
-      <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', textAlign: 'center' }}>{sub}</div>
+      <div className="mono" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: 700 }}>{label}</div>
+      <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', textAlign: 'center' }}>{sub}</div>
     </button>
   );
 }
@@ -277,7 +359,7 @@ function StationsPreview({ state }) {
   const [info, setInfo] = useState(null);
   return (
     <>
-      <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginBottom: 8 }}>
+      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginBottom: 8 }}>
         TODAY · 4 STATIONS · 6-MIN GUIDE
       </div>
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
@@ -299,19 +381,19 @@ function StationsPreview({ state }) {
                 fontSize: 16,
               }}>{String(i + 1).padStart(2, '0')}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{variant.name}</div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{variant.swap}</div>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{variant.name}</div>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 2 }}>{variant.swap}</div>
               </div>
               <button onClick={() => setInfo(ex.id)} className="mono" style={{
                 width: 28, height: 28, borderRadius: '50%',
                 background: 'var(--bg-2)', border: '1px solid var(--border-2)',
-                color: 'var(--text-mute)', fontSize: 11, cursor: 'pointer',
+                color: 'var(--text-mute)', fontSize: 12, cursor: 'pointer',
                 flexShrink: 0,
               }}>ⓘ</button>
               <div style={{ textAlign: 'right' }}>
-                <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>PB</div>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>PB</div>
                 <div className="display" style={{ fontSize: 18, color: 'var(--text)' }}>
-                  {state.bests[ex.id] || 0}{ex.unit === 'sec' && <span className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginLeft: 2 }}>s</span>}
+                  {state.bests[ex.id] || 0}{ex.unit === 'sec' && <span className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginLeft: 2 }}>s</span>}
                 </div>
               </div>
             </div>
@@ -338,7 +420,7 @@ function ExerciseInfoModal({ exId, onClose }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
           <div>
-            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)' }}>FORM CHECK</div>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)' }}>FORM CHECK</div>
             <div className="display" style={{ fontSize: 26, lineHeight: 1, marginTop: 4 }}>{ex.name}</div>
           </div>
           <button onClick={onClose} style={{
@@ -347,13 +429,13 @@ function ExerciseInfoModal({ exId, onClose }) {
           }}>×</button>
         </div>
 
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)' }}>SETUP</div>
-        <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 4, lineHeight: 1.45 }}>{cues.setup}</div>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>SETUP</div>
+        <div style={{ fontSize: 14, color: 'var(--text)', marginTop: 4, lineHeight: 1.45 }}>{cues.setup}</div>
 
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginTop: 14 }}>CUES</div>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginTop: 14 }}>CUES</div>
         <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
           {cues.cues.map((c, i) => (
-            <li key={i} style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5, marginTop: 4 }}>{c}</li>
+            <li key={i} style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.5, marginTop: 4 }}>{c}</li>
           ))}
         </ul>
 
@@ -361,8 +443,8 @@ function ExerciseInfoModal({ exId, onClose }) {
           marginTop: 14, padding: '10px 12px',
           background: 'var(--accent-dim)', border: '1px solid var(--accent)',
         }}>
-          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)' }}>DON'T</div>
-          <div style={{ fontSize: 12, color: 'var(--text)', marginTop: 4, lineHeight: 1.45 }}>{cues.mistake}</div>
+          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)' }}>DON'T</div>
+          <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 4, lineHeight: 1.45 }}>{cues.mistake}</div>
         </div>
       </div>
     </div>
@@ -388,9 +470,9 @@ function BreakReasonModal({ name, onClose, onSubmit, breakReason, setBreakReason
         width: '100%', maxWidth: 360, background: 'var(--bg)',
         border: '1px solid var(--accent)', padding: 20,
       }}>
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--accent)' }}>STREAK PAUSED</div>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STREAK PAUSED</div>
         <div className="display" style={{ fontSize: 26, lineHeight: 1, marginTop: 8 }}>WHAT HAPPENED?</div>
-        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
           Honest. Short. We post it to the Rally Board so the crew knows how to nudge you back.
         </div>
 
@@ -401,7 +483,7 @@ function BreakReasonModal({ name, onClose, onSubmit, breakReason, setBreakReason
               background: breakReason === c.id ? 'var(--accent)' : 'transparent',
               border: `1px solid ${breakReason === c.id ? 'var(--accent)' : 'var(--border-2)'}`,
               color: breakReason === c.id ? '#0A0A0A' : 'var(--text-dim)',
-              fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+              fontSize: 11, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
             }}>{c.t}</button>
           ))}
         </div>
@@ -410,7 +492,7 @@ function BreakReasonModal({ name, onClose, onSubmit, breakReason, setBreakReason
           <button onClick={onClose} className="mono uppercase" style={{
             flex: 1, padding: 12, background: 'transparent',
             border: '1px solid var(--border-2)', color: 'var(--text-mute)',
-            fontSize: 11, letterSpacing: 2, cursor: 'pointer',
+            fontSize: 12, letterSpacing: 2, cursor: 'pointer',
           }}>SKIP</button>
           <button
             disabled={!breakReason}
@@ -421,7 +503,7 @@ function BreakReasonModal({ name, onClose, onSubmit, breakReason, setBreakReason
               background: breakReason ? 'var(--accent)' : 'var(--card)',
               border: 'none',
               color: breakReason ? '#0A0A0A' : 'var(--text-mute)',
-              fontSize: 11, letterSpacing: 2, fontWeight: 700,
+              fontSize: 12, letterSpacing: 2, fontWeight: 700,
               cursor: breakReason ? 'pointer' : 'default',
             }}>POST TO RALLY →</button>
         </div>
@@ -430,4 +512,4 @@ function BreakReasonModal({ name, onClose, onSubmit, breakReason, setBreakReason
   );
 }
 
-Object.assign(window, { HomeScreen });
+Object.assign(window, { HomeScreen, RankBoard });

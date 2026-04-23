@@ -97,10 +97,10 @@ function ClanScreen({ state, setState, go }) {
 
         {!loading && roundups.length === 0 && !showRoundupForm && (
           <div style={emptyBox}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text-mute)' }}>
               NO ACTIVE ROUND-UPS
             </div>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
               {isLeader
                 ? 'Post one and rally the crew — they all see it on their home screen.'
                 : 'Waiting on the leader. When a round-up drops, you can check in here.'}
@@ -124,7 +124,7 @@ function ClanScreen({ state, setState, go }) {
           {loading && <BoardSkeleton />}
           {!loading && (!roster || roster.length === 0) && (
             <div style={{ padding: 14 }} className="mono">
-              <span style={{ color: 'var(--text-mute)', fontSize: 10, letterSpacing: 1.5 }}>NO ROSTER</span>
+              <span style={{ color: 'var(--text-mute)', fontSize: 11, letterSpacing: 1.5 }}>NO ROSTER</span>
             </div>
           )}
           {!loading && roster && roster.map((m, i) => {
@@ -143,15 +143,15 @@ function ClanScreen({ state, setState, go }) {
                     border: '1px solid var(--border-2)',
                     color: i === 0 ? 'var(--streak)' : 'var(--text-mute)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 12, flexShrink: 0,
+                    fontSize: 13, flexShrink: 0,
                   }}>{String(i + 1).padStart(2, '0')}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: isYou ? 'var(--accent)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: isYou ? 'var(--accent)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {m.display_name}
-                      {isYou && <span className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginLeft: 6 }}>· YOU</span>}
-                      {m.role === 'leader' && <span className="mono" style={{ fontSize: 8, color: 'var(--streak)', marginLeft: 6, letterSpacing: 2 }}>★ LEAD</span>}
+                      {isYou && <span className="mono" style={{ fontSize: 10, color: 'var(--accent)', marginLeft: 6 }}>· YOU</span>}
+                      {m.role === 'leader' && <span className="mono" style={{ fontSize: 9, color: 'var(--streak)', marginLeft: 6, letterSpacing: 2 }}>★ LEAD</span>}
                     </div>
-                    <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 2 }}>
+                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
                       STREAK {m.current_streak}d · PR {m.pr_total}
                     </div>
                   </div>
@@ -159,7 +159,7 @@ function ClanScreen({ state, setState, go }) {
                     <div className="display" style={{ fontSize: 18, color: m.today_total > 0 ? 'var(--streak)' : 'var(--text-mute)', lineHeight: 1 }}>
                       {m.today_total}
                     </div>
-                    <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', marginTop: 2 }}>TODAY</div>
+                    <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 2 }}>TODAY</div>
                   </div>
                 </div>
                 {m.pr_total > 0 && (
@@ -187,7 +187,7 @@ function ClanScreen({ state, setState, go }) {
 const pillBtn = {
   padding: '4px 10px', background: 'transparent',
   border: '1px solid var(--accent)', color: 'var(--accent)',
-  fontSize: 9, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+  fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
 };
 const emptyBox = {
   padding: 14, background: 'var(--card)', border: '1px dashed var(--border-2)',
@@ -197,7 +197,7 @@ const emptyBox = {
 function SectionHead({ children }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6, marginBottom: 8 }}>
-      <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)' }}>{children}</div>
+      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)' }}>{children}</div>
     </div>
   );
 }
@@ -208,7 +208,7 @@ function InfoBar({ children, color }) {
       background: 'var(--bg-2)', borderLeft: `3px solid ${color || 'var(--accent)'}`,
       padding: '10px 12px', marginBottom: 12,
     }}>
-      <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.5 }}>{children}</div>
+      <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.5 }}>{children}</div>
     </div>
   );
 }
@@ -216,9 +216,9 @@ function InfoBar({ children, color }) {
 function TotalsCard({ label, big, sub, accent }) {
   return (
     <div style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '14px 14px' }}>
-      <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)' }}>{label}</div>
+      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>{label}</div>
       <div className="display" style={{ fontSize: 28, color: accent || 'var(--text)', lineHeight: 1, marginTop: 4 }}>{big}</div>
-      <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 4 }}>{sub}</div>
+      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4 }}>{sub}</div>
     </div>
   );
 }
@@ -226,7 +226,7 @@ function TotalsCard({ label, big, sub, accent }) {
 function BoardSkeleton() {
   return (
     <div style={{ padding: 14 }} className="mono">
-      <span style={{ color: 'var(--text-mute)', fontSize: 10, letterSpacing: 1.5 }}>LOADING…</span>
+      <span style={{ color: 'var(--text-mute)', fontSize: 11, letterSpacing: 1.5 }}>LOADING…</span>
     </div>
   );
 }
@@ -246,16 +246,16 @@ function RoundupCard({ r, isLeader, onCheckin, onEnd }) {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)' }}>
+          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)' }}>
             ◆ ROUND-UP · {r.created_by_name.toUpperCase()}
           </div>
           <div className="display" style={{ fontSize: 18, lineHeight: 1.1, marginTop: 4 }}>{r.title}</div>
         </div>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--streak)', flexShrink: 0 }}>{hoursLeft}h</div>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--streak)', flexShrink: 0 }}>{hoursLeft}h</div>
       </div>
-      <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.5 }}>{r.cue}</div>
+      <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.5 }}>{r.cue}</div>
       <div style={{ display: 'flex', gap: 8, marginTop: 12, alignItems: 'center' }}>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5 }}>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5 }}>
           {r.checkin_count} IN
         </div>
         <div style={{ flex: 1 }} />
@@ -263,7 +263,7 @@ function RoundupCard({ r, isLeader, onCheckin, onEnd }) {
           <button onClick={onEnd} className="mono uppercase" style={{
             padding: '6px 10px', background: 'transparent',
             border: '1px solid var(--border-2)', color: 'var(--text-mute)',
-            fontSize: 9, letterSpacing: 1.5, cursor: 'pointer',
+            fontSize: 10, letterSpacing: 1.5, cursor: 'pointer',
           }}>END</button>
         )}
         <button
@@ -275,7 +275,7 @@ function RoundupCard({ r, isLeader, onCheckin, onEnd }) {
             background: r.you_checked_in ? 'var(--streak-dim)' : 'var(--accent)',
             border: `1px solid ${r.you_checked_in ? 'var(--streak)' : 'var(--accent)'}`,
             color: r.you_checked_in ? 'var(--streak)' : '#0A0A0A',
-            fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+            fontSize: 11, letterSpacing: 1.5, fontWeight: 700,
             cursor: r.you_checked_in ? 'default' : 'pointer',
           }}>{r.you_checked_in ? '✓ YOU\'RE IN' : "I'M IN"}</button>
       </div>
@@ -315,7 +315,7 @@ function RoundupForm({ onCancel, onPosted }) {
 
   return (
     <div style={{ background: 'var(--bg-2)', border: '1px solid var(--accent)', padding: 14, marginBottom: 14 }}>
-      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)', marginBottom: 8 }}>
+      <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--accent)', marginBottom: 8 }}>
         POST A ROUND-UP
       </div>
 
@@ -323,7 +323,7 @@ function RoundupForm({ onCancel, onPosted }) {
         {TEMPLATES.map((t, i) => (
           <button key={i} onClick={() => { setTitle(t.title); setCue(t.cue); }} className="mono uppercase" style={{
             padding: '6px 8px', background: 'var(--card)', border: '1px solid var(--border-2)',
-            color: 'var(--text-dim)', fontSize: 9, letterSpacing: 1, cursor: 'pointer',
+            color: 'var(--text-dim)', fontSize: 10, letterSpacing: 1, cursor: 'pointer',
           }}>{t.title}</button>
         ))}
       </div>
@@ -344,25 +344,25 @@ function RoundupForm({ onCancel, onPosted }) {
         style={{ ...inputStyle, resize: 'vertical' }}
       />
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
-        <div className="mono" style={{ fontSize: 9, letterSpacing: 1.5, color: 'var(--text-mute)' }}>EXPIRES IN</div>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: 1.5, color: 'var(--text-mute)' }}>EXPIRES IN</div>
         {[12, 24, 48, 72].map(h => (
           <button key={h} onClick={() => setHours(h)} className="mono" style={{
             padding: '4px 8px',
             background: hours === h ? 'var(--accent)' : 'transparent',
             border: `1px solid ${hours === h ? 'var(--accent)' : 'var(--border-2)'}`,
             color: hours === h ? '#0A0A0A' : 'var(--text-dim)',
-            fontSize: 10, letterSpacing: 1, cursor: 'pointer',
+            fontSize: 11, letterSpacing: 1, cursor: 'pointer',
           }}>{h}h</button>
         ))}
       </div>
 
-      {err && <div className="mono" style={{ marginTop: 8, fontSize: 10, color: 'var(--accent)' }}>{err}</div>}
+      {err && <div className="mono" style={{ marginTop: 8, fontSize: 11, color: 'var(--accent)' }}>{err}</div>}
 
       <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
         <button onClick={onCancel} className="mono uppercase" style={{
           flex: 1, padding: 10, background: 'transparent',
           border: '1px solid var(--border-2)', color: 'var(--text-mute)',
-          fontSize: 11, letterSpacing: 2, cursor: 'pointer',
+          fontSize: 12, letterSpacing: 2, cursor: 'pointer',
         }}>CANCEL</button>
         <button
           onClick={submit}
@@ -373,7 +373,7 @@ function RoundupForm({ onCancel, onPosted }) {
             background: busy ? 'var(--card)' : 'var(--accent)',
             border: `1px solid ${busy ? 'var(--border-2)' : 'var(--accent)'}`,
             color: busy ? 'var(--text-mute)' : '#0A0A0A',
-            fontSize: 11, letterSpacing: 2, fontWeight: 700,
+            fontSize: 12, letterSpacing: 2, fontWeight: 700,
             cursor: busy ? 'default' : 'pointer',
           }}>{busy ? 'POSTING…' : 'POST TO CREW →'}</button>
       </div>
@@ -385,7 +385,7 @@ const inputStyle = {
   width: '100%', padding: '10px 12px', marginBottom: 6,
   background: 'var(--card)', border: '1px solid var(--border-2)',
   color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace',
-  fontSize: 12,
+  fontSize: 13,
 };
 
 Object.assign(window, { ClanScreen });

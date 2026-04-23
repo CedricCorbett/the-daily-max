@@ -268,7 +268,7 @@ function App() {
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: 'var(--text-mute)', fontFamily: 'JetBrains Mono, monospace',
-          fontSize: 10, letterSpacing: 3,
+          fontSize: 11, letterSpacing: 3,
         }}>
           LOADING
         </div>
@@ -367,7 +367,7 @@ function UpdateBanner() {
       background: '#C9A24A', color: '#0A0707',
       border: 'none', borderBottom: '2px solid #0A0707',
       fontFamily: 'JetBrains Mono, monospace',
-      fontSize: 11, letterSpacing: 2.2, fontWeight: 800,
+      fontSize: 12, letterSpacing: 2.2, fontWeight: 800,
       textTransform: 'uppercase', textAlign: 'center',
       cursor: 'pointer',
       boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
@@ -406,7 +406,7 @@ function ScreenJumper({ current, go }) {
           padding: 10, width: 210,
           boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
         }}>
-          <div style={{ fontSize: 9, letterSpacing: 3, color: '#C9A24A', marginBottom: 8, textTransform: 'uppercase' }}>Jump to screen</div>
+          <div style={{ fontSize: 10, letterSpacing: 3, color: '#C9A24A', marginBottom: 8, textTransform: 'uppercase' }}>Jump to screen</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
             {screens.map(s => (
               <button key={s.id} onClick={() => { go(s.id); setOpen(false); }} style={{
@@ -414,7 +414,7 @@ function ScreenJumper({ current, go }) {
                 background: current === s.id ? '#8B1A1A' : '#150D0D',
                 border: `1px solid ${current === s.id ? '#B32121' : '#2A1B1B'}`,
                 color: current === s.id ? '#F2ECE2' : '#8F857A',
-                fontFamily: 'inherit', fontSize: 9, letterSpacing: 1.2,
+                fontFamily: 'inherit', fontSize: 10, letterSpacing: 1.2,
                 textAlign: 'left', cursor: 'pointer', textTransform: 'uppercase',
               }}>{s.label}</button>
             ))}
@@ -426,7 +426,7 @@ function ScreenJumper({ current, go }) {
         background: open ? '#8B1A1A' : '#0A0707',
         border: '1px solid #8B1A1A',
         color: '#F2ECE2',
-        fontFamily: 'inherit', fontSize: 10, letterSpacing: 2, fontWeight: 700,
+        fontFamily: 'inherit', fontSize: 11, letterSpacing: 2, fontWeight: 700,
         cursor: 'pointer', textTransform: 'uppercase',
         boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
       }}>◇ SCREENS</button>

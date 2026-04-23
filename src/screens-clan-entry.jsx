@@ -43,7 +43,7 @@ function ClanEntryScreen({ state, setState, go }) {
           <div className="display" style={{ fontSize: 28, lineHeight: 1.05, color: 'var(--text)' }}>
             A CREW OF 2–25.
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
             Your commitment is yours. Your absence is everyone's.
             Start a crew, join one with a code, or browse crews in your state.
           </div>
@@ -51,7 +51,7 @@ function ClanEntryScreen({ state, setState, go }) {
 
         {err && (
           <div className="mono" style={{
-            fontSize: 11, color: '#FF6B6B', letterSpacing: 1, marginBottom: 12,
+            fontSize: 12, color: '#FF6B6B', letterSpacing: 1, marginBottom: 12,
             padding: '10px 12px', border: '1px solid #5A1F1F', background: '#1F0D0D',
           }}>{err}</div>
         )}
@@ -70,7 +70,7 @@ function ClanEntryScreen({ state, setState, go }) {
                   background: 'transparent',
                   border: '1px solid var(--border, #2A1B1B)',
                   color: 'var(--text-mute, #8F857A)',
-                  fontSize: 10, letterSpacing: 2,
+                  fontSize: 11, letterSpacing: 2,
                   cursor: 'pointer',
                 }}
               >
@@ -121,9 +121,9 @@ function EntryCard({ glyph, label, sub, onClick }) {
         }}>{glyph}</div>
         <div>
           <div className="mono uppercase" style={{
-            fontSize: 12, letterSpacing: 2, fontWeight: 700, color: 'var(--text, #F2ECE2)',
+            fontSize: 13, letterSpacing: 2, fontWeight: 700, color: 'var(--text, #F2ECE2)',
           }}>{label}</div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute, #8F857A)', marginTop: 2 }}>{sub}</div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute, #8F857A)', marginTop: 2 }}>{sub}</div>
         </div>
       </div>
     </button>
@@ -138,14 +138,14 @@ function PanelShell({ title, onCancel, children }) {
       border: '1px solid var(--border, #2A1B1B)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--gold, #C9A24A)', fontWeight: 700 }}>{title}</div>
+        <div className="mono uppercase" style={{ fontSize: 12, letterSpacing: 3, color: 'var(--gold, #C9A24A)', fontWeight: 700 }}>{title}</div>
         <button
           onClick={onCancel}
           className="mono uppercase"
           style={{
             background: 'transparent', border: 'none',
             color: 'var(--text-mute, #8F857A)',
-            fontSize: 10, letterSpacing: 2, cursor: 'pointer',
+            fontSize: 11, letterSpacing: 2, cursor: 'pointer',
           }}
         >CANCEL</button>
       </div>
@@ -200,7 +200,7 @@ function CreatePanel({ state, onCancel, onCreated, setErr }) {
 
         <label className="mono uppercase" style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          fontSize: 10, letterSpacing: 2, color: 'var(--text-mute, #8F857A)',
+          fontSize: 11, letterSpacing: 2, color: 'var(--text-mute, #8F857A)',
         }}>
           <input
             type="checkbox"
@@ -243,7 +243,7 @@ function CodePanel({ onCancel, onJoined, setErr }) {
       <div style={{ display: 'grid', gap: 10 }}>
         <div>
           <div className="mono uppercase" style={{
-            fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+            fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
           }}>INVITE CODE</div>
           <input
             value={code}
@@ -315,13 +315,13 @@ function BrowsePanel({ state, onCancel, onJoined, setErr }) {
       </div>
 
       {loading && (
-        <div className="mono" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute, #8F857A)', padding: 12, textAlign: 'center' }}>
+        <div className="mono" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text-mute, #8F857A)', padding: 12, textAlign: 'center' }}>
           LOADING...
         </div>
       )}
 
       {!loading && rows.length === 0 && (
-        <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute, #8F857A)', padding: 12, textAlign: 'center', lineHeight: 1.5 }}>
+        <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute, #8F857A)', padding: 12, textAlign: 'center', lineHeight: 1.5 }}>
           No public crews match. Start one — be the founding 1.
         </div>
       )}
@@ -334,14 +334,14 @@ function BrowsePanel({ state, onCancel, onJoined, setErr }) {
             display: 'flex', alignItems: 'center', gap: 10,
           }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text, #F2ECE2)' }}>
-                {c.name} {c.tag && <span className="mono" style={{ color: 'var(--gold, #C9A24A)', fontSize: 10, marginLeft: 4 }}>[{c.tag}]</span>}
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text, #F2ECE2)' }}>
+                {c.name} {c.tag && <span className="mono" style={{ color: 'var(--gold, #C9A24A)', fontSize: 11, marginLeft: 4 }}>[{c.tag}]</span>}
               </div>
-              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute, #8F857A)', marginTop: 2, letterSpacing: 1 }}>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute, #8F857A)', marginTop: 2, letterSpacing: 1 }}>
                 {c.member_count} / 25 · {c.region_state || '—'} · {c.age_bracket || '—'}
               </div>
               {c.description && (
-                <div style={{ fontSize: 11, color: 'var(--text-dim, #E5E0D6)', marginTop: 4, lineHeight: 1.4 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-dim, #E5E0D6)', marginTop: 4, lineHeight: 1.4 }}>
                   {c.description}
                 </div>
               )}
@@ -355,7 +355,7 @@ function BrowsePanel({ state, onCancel, onJoined, setErr }) {
                 background: c.member_count >= 25 ? '#333' : 'var(--accent, #8B1A1A)',
                 border: 'none',
                 color: '#F2ECE2',
-                fontSize: 10, letterSpacing: 2, fontWeight: 700,
+                fontSize: 11, letterSpacing: 2, fontWeight: 700,
                 cursor: c.member_count >= 25 ? 'not-allowed' : 'pointer',
               }}
             >
@@ -372,7 +372,7 @@ function FieldText({ label, value, onChange, placeholder, maxLength }) {
   return (
     <div>
       <div className="mono uppercase" style={{
-        fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+        fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
       }}>{label}</div>
       <input
         value={value}
@@ -384,7 +384,7 @@ function FieldText({ label, value, onChange, placeholder, maxLength }) {
           background: '#0A0707',
           border: '1px solid var(--border, #2A1B1B)',
           color: 'var(--text, #F2ECE2)',
-          fontSize: 14,
+          fontSize: 15,
           fontFamily: 'JetBrains Mono, monospace',
           borderRadius: 0, outline: 'none',
         }}
@@ -397,7 +397,7 @@ function FieldSelect({ label, value, onChange, options }) {
   return (
     <div>
       <div className="mono uppercase" style={{
-        fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+        fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
       }}>{label}</div>
       <select
         value={value}
@@ -407,7 +407,7 @@ function FieldSelect({ label, value, onChange, options }) {
           background: '#0A0707',
           border: '1px solid var(--border, #2A1B1B)',
           color: 'var(--text, #F2ECE2)',
-          fontSize: 13,
+          fontSize: 14,
           fontFamily: 'JetBrains Mono, monospace',
           borderRadius: 0, outline: 'none',
         }}

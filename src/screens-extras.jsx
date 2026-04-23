@@ -49,14 +49,14 @@ function CalendarScreen({ state, go }) {
           background: 'var(--card)', border: '1px solid var(--border)',
           padding: 14, marginBottom: 14,
         }}>
-          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-mute)', marginBottom: 10 }}>
+          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-mute)', marginBottom: 10 }}>
             LAST {weeks} WEEKS
           </div>
 
           {/* month row */}
           <div style={{ display: 'grid', gridTemplateColumns: `repeat(${weeks}, 1fr)`, gap: 3, marginBottom: 4 }}>
             {monthLabels.map((m, i) => (
-              <div key={i} className="mono" style={{ fontSize: 7, color: 'var(--text-mute)', letterSpacing: 0.5, textAlign: 'left' }}>{m}</div>
+              <div key={i} className="mono" style={{ fontSize: 8, color: 'var(--text-mute)', letterSpacing: 0.5, textAlign: 'left' }}>{m}</div>
             ))}
           </div>
 
@@ -94,11 +94,11 @@ function CalendarScreen({ state, go }) {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-            <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', letterSpacing: 1.5 }}>TAP A DAY FOR DETAIL</div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5 }}>TAP A DAY FOR DETAIL</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <div style={{ width: 10, height: 10, background: 'var(--card-2)', border: '1px solid var(--border)' }} />
               <div style={{ width: 10, height: 10, background: 'var(--streak)' }} />
-              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>LOGGED</div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>LOGGED</div>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ function CalendarScreen({ state, go }) {
         {sel && (
           <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border-2)', padding: 14, marginBottom: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text)' }}>{sel}</div>
+              <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text)' }}>{sel}</div>
               <button onClick={() => setSel(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 16, cursor: 'pointer' }}>×</button>
             </div>
             {selHit ? (
@@ -118,7 +118,7 @@ function CalendarScreen({ state, go }) {
                 <DayStat label="PULL"   v={selHit.pullups} />
               </div>
             ) : (
-              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5 }}>NO ENTRY</div>
+              <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', letterSpacing: 1.5 }}>NO ENTRY</div>
             )}
           </div>
         )}
@@ -127,7 +127,7 @@ function CalendarScreen({ state, go }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
           {CORE_EXERCISES.map(ex => (
             <div key={ex.id} style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '10px 8px' }}>
-              <div className="mono uppercase" style={{ fontSize: 7, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{ex.short} LIFE</div>
+              <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{ex.short} LIFE</div>
               <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1, marginTop: 4 }}>
                 {(state.lifetimeBreakdown[ex.id] || 0).toLocaleString()}
               </div>
@@ -143,9 +143,9 @@ function CalendarScreen({ state, go }) {
 function DayStat({ label, v, unit }) {
   return (
     <div style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '8px 6px', textAlign: 'center' }}>
-      <div className="mono uppercase" style={{ fontSize: 7, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{label}</div>
+      <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{label}</div>
       <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1, marginTop: 4 }}>
-        {v || 0}{unit && <span className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginLeft: 1 }}>{unit}</span>}
+        {v || 0}{unit && <span className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginLeft: 1 }}>{unit}</span>}
       </div>
     </div>
   );
@@ -241,22 +241,22 @@ function MaxCardScreen({ state, go }) {
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}><HazardBar height={6} /></div>
           <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: '#666' }}>THE DAILY MAX</div>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: '#666' }}>THE DAILY MAX</div>
               <div className="display" style={{ fontSize: 20, color: '#0A0A0A', marginTop: 2 }}>
                 {(state.name || state.username || 'FRIEND').toUpperCase()}
               </div>
-              <div className="mono" style={{ fontSize: 10, color: '#666', marginTop: 2 }}>
+              <div className="mono" style={{ fontSize: 11, color: '#666', marginTop: 2 }}>
                 {(state.city || '').toUpperCase()}{state.city && state.ageBracket ? ' · ' : ''}{state.ageBracket || ''}
               </div>
               {/* Crew line. Always shows something so no one feels solo —
                   falls back to the default DM Crew when the user hasn't
                   joined a custom crew yet. */}
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--accent)', marginTop: 6, fontWeight: 700 }}>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)', marginTop: 6, fontWeight: 700 }}>
                 ◆ CREW · {(state.clanName || 'DM CREW').toUpperCase()}{state.clanTag ? ` · ${state.clanTag}` : ''}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div className="mono" style={{ fontSize: 9, color: '#666' }}>DAY</div>
+              <div className="mono" style={{ fontSize: 10, color: '#666' }}>DAY</div>
               <div className="display" style={{ fontSize: 28, color: 'var(--accent)', lineHeight: 1 }}>{state.streak}</div>
             </div>
           </div>
@@ -264,7 +264,7 @@ function MaxCardScreen({ state, go }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {CORE_EXERCISES.map(ex => (
               <div key={ex.id}>
-                <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: '#666' }}>{ex.name}</div>
+                <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>{ex.name}</div>
                 <div className="display" style={{ fontSize: 36, color: '#0A0A0A', lineHeight: 1, marginTop: 2 }}>
                   {t[ex.id]}{ex.unit === 'sec' && <span style={{ fontSize: 18, color: '#666' }}>s</span>}
                 </div>
@@ -273,15 +273,15 @@ function MaxCardScreen({ state, go }) {
           </div>
           <div style={{ margin: '16px 0 0', borderTop: '2px solid #0A0A0A', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
             <div>
-              <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: '#666' }}>TOTAL WORK</div>
+              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>TOTAL WORK</div>
               <div className="display" style={{ fontSize: 26, color: 'var(--accent)', lineHeight: 1 }}>{total}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: '#666' }}>LIFETIME</div>
+              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>LIFETIME</div>
               <div className="display" style={{ fontSize: 16, color: '#0A0A0A', lineHeight: 1, marginTop: 4 }}>{state.totalReps.toLocaleString()}</div>
             </div>
           </div>
-          <div style={{ marginTop: 14, fontSize: 11, fontStyle: 'italic', color: '#333' }}>"{caption}"</div>
+          <div style={{ marginTop: 14, fontSize: 12, fontStyle: 'italic', color: '#333' }}>"{caption}"</div>
           <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, borderTop: '1px dashed #999', paddingTop: 10 }}>
             <div style={{ width: 44, height: 44, background: '#0A0A0A', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 4, background: 'var(--bone)' }} />
@@ -290,8 +290,8 @@ function MaxCardScreen({ state, go }) {
               <div style={{ position: 'absolute', inset: 16, background: '#0A0A0A' }} />
             </div>
             <div>
-              <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: '#666' }}>JOIN THE CREW</div>
-              <div className="mono" style={{ fontSize: 10, fontWeight: 700, color: '#0A0A0A' }}>dailymax.app/{state.referralCode}</div>
+              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>JOIN THE CREW</div>
+              <div className="mono" style={{ fontSize: 11, fontWeight: 700, color: '#0A0A0A' }}>dailymax.app/{state.referralCode}</div>
             </div>
           </div>
         </div>
@@ -308,13 +308,13 @@ function MaxCardScreen({ state, go }) {
           <div className="mono uppercase" style={{
             marginTop: 10, padding: '8px 10px',
             background: '#1F0D0D', border: '1px solid #5A1F1F',
-            color: '#FF6B6B', fontSize: 10, letterSpacing: 1.5, textAlign: 'center',
+            color: '#FF6B6B', fontSize: 11, letterSpacing: 1.5, textAlign: 'center',
           }}>
             COULDN'T RENDER THE CARD · TRY AGAIN
           </div>
         )}
         <div className="mono" style={{
-          marginTop: 10, fontSize: 9, color: 'var(--text-mute)',
+          marginTop: 10, fontSize: 10, color: 'var(--text-mute)',
           letterSpacing: 1.5, textAlign: 'center', lineHeight: 1.5,
         }}>
           SAVES A PNG TO YOUR PHOTOS · SHARE SENDS IT STRAIGHT TO THE CREW
@@ -387,17 +387,17 @@ function LeaderboardScreen({ state, setState, go }) {
               background: bracket === b ? 'var(--accent)' : 'var(--card)',
               border: `1px solid ${bracket === b ? 'var(--accent)' : 'var(--border)'}`,
               color: bracket === b ? '#0A0A0A' : 'var(--text-dim)',
-              fontFamily: 'Archivo Black', fontSize: 11, letterSpacing: 1.5,
+              fontFamily: 'Archivo Black', fontSize: 12, letterSpacing: 1.5,
             }}>{b}</button>
           ))}
         </div>
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
           RANKED BY TOTAL WORK (TODAY){loading ? ' · LOADING…' : ''}
         </div>
 
         {err && (
           <div className="mono" style={{
-            fontSize: 10, color: '#FF6B6B', padding: '8px 10px',
+            fontSize: 11, color: '#FF6B6B', padding: '8px 10px',
             border: '1px solid #5A1F1F', background: '#1F0D0D', marginBottom: 10, letterSpacing: 1.5,
           }}>
             {err}
@@ -412,7 +412,7 @@ function LeaderboardScreen({ state, setState, go }) {
             <div className="display" style={{ fontSize: 18, color: 'var(--text)', letterSpacing: '-0.01em' }}>
               NO ONE HERE YET.
             </div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
               The board fills in as the crew logs today's max.<br/>
               Be the first pin on the map.
             </div>
@@ -428,19 +428,19 @@ function LeaderboardScreen({ state, setState, go }) {
             }}>
               <div className="display" style={{
                 width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, color: i < 3 ? 'var(--accent)' : 'var(--text-mute)',
+                fontSize: 15, color: i < 3 ? 'var(--accent)' : 'var(--text-mute)',
               }}>{i + 1}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: p.isYou ? 'var(--accent)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {p.name} {p.isYou && <span className="mono" style={{ fontSize: 9, marginLeft: 4, color: 'var(--accent)' }}>· YOU</span>}
+                <div style={{ fontSize: 14, fontWeight: 600, color: p.isYou ? 'var(--accent)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {p.name} {p.isYou && <span className="mono" style={{ fontSize: 10, marginLeft: 4, color: 'var(--accent)' }}>· YOU</span>}
                 </div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 1 }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 1 }}>
                   {p.city} · {p.streak}d streak
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div className="display" style={{ fontSize: 18, color: p.isYou ? 'var(--accent)' : 'var(--text)' }}>{p.total}</div>
-                <div className="mono" style={{ fontSize: 8, color: 'var(--text-mute)' }}>{p.pu}/{p.sq}/{p.ho}s/{p.pl}</div>
+                <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>{p.pu}/{p.sq}/{p.ho}s/{p.pl}</div>
               </div>
             </div>
           ))}
@@ -503,7 +503,7 @@ function StateMap({ myState, champsByState, claimsByState, onPick }) {
         pointerEvents: 'none',
       }} />
       <div className="mono uppercase" style={{
-        fontSize: 9, letterSpacing: 2.5, color: 'var(--text-mute)',
+        fontSize: 10, letterSpacing: 2.5, color: 'var(--text-mute)',
         marginBottom: 8, display: 'flex', justifyContent: 'space-between',
       }}>
         <span>REGIONAL BATTLE MAP</span>
@@ -546,7 +546,7 @@ function StateMap({ myState, champsByState, claimsByState, onPick }) {
                      : isMine ? 'var(--streak)'
                      : hasChamp ? 'var(--text-dim)'
                      : 'var(--text-mute)',
-                fontSize: 8,
+                fontSize: 9,
                 fontWeight: 700,
                 letterSpacing: 0.5,
                 cursor: 'pointer',
@@ -570,14 +570,14 @@ function StateMap({ myState, champsByState, claimsByState, onPick }) {
               {contested && (
                 <span style={{
                   position: 'absolute', top: 1, right: 2,
-                  fontSize: 8, color: 'var(--accent-2)', fontWeight: 900,
+                  fontSize: 9, color: 'var(--accent-2)', fontWeight: 900,
                   textShadow: '0 0 4px rgba(179,33,33,0.9)',
                 }}>{claim.kind === 'dethrone' ? '⚔' : '⚑'}</span>
               )}
               {isMine && (
                 <span style={{
                   position: 'absolute', bottom: 1, left: 1,
-                  fontSize: 6, color: 'var(--accent)', fontWeight: 900,
+                  fontSize: 7, color: 'var(--accent)', fontWeight: 900,
                 }}>◆</span>
               )}
             </button>
@@ -585,7 +585,7 @@ function StateMap({ myState, champsByState, claimsByState, onPick }) {
         })}
       </div>
       <div className="mono" style={{
-        fontSize: 9, color: 'var(--text-mute)', letterSpacing: 1.5,
+        fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5,
         marginTop: 8, textAlign: 'center',
       }}>
         TAP ANY STATE TO SEE THE REIGNING CHAMP & TOP 10 CONTENDERS
@@ -641,20 +641,20 @@ function ClaimRacePanel({ claim }) {
       animation: 'pulse-hazard 2.4s infinite',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--accent-2)', fontWeight: 700 }}>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent-2)', fontWeight: 700 }}>
           {isDethrone ? '⚔ DETHRONE IN PROGRESS' : '⚑ OPEN CLAIM IN PROGRESS'}
         </div>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--streak)', letterSpacing: 1.5, fontWeight: 700 }}>
+        <div className="mono" style={{ fontSize: 11, color: 'var(--streak)', letterSpacing: 1.5, fontWeight: 700 }}>
           {fmtCountdown(tick)}
         </div>
       </div>
-      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4, letterSpacing: 0.5 }}>
+      <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4, letterSpacing: 0.5 }}>
         3-DAY WINDOW · {isEffort
           ? 'CROSS CLASS · MEAN % OF PR · CAP 100%'
           : 'IN CLASS · HIGHER TOTAL REPS WINS'}{isDethrone ? ' · TIES GO TO DEFENDER' : ''}
       </div>
       {isDethrone && (claim.claimant_pr || claim.defender_pr) && (
-        <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 3, letterSpacing: 1 }}>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 3, letterSpacing: 1 }}>
           CREW PRs · CLAIMANT {claim.claimant_pr || 0} · DEFENDER {claim.defender_pr || 0}
         </div>
       )}
@@ -683,7 +683,7 @@ function ClaimRacePanel({ claim }) {
 
       {/* elapsed progress */}
       <div style={{ marginTop: 10 }}>
-        <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 3 }}>
+        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 3 }}>
           WINDOW ELAPSED
         </div>
         <div style={{ height: 4, background: 'var(--bg-2)', border: '1px solid var(--border)', position: 'relative' }}>
@@ -708,10 +708,10 @@ function ClaimBar({ label, score, ratio, color, role, kind }) {
     <div>
       <div className="mono uppercase" style={{
         display: 'flex', justifyContent: 'space-between',
-        fontSize: 9, letterSpacing: 1.5, color: 'var(--text-dim)', marginBottom: 3,
+        fontSize: 10, letterSpacing: 1.5, color: 'var(--text-dim)', marginBottom: 3,
       }}>
         <span>{role} · {label}</span>
-        <span className="display" style={{ fontSize: 14, color, letterSpacing: '-0.01em' }}>{fmt(score)}</span>
+        <span className="display" style={{ fontSize: 15, color, letterSpacing: '-0.01em' }}>{fmt(score)}</span>
       </div>
       <div style={{ height: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', position: 'relative' }}>
         <div style={{
@@ -770,7 +770,7 @@ function StateChampModal({
           background: 'linear-gradient(180deg, rgba(201,162,74,0.08) 0%, transparent 100%)',
         }}>
           <div>
-            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--streak)' }}>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--streak)' }}>
               STATE · {abbr}
             </div>
             <div className="display" style={{ fontSize: 24, lineHeight: 1, marginTop: 2, color: 'var(--text)' }}>
@@ -786,7 +786,7 @@ function StateChampModal({
         <div style={{ padding: '0 16px 16px' }}>
           {loading && (
             <div className="mono" style={{
-              padding: 20, textAlign: 'center', fontSize: 11, letterSpacing: 1.5,
+              padding: 20, textAlign: 'center', fontSize: 12, letterSpacing: 1.5,
               color: 'var(--text-mute)',
             }}>LOADING LADDER…</div>
           )}
@@ -799,7 +799,7 @@ function StateChampModal({
             <div className="mono" style={{
               padding: '8px 10px', marginBottom: 10,
               background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF9B8A',
-              fontSize: 10, letterSpacing: 1,
+              fontSize: 11, letterSpacing: 1,
             }}>{claimErr}</div>
           )}
 
@@ -813,7 +813,7 @@ function StateChampModal({
               <div className="display" style={{ fontSize: 18, color: 'var(--text)' }}>
                 THRONE IS OPEN.
               </div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5, marginTop: 6, lineHeight: 1.5 }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5, marginTop: 6, lineHeight: 1.5 }}>
                 NO CREW HOLDS {abbr}. PLANT YOUR FLAG AND PUT UP A NUMBER.<br/>
                 <span style={{ color: 'var(--streak)' }}>3 DAYS. ANY NUMBER &gt; 0 CLAIMS IT.</span>
               </div>
@@ -825,7 +825,7 @@ function StateChampModal({
                   style={{
                     marginTop: 12, padding: '12px 20px',
                     background: 'var(--streak)', border: 'none', color: '#0A0A0A',
-                    fontSize: 11, letterSpacing: 2.5, fontWeight: 700,
+                    fontSize: 12, letterSpacing: 2.5, fontWeight: 700,
                     cursor: claimBusy ? 'default' : 'pointer',
                     opacity: claimBusy ? 0.6 : 1,
                   }}
@@ -834,7 +834,7 @@ function StateChampModal({
                 <div className="mono uppercase" style={{
                   marginTop: 12, padding: '8px 12px', display: 'inline-block',
                   background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
-                  fontSize: 10, letterSpacing: 1.5, color: 'var(--text-mute)',
+                  fontSize: 11, letterSpacing: 1.5, color: 'var(--text-mute)',
                 }}>JOIN A CREW FIRST</div>
               )}
             </div>
@@ -845,7 +845,7 @@ function StateChampModal({
               background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
               padding: 16, textAlign: 'center', marginBottom: 12,
             }}>
-              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5 }}>
+              <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', letterSpacing: 1.5 }}>
                 RACE IS LIVE. FIRST NUMBER UP TAKES THE CROWN.
               </div>
             </div>
@@ -861,7 +861,7 @@ function StateChampModal({
               position: 'relative',
               boxShadow: '0 8px 20px rgba(201,162,74,0.15)',
             }}>
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--streak)' }}>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--streak)' }}>
                 ♛ REIGNING CHAMP
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 6 }}>
@@ -874,9 +874,9 @@ function StateChampModal({
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1.1 }}>
                     {champ.name}
-                    {champ.tag && <span className="mono" style={{ fontSize: 11, color: 'var(--streak)', marginLeft: 6 }}>[{champ.tag}]</span>}
+                    {champ.tag && <span className="mono" style={{ fontSize: 12, color: 'var(--streak)', marginLeft: 6 }}>[{champ.tag}]</span>}
                   </div>
-                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 3 }}>
+                  <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 3 }}>
                     {champ.member_count} · TOTAL PR {champ.total_pr} · AVG {champ.avg_pr} · {champ.active_today} TODAY
                   </div>
                 </div>
@@ -892,7 +892,7 @@ function StateChampModal({
                   <div style={{ marginTop: 10 }}>
                     <div className="mono uppercase" style={{
                       display: 'flex', justifyContent: 'space-between',
-                      fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 4,
+                      fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 4,
                     }}>
                       <span>CONSISTENCY · LAST 7 DAYS</span>
                       <span style={{ color: barColor }}>
@@ -915,7 +915,7 @@ function StateChampModal({
                 );
               })()}
               {champ.description && (
-                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 10, lineHeight: 1.4 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 10, lineHeight: 1.4 }}>
                   {champ.description}
                 </div>
               )}
@@ -928,7 +928,7 @@ function StateChampModal({
                     width: '100%', marginTop: 12, padding: '12px 0',
                     background: 'var(--accent)',
                     border: 'none', color: '#F2ECE2',
-                    fontSize: 11, letterSpacing: 2.5, fontWeight: 700,
+                    fontSize: 12, letterSpacing: 2.5, fontWeight: 700,
                     cursor: claimBusy ? 'default' : 'pointer',
                     opacity: claimBusy ? 0.6 : 1,
                   }}
@@ -940,7 +940,7 @@ function StateChampModal({
                 <div className="mono uppercase" style={{
                   marginTop: 10, padding: '8px 10px', textAlign: 'center',
                   background: 'var(--streak-dim)', border: '1px solid var(--streak)',
-                  fontSize: 10, letterSpacing: 2, color: 'var(--streak)',
+                  fontSize: 11, letterSpacing: 2, color: 'var(--streak)',
                 }}>
                   ♛ YOUR CREW HOLDS THE CROWN
                 </div>
@@ -952,7 +952,7 @@ function StateChampModal({
           {contenders.length > 0 && (
             <>
               <div className="mono uppercase" style={{
-                fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6,
+                fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6,
               }}>
                 CONTENDERS · TOP {contenders.length}
               </div>
@@ -969,15 +969,15 @@ function StateChampModal({
                     marginBottom: 4,
                   }}>
                     <div className="display" style={{
-                      width: 26, fontSize: 14,
+                      width: 26, fontSize: 15,
                       color: 'var(--text-mute)', textAlign: 'center',
                     }}>{r.rank}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {r.name}{r.tag && <span className="mono" style={{ fontSize: 9, color: 'var(--streak)', marginLeft: 4 }}>[{r.tag}]</span>}
-                        {mine && <span className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginLeft: 6 }}>· YOU</span>}
+                      <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {r.name}{r.tag && <span className="mono" style={{ fontSize: 10, color: 'var(--streak)', marginLeft: 4 }}>[{r.tag}]</span>}
+                        {mine && <span className="mono" style={{ fontSize: 10, color: 'var(--accent)', marginLeft: 6 }}>· YOU</span>}
                       </div>
-                      <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 1 }}>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 1 }}>
                         {r.member_count} · PR {r.total_pr} · AVG {r.avg_pr}
                       </div>
                     </div>
@@ -991,7 +991,7 @@ function StateChampModal({
                           background: isSent ? 'var(--streak)' : 'transparent',
                           border: `1px solid ${isSent ? 'var(--streak)' : 'var(--accent)'}`,
                           color: isSent ? '#0A0A0A' : 'var(--accent)',
-                          fontSize: 9, letterSpacing: 1.5, fontWeight: 700,
+                          fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
                           cursor: (isSent || busy) ? 'default' : 'pointer',
                           opacity: busy ? 0.6 : 1,
                         }}
@@ -1011,13 +1011,13 @@ function StateChampModal({
             position: 'relative',
           }}>
             <div className="mono uppercase" style={{
-              fontSize: 9, letterSpacing: 3, color: 'var(--streak)',
+              fontSize: 10, letterSpacing: 3, color: 'var(--streak)',
               marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6,
             }}>
               <span style={{ color: 'var(--streak)' }}>♛</span> HONOR CODE
             </div>
             <div className="mono" style={{
-              fontSize: 10, color: 'var(--text-dim)',
+              fontSize: 11, color: 'var(--text-dim)',
               letterSpacing: 0.5, lineHeight: 1.6,
             }}>
               <div><span style={{ color: 'var(--accent)' }}>1.</span> Champs must stay warm. A crew with zero active members in the last 7 days loses the crown — the state re-opens automatically.</div>
@@ -1229,7 +1229,7 @@ function BattleScreen({ state, go }) {
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
         <div className="display" style={{ fontSize: 28, lineHeight: 1, marginBottom: 8 }}>PICK YOUR<br/>FIGHT.</div>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
+        <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
           Everyone with a PR is always available. Battles are 7-day async windows —
           no one has to be online. In class (±10% PR): raw reps wins.
           Cross class: highest <span style={{ color: 'var(--accent)' }}>% of your own PR</span> wins.
@@ -1247,7 +1247,7 @@ function BattleScreen({ state, go }) {
               background: tab === t.id ? 'var(--accent)' : 'var(--card)',
               border: `1px solid ${tab === t.id ? 'var(--accent)' : 'var(--border)'}`,
               color: tab === t.id ? '#0A0A0A' : 'var(--text-dim)',
-              fontSize: 11, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+              fontSize: 12, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
             }}>{t.l}</button>
           ))}
         </div>
@@ -1256,7 +1256,7 @@ function BattleScreen({ state, go }) {
           <div className="mono" style={{
             padding: '8px 10px', marginBottom: 10,
             background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF9B8A',
-            fontSize: 10, letterSpacing: 1,
+            fontSize: 11, letterSpacing: 1,
           }}>{err}</div>
         )}
 
@@ -1264,7 +1264,7 @@ function BattleScreen({ state, go }) {
           <div className="mono" style={{
             padding: '12px', marginBottom: 10,
             background: 'var(--bg-2)', border: '1px dashed var(--border-2)', color: 'var(--text-mute)',
-            fontSize: 11, letterSpacing: 1, lineHeight: 1.5, textAlign: 'center',
+            fontSize: 12, letterSpacing: 1, lineHeight: 1.5, textAlign: 'center',
           }}>
             SIGN IN TO SEE REAL OPPONENTS.
           </div>
@@ -1284,14 +1284,14 @@ function BattleScreen({ state, go }) {
                   background: mode === t.id ? 'var(--streak-dim)' : 'var(--card)',
                   border: `1px solid ${mode === t.id ? 'var(--streak)' : 'var(--border)'}`,
                   color: mode === t.id ? 'var(--streak)' : 'var(--text-dim)',
-                  fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+                  fontSize: 11, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
                 }}>{t.l}</button>
               ))}
             </div>
 
             <label className="mono uppercase" style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              fontSize: 10, letterSpacing: 1.5, color: 'var(--text-mute)',
+              fontSize: 11, letterSpacing: 1.5, color: 'var(--text-mute)',
               marginBottom: 10, cursor: 'pointer',
             }}>
               <input
@@ -1304,19 +1304,19 @@ function BattleScreen({ state, go }) {
               MY BRACKET ONLY {state.ageBracket ? `(${state.ageBracket})` : '(SET BRACKET FIRST)'}
             </label>
 
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 10 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10 }}>
               YOUR PR TOTAL · {yourPR || '—'}
             </div>
 
             {opponents === null && (
               <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>LOADING OPPONENTS…</div>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)' }}>LOADING OPPONENTS…</div>
               </div>
             )}
 
             {opponents && soloFiltered.length === 0 && (
               <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
                   {opponents.length === 0
                     ? 'NO OPPONENTS YET.\nINVITE SOMEONE AND PICK A FIGHT.'
                     : 'NO OPPONENTS IN THIS BAND.\nTRY ANOTHER FILTER.'}
@@ -1336,8 +1336,8 @@ function BattleScreen({ state, go }) {
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
                     }}>{(p.display_name || p.username || '?')[0].toUpperCase()}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{p.display_name || p.username}</div>
-                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>{p.display_name || p.username}</div>
+                      <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>
                         {(p.city || p.region_state || '—')} · PR {p.theirPR} · {p.current_streak || 0}d
                       </div>
                     </div>
@@ -1350,7 +1350,7 @@ function BattleScreen({ state, go }) {
                         background: isSent ? 'var(--streak)' : 'transparent',
                         border: `1px solid ${isSent ? 'var(--streak)' : 'var(--accent)'}`,
                         color: isSent ? '#0A0A0A' : 'var(--accent)',
-                        fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+                        fontSize: 11, letterSpacing: 1.5, fontWeight: 700,
                         cursor: (isSent || busy) ? 'default' : 'pointer',
                         opacity: busy ? 0.6 : 1,
                       }}
@@ -1361,10 +1361,10 @@ function BattleScreen({ state, go }) {
                     background: p.inClass ? 'var(--streak-dim)' : 'var(--accent-dim)',
                     border: `1px solid ${p.inClass ? 'var(--streak)' : 'var(--accent)'}`,
                   }}>
-                    <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: p.inClass ? 'var(--streak)' : 'var(--accent)' }}>
+                    <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: p.inClass ? 'var(--streak)' : 'var(--accent)' }}>
                       SCORING · {scoreMode}
                     </div>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2, lineHeight: 1.4 }}>
+                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2, lineHeight: 1.4 }}>
                       {p.inClass
                         ? `Within ±10% of your PR (${yourPR} vs ${p.theirPR}). Total reps over 7 days wins.`
                         : `Outside your class (${yourPR} vs ${p.theirPR}). Whoever averages highest % of their own PR wins. Cap 100%.`}
@@ -1379,32 +1379,32 @@ function BattleScreen({ state, go }) {
         {/* ============= CREW TAB ============= */}
         {tab === 'crew' && (
           <>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
               CREW vs CREW · 7 DAYS · SUMMED EFFORT. Your crew: <span style={{ color: state.clanName ? 'var(--accent)' : 'var(--text-mute)' }}>{(state.clanName || 'NONE').toUpperCase()}</span>
             </div>
 
             {!state.clanId && (
               <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '14px', marginBottom: 10, textAlign: 'center' }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.5 }}>
                   JOIN A CREW FIRST.
                 </div>
                 <button onClick={() => go('clan-entry')} className="mono uppercase" style={{
                   marginTop: 8, padding: '8px 14px',
                   background: 'var(--accent)', border: 'none', color: '#F2ECE2',
-                  fontSize: 10, letterSpacing: 2, fontWeight: 700, cursor: 'pointer',
+                  fontSize: 11, letterSpacing: 2, fontWeight: 700, cursor: 'pointer',
                 }}>FIND CREW</button>
               </div>
             )}
 
             {crews === null && (
               <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>LOADING CREWS…</div>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)' }}>LOADING CREWS…</div>
               </div>
             )}
 
             {crews && crews.length === 0 && (
               <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', whiteSpace: 'pre-line' }}>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', whiteSpace: 'pre-line' }}>
                   NO OTHER PUBLIC CREWS YET.
                 </div>
               </div>
@@ -1421,10 +1421,10 @@ function BattleScreen({ state, go }) {
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
                     }}>◆</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>
-                        {c.name} {c.tag && <span className="mono" style={{ color: 'var(--streak)', fontSize: 10, marginLeft: 4 }}>[{c.tag}]</span>}
+                      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>
+                        {c.name} {c.tag && <span className="mono" style={{ color: 'var(--streak)', fontSize: 11, marginLeft: 4 }}>[{c.tag}]</span>}
                       </div>
-                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+                      <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>
                         {c.member_count} · TOTAL PR {c.total_pr} · AVG {c.avg_pr} · {c.active_today} TODAY
                       </div>
                     </div>
@@ -1437,14 +1437,14 @@ function BattleScreen({ state, go }) {
                         background: isSent ? 'var(--streak)' : 'transparent',
                         border: `1px solid ${isSent ? 'var(--streak)' : state.clanId ? 'var(--accent)' : 'var(--border-2)'}`,
                         color: isSent ? '#0A0A0A' : state.clanId ? 'var(--accent)' : 'var(--text-mute)',
-                        fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+                        fontSize: 11, letterSpacing: 1.5, fontWeight: 700,
                         cursor: (isSent || busy || !state.clanId) ? 'default' : 'pointer',
                         opacity: busy ? 0.6 : 1,
                       }}
                     >{isSent ? 'SENT' : busy ? '...' : 'CHALLENGE'}</button>
                   </div>
                   {c.description && (
-                    <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8, lineHeight: 1.4 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8, lineHeight: 1.4 }}>
                       {c.description}
                     </div>
                   )}
@@ -1465,7 +1465,7 @@ function BattleScreen({ state, go }) {
             />
             {Object.keys(champsByState).length === 0 && apiOk && (
               <div className="mono" style={{
-                padding: 10, fontSize: 10, color: 'var(--text-mute)',
+                padding: 10, fontSize: 11, color: 'var(--text-mute)',
                 letterSpacing: 1.5, textAlign: 'center',
               }}>
                 NO STATES CLAIMED YET · BE THE FIRST CREW IN YOUR STATE TO HOIST THE GOLD DOT
@@ -1497,9 +1497,9 @@ function BattleScreen({ state, go }) {
         )}
 
         <div style={{ marginTop: 14, background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: 14 }}>
-          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>OR INVITE A FRIEND</div>
+          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>OR INVITE A FRIEND</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <div style={{ flex: 1, padding: '10px 12px', background: 'var(--card)', border: '1px solid var(--border)', fontSize: 12 }} className="mono">
+            <div style={{ flex: 1, padding: '10px 12px', background: 'var(--card)', border: '1px solid var(--border)', fontSize: 13 }} className="mono">
               dailymax.app/{state.referralCode}
             </div>
             <GhostBtn onClick={() => alert('Link copied')}>COPY</GhostBtn>
@@ -1535,14 +1535,14 @@ function NightScreen({ state, go }) {
     <Shell bg="#050508">
       <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="LIGHTS OUT" sub="MOBILITY · UNLOCKED" />
       <div style={{ padding: 24, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--streak)', marginBottom: 8 }}>
+        <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--streak)', marginBottom: 8 }}>
           STEP {idx + 1} / {NIGHT_FLOW.length}
         </div>
         <div className="display" style={{ fontSize: 26, textAlign: 'center', lineHeight: 1.1, color: 'var(--text)' }}>{step.name}</div>
-        <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8, textAlign: 'center' }}>{step.cue}</div>
+        <div className="mono" style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 8, textAlign: 'center' }}>{step.cue}</div>
 
         <div className="display" style={{ fontSize: 110, color: 'var(--streak)', marginTop: 32, letterSpacing: '-0.04em' }}>{left}</div>
-        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)' }}>SECONDS</div>
+        <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--text-mute)' }}>SECONDS</div>
 
         <div style={{ marginTop: 32, width: '100%' }}>
           {!running ? (
@@ -1553,7 +1553,7 @@ function NightScreen({ state, go }) {
           ) : (
             <button onClick={() => setRunning(false)} style={{
               width: '100%', padding: '16px 0', background: 'transparent', border: '1px solid var(--streak)',
-              color: 'var(--streak)', fontFamily: 'Archivo Black', fontSize: 13, letterSpacing: 2,
+              color: 'var(--streak)', fontFamily: 'Archivo Black', fontSize: 14, letterSpacing: 2,
             }}>PAUSE</button>
           )}
         </div>
@@ -1586,7 +1586,7 @@ function KickoffScreen({ state, go }) {
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
         <div className="display" style={{ fontSize: 32, lineHeight: 1 }}>30 DAYS.<br/>ONE TO OPEN.</div>
-        <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8, marginBottom: 16 }}>
+        <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8, marginBottom: 16 }}>
           Each day adds one bonus on top of your Daily Max. Skip one and it's gone — no make-ups.
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
@@ -1608,7 +1608,7 @@ function KickoffScreen({ state, go }) {
                   fontSize: 16,
                   color: d.current ? '#0A0A0A' : d.done ? 'var(--streak)' : 'var(--text-mute)',
                 }}>{d.day}</div>
-                <div className="mono" style={{ fontSize: 7, color: d.current ? '#0A0A0A' : 'var(--text-mute)', marginTop: 1 }}>
+                <div className="mono" style={{ fontSize: 8, color: d.current ? '#0A0A0A' : 'var(--text-mute)', marginTop: 1 }}>
                   {d.current ? 'TODAY' : d.done ? '✓' : '◯'}
                 </div>
               </button>
@@ -1622,13 +1622,13 @@ function KickoffScreen({ state, go }) {
           padding: 14,
         }}>
           <div className="mono uppercase" style={{
-            fontSize: 9, letterSpacing: 2,
+            fontSize: 10, letterSpacing: 2,
             color: isToday ? 'var(--accent)' : isFuture ? 'var(--text-mute)' : 'var(--streak)',
           }}>
             DAY {selected} · {isToday ? 'TODAY' : isFuture ? 'LOCKED' : 'DONE'}
           </div>
-          <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>{bonus.name}</div>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.4 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, marginTop: 4 }}>{bonus.name}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.4 }}>
             {isFuture ? 'Finish today first. No peeking ahead.' : bonus.cue}
           </div>
         </div>

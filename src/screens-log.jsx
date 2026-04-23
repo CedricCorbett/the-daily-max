@@ -137,17 +137,17 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
 
         <div style={{ marginBottom: 14 }}>
           <BigNum n={total} unit="WORK" color="var(--accent)" size={56} />
-          <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 6, letterSpacing: 1.5 }}>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 6, letterSpacing: 1.5 }}>
             EFFORT · {effortPct}% OF YOUR PR TOTAL
           </div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
             NO COMPARISON TO YESTERDAY. MOVEMENT OVER EGO.
           </div>
           {hadDraft && (
             <div className="mono uppercase" style={{
               marginTop: 10, padding: '8px 10px',
               background: 'var(--streak-dim)', border: '1px solid var(--streak)',
-              color: 'var(--streak)', fontSize: 9, letterSpacing: 1.5, lineHeight: 1.5,
+              color: 'var(--streak)', fontSize: 10, letterSpacing: 1.5, lineHeight: 1.5,
             }}>
               ◇ PREFILLED FROM TIMER TAPS · TAP A NUMBER TO TYPE THE FINAL COUNT.
             </div>
@@ -167,19 +167,19 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                 <div>
-                  <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)' }}>
+                  <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>
                     {ex.name} · {unitLabel}
                     {isPR && <span style={{ color: 'var(--streak)', marginLeft: 6 }}>NEW PR</span>}
                     {isFirst && <span style={{ color: 'var(--streak)', marginLeft: 6 }}>FIRST LOG</span>}
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>{v.name}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, marginTop: 2 }}>{v.name}</div>
                 </div>
                 <button
                   onClick={() => resetOne(ex.id)}
                   className="mono uppercase"
                   style={{
                     background: 'transparent', border: '1px solid var(--border-2)',
-                    color: 'var(--text-mute)', fontSize: 9, letterSpacing: 1.5,
+                    color: 'var(--text-mute)', fontSize: 10, letterSpacing: 1.5,
                     padding: '4px 8px', cursor: 'pointer',
                   }}
                 >
@@ -211,7 +211,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
                 <button onClick={() => adjust(ex.id, 1)} style={stepBtn}>+</button>
                 <button onClick={() => adjust(ex.id, 5)} style={stepBtnSm}>+5</button>
               </div>
-              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 8, textAlign: 'right' }}>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 8, textAlign: 'right' }}>
                 PB {pb}{ex.unit === 'sec' ? 's' : ''}
               </div>
             </div>
@@ -223,7 +223,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
           <div className="mono uppercase" style={{
             marginBottom: 10, padding: '8px 10px',
             background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF8E8E',
-            fontSize: 9, letterSpacing: 1.5, lineHeight: 1.5,
+            fontSize: 10, letterSpacing: 1.5, lineHeight: 1.5,
           }}>
             ⚠ {saveErr}
           </div>
@@ -238,6 +238,6 @@ const stepBtn = {
   width: 44, height: 44, background: 'var(--bg-2)', border: '1px solid var(--border-2)',
   color: 'var(--text)', fontSize: 22, fontWeight: 700, cursor: 'pointer',
 };
-const stepBtnSm = { ...stepBtn, width: 40, fontSize: 12, fontFamily: 'JetBrains Mono' };
+const stepBtnSm = { ...stepBtn, width: 40, fontSize: 13, fontFamily: 'JetBrains Mono' };
 
 Object.assign(window, { LogScreen });

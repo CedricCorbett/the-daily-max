@@ -70,36 +70,46 @@ const MAX_CARD_CAPTIONS = [
 ];
 
 // Per-exercise Elite Clubs. Hollow is lifetime seconds held.
+// ELITE and TITAN thresholds are the MVP anchors (mirrored on the home
+// screen as dedicated boards). TITAN = exactly 2× ELITE so the climb has
+// a clean "double it" feel. SILVER/BRONZE/ROOKIE are stepping stones —
+// keeps the Done screen tier meter honest between now and Elite.
 const MILESTONES_BY_EXERCISE = {
   pushups: [
-    { reps: 500,   label: "500 CLUB",         tier: "ROOKIE" },
-    { reps: 2500,  label: "2.5K CLUB",        tier: "BRONZE" },
-    { reps: 10000, label: "10K CLUB",         tier: "SILVER" },
-    { reps: 25000, label: "25K CLUB",         tier: "GOLD"   },
-    { reps: 50000, label: "50K PUSH-UP CLUB", tier: "ELITE"  },
+    { reps: 500,   label: "500 CLUB",     tier: "ROOKIE" },
+    { reps: 2500,  label: "2.5K CLUB",    tier: "BRONZE" },
+    { reps: 10000, label: "10K CLUB",     tier: "SILVER" },
+    { reps: 20000, label: "20K ELITE",    tier: "ELITE"  },
+    { reps: 40000, label: "40K TITAN",    tier: "TITAN"  },
   ],
   squats: [
-    { reps: 500,   label: "500 CLUB",        tier: "ROOKIE" },
-    { reps: 3000,  label: "3K CLUB",         tier: "BRONZE" },
-    { reps: 15000, label: "15K CLUB",        tier: "SILVER" },
-    { reps: 40000, label: "40K CLUB",        tier: "GOLD"   },
-    { reps: 75000, label: "75K SQUAT CLUB",  tier: "ELITE"  },
+    { reps: 500,   label: "500 CLUB",     tier: "ROOKIE" },
+    { reps: 3000,  label: "3K CLUB",      tier: "BRONZE" },
+    { reps: 10000, label: "10K CLUB",     tier: "SILVER" },
+    { reps: 20000, label: "20K ELITE",    tier: "ELITE"  },
+    { reps: 40000, label: "40K TITAN",    tier: "TITAN"  },
   ],
   hollow: [
-    { reps: 600,   label: "10 MIN CLUB",     tier: "ROOKIE" },
-    { reps: 3000,  label: "50 MIN CLUB",     tier: "BRONZE" },
-    { reps: 10800, label: "3 HOUR CLUB",     tier: "SILVER" },
-    { reps: 36000, label: "10 HOUR CLUB",    tier: "GOLD"   },
-    { reps: 90000, label: "25 HOUR CLUB",    tier: "ELITE"  },
+    { reps: 600,   label: "10 MIN CLUB",  tier: "ROOKIE" },
+    { reps: 3000,  label: "50 MIN CLUB",  tier: "BRONZE" },
+    { reps: 8000,  label: "2 HOUR+ CLUB", tier: "SILVER" },
+    { reps: 16500, label: "ELITE HOLD",   tier: "ELITE"  }, // ~4h35m held lifetime
+    { reps: 33000, label: "TITAN HOLD",   tier: "TITAN"  }, // ~9h10m held lifetime
   ],
   pullups: [
-    { reps: 100,   label: "100 CLUB",         tier: "ROOKIE" },
-    { reps: 500,   label: "500 CLUB",         tier: "BRONZE" },
-    { reps: 2000,  label: "2K CLUB",          tier: "SILVER" },
-    { reps: 5000,  label: "5K CLUB",          tier: "GOLD"   },
-    { reps: 10000, label: "10K PULL-UP CLUB", tier: "ELITE"  },
+    { reps: 100,   label: "100 CLUB",     tier: "ROOKIE" },
+    { reps: 500,   label: "500 CLUB",     tier: "BRONZE" },
+    { reps: 2000,  label: "2K CLUB",      tier: "SILVER" },
+    { reps: 7500,  label: "7.5K ELITE",   tier: "ELITE"  },
+    { reps: 15000, label: "15K TITAN",    tier: "TITAN"  },
   ],
 };
+
+// Flat threshold maps for the HOME-SCREEN ELITES + TITANS BOARDS.
+// Keep in sync with the ELITE / TITAN rows above — the home boards show
+// raw lifetime totals against these cutoffs, no tier ladder needed.
+const ELITE_THRESHOLDS = { pushups: 20000, squats: 20000, hollow: 16500, pullups: 7500 };
+const TITAN_THRESHOLDS = { pushups: 40000, squats: 40000, hollow: 33000, pullups: 15000 };
 
 function milestoneProgress(exId, count) {
   const ladder = MILESTONES_BY_EXERCISE[exId] || [];
@@ -230,6 +240,7 @@ function tierStyle(tier) {
     SILVER: { fg: '#D9D9D9', bg: '#1A1A1A', border: '#808080' },
     GOLD:   { fg: '#E6C068', bg: '#1F1708', border: '#A88A3A' },
     ELITE:  { fg: '#FFD700', bg: '#2A1F08', border: '#FFD700' },
+    TITAN:  { fg: '#FF4D4D', bg: '#2A0909', border: '#B32121' },
   }[tier] || { fg: '#888', bg: '#1A1A1A', border: '#444' };
 }
 
@@ -400,6 +411,7 @@ function saveState(s) {
 Object.assign(window, {
   CORE_EXERCISES, VARIANTS, NIGHT_FLOW, KICKOFF_BONUSES, MAX_CARD_CAPTIONS, EXERCISE_CUES,
   MILESTONES_BY_EXERCISE, milestoneProgress, LEADERBOARD,
+  ELITE_THRESHOLDS, TITAN_THRESHOLDS,
   RALLY_ENCOURAGEMENTS, RALLY_BOARD_SEED, RALLY_INBOX_SEED, RALLY_PUSH_CAP,
   MANTRAS, pickMantra,
   showedUpScore, effortScore, dayTotal, prSum, draftInClass, clanClass, tierStyle,

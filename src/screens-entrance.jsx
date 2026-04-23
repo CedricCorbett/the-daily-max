@@ -55,7 +55,7 @@ function EntranceScreen({ state, setState, go }) {
         </div>
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '0 24px 28px' }}>
           <div className="mono uppercase" style={{
-            fontSize: 10, letterSpacing: 4, color: 'var(--text-mute)',
+            fontSize: 11, letterSpacing: 4, color: 'var(--text-mute)',
             textAlign: 'center', animation: 'fade-up 0.8s 0.6s both',
           }}>
             DAILY · DISCIPLINED · CREW
@@ -113,7 +113,7 @@ function EntranceScreen({ state, setState, go }) {
             </div>
             {m.src && (
               <div className="mono uppercase" style={{
-                fontSize: 9, letterSpacing: 3, color: 'var(--ash)', marginTop: 8,
+                fontSize: 10, letterSpacing: 3, color: 'var(--ash)', marginTop: 8,
               }}>
                 — {m.src}
               </div>
@@ -131,7 +131,7 @@ function EntranceScreen({ state, setState, go }) {
         {/* Pulsing cue while mantras are still appearing */}
         {!allShown && (
           <div className="mono uppercase" style={{
-            textAlign: 'center', fontSize: 9, letterSpacing: 3,
+            textAlign: 'center', fontSize: 10, letterSpacing: 3,
             color: 'var(--ash)', padding: '8px 0 4px',
             animation: 'flash 1.4s ease-in-out infinite',
           }}>
@@ -158,7 +158,7 @@ function EntranceScreen({ state, setState, go }) {
             border: '1px solid var(--streak)',
             color: 'var(--streak)',
             fontFamily: 'Archivo Black, sans-serif',
-            fontSize: 14, letterSpacing: 4,
+            fontSize: 15, letterSpacing: 4,
             cursor: 'pointer',
             opacity: allShown ? 1 : 0.55,
             transition: 'opacity 0.6s, background 0.6s',
@@ -168,7 +168,7 @@ function EntranceScreen({ state, setState, go }) {
           {allShown ? 'TAP TO ENTER ◇' : 'READ · THEN ENTER'}
         </button>
         <div className="mono uppercase" style={{
-          fontSize: 9, letterSpacing: 3, color: 'var(--text-mute)',
+          fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)',
           textAlign: 'center', marginTop: 12,
         }}>
           BREATHE IN · BREATHE OUT · BEGIN
@@ -198,9 +198,9 @@ function MiniStat({ label, value, unit, color }) {
       textAlign: 'center',
       backdropFilter: 'blur(4px)',
     }}>
-      <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--text-mute)' }}>{label}</div>
+      <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)' }}>{label}</div>
       <div className="display" style={{ fontSize: 20, color, lineHeight: 1, marginTop: 4 }}>
-        {value}{unit && <span className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginLeft: 2, letterSpacing: 1 }}>{unit}</span>}
+        {value}{unit && <span className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginLeft: 2, letterSpacing: 1 }}>{unit}</span>}
       </div>
     </div>
   );

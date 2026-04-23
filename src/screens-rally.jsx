@@ -42,8 +42,8 @@ function RallyScreen({ state, setState, go }) {
             color: tab === t.id ? 'var(--text)' : 'var(--text-mute)',
             cursor: 'pointer',
           }}>
-            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: 700 }}>{t.label}</div>
-            <div className="mono" style={{ fontSize: 8, letterSpacing: 1.5, marginTop: 2, opacity: 0.7 }}>{t.sub}</div>
+            <div className="mono uppercase" style={{ fontSize: 12, letterSpacing: 1.5, fontWeight: 700 }}>{t.label}</div>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: 1.5, marginTop: 2, opacity: 0.7 }}>{t.sub}</div>
           </button>
         ))}
       </div>
@@ -54,14 +54,14 @@ function RallyScreen({ state, setState, go }) {
           <>
             {state.onRally && (
               <div style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent)', padding: 12, marginBottom: 14 }}>
-                <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--accent)' }}>YOU'RE ON THE BOARD</div>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4, lineHeight: 1.4 }}>
+                <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--accent)' }}>YOU'RE ON THE BOARD</div>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 4, lineHeight: 1.4 }}>
                   Streak paused. {inbox.length} of the crew already rallied for you. Check INBOX.
                 </div>
               </div>
             )}
 
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
               Crew members who broke their streak. Pick one. Send a rally. Bring them back. You've sent <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{state.ralliesSent}</span> this month.
             </div>
 
@@ -73,7 +73,7 @@ function RallyScreen({ state, setState, go }) {
                 <div className="display" style={{ fontSize: 18, color: 'var(--text)', letterSpacing: '-0.01em' }}>
                   NO ONE'S DOWN.
                 </div>
-                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
+                <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
                   The crew is holding. Keep your streak alive<br/>
                   and this board stays empty.
                 </div>
@@ -94,43 +94,43 @@ function RallyScreen({ state, setState, go }) {
                   }}>{dad.avatar}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600 }}>{dad.name}</div>
-                      <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>{dad.daysOff}D OFF</div>
+                      <div style={{ fontSize: 15, fontWeight: 600 }}>{dad.name}</div>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>{dad.daysOff}D OFF</div>
                     </div>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 2 }}>
                       {dad.city} · Lost a <span style={{ color: 'var(--danger)' }}>{dad.streakLost}d</span> streak
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8, fontStyle: 'italic', lineHeight: 1.35 }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 8, fontStyle: 'italic', lineHeight: 1.35 }}>
                       "{dad.note}"
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, gap: 8 }}>
-                      <div className="mono" style={{ fontSize: 9, color: 'var(--streak)' }}>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--streak)' }}>
                         ✊ {dad.rallies} {dad.rallies === 1 ? 'RALLY' : 'RALLIES'}
                       </div>
                       {dad.sentByYou ? (
                         <div className="mono uppercase" style={{
                           padding: '6px 10px', background: 'var(--streak-dim)', color: 'var(--streak)',
-                          border: '1px solid var(--streak)', fontSize: 9, letterSpacing: 1.5,
+                          border: '1px solid var(--streak)', fontSize: 10, letterSpacing: 1.5,
                         }}>✓ RALLIED</div>
                       ) : (
                         <button onClick={() => setSending(dad.id)} className="mono uppercase" style={{
                           padding: '6px 10px', background: 'var(--accent)', color: '#0A0A0A',
-                          border: 'none', fontSize: 9, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+                          border: 'none', fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
                         }}>SEND RALLY</button>
                       )}
                     </div>
 
                     {sending === dad.id && (
                       <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-2)', border: '1px solid var(--border-2)' }}>
-                        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
+                        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 8 }}>
                           PICK A RALLY · OR WRITE ONE
                         </div>
                         {RALLY_ENCOURAGEMENTS.slice(0, 4).map((msg, i) => (
                           <button key={i} onClick={() => sendRally(dad.id, msg)} style={{
                             width: '100%', textAlign: 'left', padding: '8px 10px', marginBottom: 4,
                             background: 'var(--card)', border: '1px solid var(--border)',
-                            color: 'var(--text-dim)', fontSize: 11, cursor: 'pointer', lineHeight: 1.35,
+                            color: 'var(--text-dim)', fontSize: 12, cursor: 'pointer', lineHeight: 1.35,
                             fontFamily: 'inherit',
                           }}>{msg}</button>
                         ))}
@@ -142,7 +142,7 @@ function RallyScreen({ state, setState, go }) {
                           style={{
                             width: '100%', marginTop: 6, padding: '8px 10px',
                             background: 'var(--card)', border: '1px solid var(--border-2)',
-                            color: 'var(--text)', fontSize: 11, resize: 'none',
+                            color: 'var(--text)', fontSize: 12, resize: 'none',
                             fontFamily: 'JetBrains Mono',
                           }}
                         />
@@ -150,7 +150,7 @@ function RallyScreen({ state, setState, go }) {
                           <button onClick={() => { setSending(null); setCustomMsg(''); }} className="mono uppercase" style={{
                             flex: 1, padding: 8, background: 'transparent',
                             border: '1px solid var(--border-2)', color: 'var(--text-dim)',
-                            fontSize: 10, letterSpacing: 1.5, cursor: 'pointer',
+                            fontSize: 11, letterSpacing: 1.5, cursor: 'pointer',
                           }}>CANCEL</button>
                           <button
                             disabled={!customMsg.trim()}
@@ -160,7 +160,7 @@ function RallyScreen({ state, setState, go }) {
                               flex: 2, padding: 8,
                               background: customMsg.trim() ? 'var(--accent)' : 'var(--bg-2)',
                               border: 'none', color: customMsg.trim() ? '#0A0A0A' : 'var(--text-mute)',
-                              fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+                              fontSize: 11, letterSpacing: 1.5, fontWeight: 700,
                               cursor: customMsg.trim() ? 'pointer' : 'default',
                             }}>SEND CUSTOM RALLY →</button>
                         </div>
@@ -172,8 +172,8 @@ function RallyScreen({ state, setState, go }) {
             ))}
 
             <div style={{ marginTop: 14, padding: 12, background: 'var(--bg-2)', border: '1px dashed var(--border-2)' }}>
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)' }}>HOW IT WORKS</div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.5 }}>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>HOW IT WORKS</div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.5 }}>
                 Miss a day → auto-listed here. First {RALLY_PUSH_CAP} rallies push a notification; the rest collect in the inbox (no spam). At 6am we send one combined nudge. First workout back unlists them + logs a comeback badge.
               </div>
             </div>
@@ -182,7 +182,7 @@ function RallyScreen({ state, setState, go }) {
 
         {tab === 'inbox' && (
           <>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
               {inbox.length === 0
                 ? "Empty. Keep the streak alive and it stays empty. If it breaks, the crew shows up."
                 : `${inbox.length} from the crew. Read them when you need to.`}
@@ -190,11 +190,11 @@ function RallyScreen({ state, setState, go }) {
             {inbox.map((msg, i) => (
               <div key={i} style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: 14, marginBottom: 8 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>✊ {msg.from}</div>
-                  <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>{msg.when}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent)' }}>✊ {msg.from}</div>
+                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>{msg.when}</div>
                 </div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{msg.city}</div>
-                <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 10, lineHeight: 1.4, fontStyle: 'italic' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 2 }}>{msg.city}</div>
+                <div style={{ fontSize: 14, color: 'var(--text)', marginTop: 10, lineHeight: 1.4, fontStyle: 'italic' }}>
                   "{msg.msg}"
                 </div>
               </div>

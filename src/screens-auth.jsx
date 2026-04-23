@@ -62,7 +62,7 @@ function RotatingPhrase() {
   return (
     <div style={{
       minHeight: 22,
-      fontSize: 12,
+      fontSize: 13,
       letterSpacing: 2,
       textAlign: 'center',
       color: 'var(--gold, #C9A24A)',
@@ -129,7 +129,7 @@ function AuthField({ label, value, onChange, placeholder, type = 'text', autoCom
   return (
     <div>
       <div className="mono uppercase" style={{
-        fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+        fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
       }}>{label}</div>
       <input
         type={type}
@@ -286,7 +286,7 @@ function AuthScreen({ onAuthed }) {
                 background: mode === m.id ? 'var(--accent, #8B1A1A)' : 'transparent',
                 border: `1px solid ${mode === m.id ? 'var(--accent, #8B1A1A)' : 'var(--border, #2A1B1B)'}`,
                 color: mode === m.id ? '#F2ECE2' : 'var(--text-mute, #8F857A)',
-                fontSize: 11, letterSpacing: 3, fontWeight: 700,
+                fontSize: 12, letterSpacing: 3, fontWeight: 700,
                 cursor: 'pointer',
               }}
             >
@@ -308,7 +308,7 @@ function AuthScreen({ onAuthed }) {
 
           <div>
             <div className="mono uppercase" style={{
-              fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+              fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
             }}>
               6-DIGIT PIN
             </div>
@@ -319,7 +319,7 @@ function AuthScreen({ onAuthed }) {
             <>
               <div>
                 <div className="mono uppercase" style={{
-                  fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+                  fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
                 }}>
                   CONFIRM PIN
                 </div>
@@ -336,7 +336,7 @@ function AuthScreen({ onAuthed }) {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div>
                   <div className="mono uppercase" style={{
-                    fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+                    fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
                   }}>
                     STATE
                   </div>
@@ -359,7 +359,7 @@ function AuthScreen({ onAuthed }) {
                 </div>
                 <div>
                   <div className="mono uppercase" style={{
-                    fontSize: 9, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
+                    fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)', marginBottom: 6,
                   }}>
                     AGE BRACKET
                   </div>
@@ -391,7 +391,7 @@ function AuthScreen({ onAuthed }) {
                 autoComplete="email"
               />
               <div className="mono" style={{
-                fontSize: 10, color: 'var(--text-mute, #8F857A)', letterSpacing: 1, marginTop: -6,
+                fontSize: 11, color: 'var(--text-mute, #8F857A)', letterSpacing: 1, marginTop: -6,
               }}>
                 Used for sign-in and PIN recovery. Kept private.
               </div>
@@ -400,7 +400,7 @@ function AuthScreen({ onAuthed }) {
 
           {err && (
             <div className="mono" style={{
-              fontSize: 11, color: '#FF6B6B', letterSpacing: 1,
+              fontSize: 12, color: '#FF6B6B', letterSpacing: 1,
               padding: '10px 12px', border: '1px solid #5A1F1F', background: '#1F0D0D',
             }}>
               {err}
@@ -408,7 +408,7 @@ function AuthScreen({ onAuthed }) {
           )}
           {info && (
             <div className="mono" style={{
-              fontSize: 11, color: 'var(--gold, #C9A24A)', letterSpacing: 1,
+              fontSize: 12, color: 'var(--gold, #C9A24A)', letterSpacing: 1,
             }}>
               {info}
             </div>
@@ -428,7 +428,7 @@ function AuthScreen({ onAuthed }) {
                 style={{
                   background: 'transparent', border: 'none',
                   color: 'var(--text-mute, #8F857A)',
-                  fontSize: 10, letterSpacing: 2, cursor: 'pointer',
+                  fontSize: 11, letterSpacing: 2, cursor: 'pointer',
                   padding: 6,
                 }}
               >
@@ -441,7 +441,7 @@ function AuthScreen({ onAuthed }) {
         {!apiEnabled && (
           <div className="mono" style={{
             marginTop: 'auto', paddingTop: 20, textAlign: 'center',
-            fontSize: 9, letterSpacing: 2, color: 'var(--text-mute, #8F857A)',
+            fontSize: 10, letterSpacing: 2, color: 'var(--text-mute, #8F857A)',
           }}>
             PREVIEW MODE · SUPABASE NOT CONFIGURED
           </div>

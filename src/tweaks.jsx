@@ -97,7 +97,7 @@ function TweaksPanel({ state, setState, onClose }) {
         maxHeight: '85%', overflowY: 'auto', animation: 'slide-up 0.25s ease-out',
       }}>
         <div style={{ padding: '16px 20px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>TWEAKS</div>
+          <div className="mono uppercase" style={{ fontSize: 12, letterSpacing: 3, color: 'var(--accent)' }}>TWEAKS</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 18 }}>×</button>
         </div>
         <HazardBar height={3} />
@@ -120,7 +120,7 @@ function TweaksPanel({ state, setState, onClose }) {
                   display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
                 }}>
                   <div style={{ width: 18, height: 18, background: a.accent, flexShrink: 0 }} />
-                  <div className="mono" style={{ fontSize: 10, letterSpacing: 1.5, color: 'var(--text)', textAlign: 'left' }}>{a.label}</div>
+                  <div className="mono" style={{ fontSize: 11, letterSpacing: 1.5, color: 'var(--text)', textAlign: 'left' }}>{a.label}</div>
                 </button>
               ))}
             </div>
@@ -135,7 +135,7 @@ function TweaksPanel({ state, setState, onClose }) {
 
           {ACCOUNTABILITY_ENABLED && (
             <Section title="ACCOUNTABILITY PARTNER · STREAK BREAK">
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
                 If you break the streak, we text this person. Extra accountability or pure chaos — your call.
               </div>
               <input
@@ -145,7 +145,7 @@ function TweaksPanel({ state, setState, onClose }) {
                 style={{
                   width: '100%', padding: '10px 12px', background: 'var(--card)',
                   border: '1px solid var(--border-2)', color: 'var(--text)',
-                  fontFamily: 'JetBrains Mono', fontSize: 12,
+                  fontFamily: 'JetBrains Mono', fontSize: 13,
                 }}
               />
             </Section>
@@ -155,14 +155,14 @@ function TweaksPanel({ state, setState, onClose }) {
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <div className="mono" style={{
                 flex: 1, padding: '10px 12px', background: 'var(--card)', border: '1px solid var(--border)',
-                fontSize: 13, letterSpacing: 2, color: 'var(--accent)',
+                fontSize: 14, letterSpacing: 2, color: 'var(--accent)',
               }}>{state.referralCode}</div>
               <GhostBtn onClick={() => { navigator.clipboard && navigator.clipboard.writeText(`dailymax.app/${state.referralCode}`); }}>COPY LINK</GhostBtn>
             </div>
           </Section>
 
           <Section title="SYNC LOCAL HISTORY">
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
               Pushes every locally-logged day to the server at once. Use this if your reps are on this device but not on the leaderboard. Safe to run more than once. <span style={{ color: 'var(--text)' }}>{historyCount}</span> local day(s) on file.
             </div>
             <GhostBtn onClick={syncHistory}>{syncing ? 'SYNCING…' : '↑ SYNC HISTORY'}</GhostBtn>
@@ -170,7 +170,7 @@ function TweaksPanel({ state, setState, onClose }) {
               <div className="mono" style={{
                 marginTop: 8, padding: '8px 10px',
                 background: 'var(--card)', border: '1px solid var(--border)',
-                color: 'var(--text-dim)', fontSize: 10, lineHeight: 1.5,
+                color: 'var(--text-dim)', fontSize: 11, lineHeight: 1.5,
               }}>
                 {syncMsg}
               </div>
@@ -178,7 +178,7 @@ function TweaksPanel({ state, setState, onClose }) {
           </Section>
 
           <Section title="DIAGNOSTIC">
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
               API: <span style={{ color: diag.apiEnabled ? 'var(--streak)' : '#FF8E8E' }}>{diag.apiEnabled ? 'ENABLED' : 'DISABLED'}</span><br/>
               Email: <span style={{ color: 'var(--text)' }}>{diag.email || '— (guest)'}</span><br/>
               User ID: <span style={{ color: 'var(--text)' }}>{diag.userId ? diag.userId.slice(0, 8) + '…' : '—'}</span><br/>
@@ -192,7 +192,7 @@ function TweaksPanel({ state, setState, onClose }) {
           </Section>
 
           <Section title="BUILD">
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.4 }}>
               Running <span style={{ color: 'var(--streak)' }}>{window.APP_BUILD || 'dev'}</span>. Stuck on an old version? Force a clean reload — unregisters the service worker and clears the cache.
             </div>
             <GhostBtn onClick={async () => {
@@ -211,7 +211,7 @@ function TweaksPanel({ state, setState, onClose }) {
           </Section>
 
           <Section title="ACCOUNT">
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
               {diag.email ? <>Signed in as <span style={{ color: 'var(--text)' }}>{diag.email}</span>.</> : 'Not signed in.'}
             </div>
             <GhostBtn onClick={async () => {
@@ -242,7 +242,7 @@ function TweaksPanel({ state, setState, onClose }) {
 function Section({ title, children }) {
   return (
     <div style={{ marginBottom: 22 }}>
-      <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginBottom: 8 }}>{title}</div>
+      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginBottom: 8 }}>{title}</div>
       {children}
     </div>
   );
@@ -255,7 +255,7 @@ function OptionRow({ active, children, onClick }) {
       background: active ? 'var(--accent-dim)' : 'var(--card)',
       border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
       color: active ? 'var(--accent)' : 'var(--text)',
-      fontSize: 11, letterSpacing: 1.5, textAlign: 'left', cursor: 'pointer',
+      fontSize: 12, letterSpacing: 1.5, textAlign: 'left', cursor: 'pointer',
     }}>{children}</button>
   );
 }

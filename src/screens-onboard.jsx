@@ -61,10 +61,10 @@ function OnboardScreen({ state, setState, go }) {
         <button onClick={back} disabled={step === 0} className="mono uppercase" style={{
           background: 'transparent', border: 'none',
           color: step === 0 ? 'transparent' : 'var(--text-mute)',
-          fontSize: 11, letterSpacing: 2, cursor: step === 0 ? 'default' : 'pointer',
+          fontSize: 12, letterSpacing: 2, cursor: step === 0 ? 'default' : 'pointer',
           padding: 4,
         }}>← BACK</button>
-        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--text-mute)' }}>
+        <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)' }}>
           {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
         </div>
         <div style={{ width: 48 }} />
@@ -74,11 +74,11 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'name' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 1 · WHO</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 1 · WHO</div>
             <div className="display" style={{ fontSize: 42, lineHeight: 1, marginTop: 10, letterSpacing: '-0.03em' }}>
               WHAT DO<br/>THEY CALL YOU?
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
               First name, nickname, whatever shows up on your Max Card.
             </div>
             <input
@@ -100,15 +100,15 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'where' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 2 · WHERE & WHEN</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 2 · WHERE & WHEN</div>
             <div className="display" style={{ fontSize: 40, lineHeight: 1, marginTop: 10 }}>
               YOUR CITY.<br/>YOUR DECADE.
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
               Puts you in the right bracket and city chart. Leaderboard stuff.
             </div>
 
-            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 26, marginBottom: 8 }}>CITY</div>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 26, marginBottom: 8 }}>CITY</div>
             <input
               value={city}
               onChange={e => setCity(e.target.value)}
@@ -120,7 +120,7 @@ function OnboardScreen({ state, setState, go }) {
               }}
             />
 
-            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 22, marginBottom: 8 }}>DECADE</div>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 22, marginBottom: 8 }}>DECADE</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6 }}>
               {['20s', '30s', '40s', '50s'].map(b => (
                 <button key={b} onClick={() => setBracket(b)} style={{
@@ -138,11 +138,11 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'bar' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 3 · THE PULL-UP QUESTION</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 3 · THE PULL-UP QUESTION</div>
             <div className="display" style={{ fontSize: 40, lineHeight: 1, marginTop: 10 }}>
               DO YOU HAVE<br/>A PULL-UP BAR?
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
               No judgment. If not, we swap station 4 for door-frame rows. Same muscles. No ceiling mount.
             </div>
 
@@ -158,7 +158,7 @@ function OnboardScreen({ state, setState, go }) {
                   textAlign: 'left', cursor: 'pointer', color: 'var(--text)',
                 }}>
                   <div className="display" style={{ fontSize: 16, letterSpacing: 1, color: hasBar === opt.v ? 'var(--accent)' : 'var(--text)' }}>{opt.t}</div>
-                  <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>{opt.s}</div>
+                  <div className="mono" style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>{opt.s}</div>
                 </button>
               ))}
             </div>
@@ -167,11 +167,11 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'context' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 4 · MEET YOU WHERE YOU ARE</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 4 · MEET YOU WHERE YOU ARE</div>
             <div className="display" style={{ fontSize: 38, lineHeight: 1, marginTop: 10 }}>
               PICK YOUR<br/>STARTING CONTEXT.
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
               Changes every station's variant. You can switch daily.
             </div>
 
@@ -195,8 +195,8 @@ function OnboardScreen({ state, setState, go }) {
                     border: `2px solid ${modifier === opt.id ? 'var(--accent)' : 'var(--border-2)'}`,
                   }} />
                   <div style={{ flex: 1 }}>
-                    <div className="display" style={{ fontSize: 14, letterSpacing: 1 }}>{opt.t}</div>
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{opt.s}</div>
+                    <div className="display" style={{ fontSize: 15, letterSpacing: 1 }}>{opt.t}</div>
+                    <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 2 }}>{opt.s}</div>
                   </div>
                 </button>
               ))}
@@ -206,15 +206,15 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'spouse' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 5 · OPTIONAL BUT EFFECTIVE</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 5 · OPTIONAL BUT EFFECTIVE</div>
             <div className="display" style={{ fontSize: 40, lineHeight: 1, marginTop: 10 }}>
               ACCOUNTABILITY<br/>WITH TEETH.
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.55 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.55 }}>
               If you break a streak, we text your partner a heads-up. It's just one line. You can turn it off anytime.
             </div>
 
-            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 26, marginBottom: 8 }}>
+            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--text-dim)', marginTop: 26, marginBottom: 8 }}>
               PARTNER'S NAME OR NUMBER
             </div>
             <input
@@ -231,13 +231,13 @@ function OnboardScreen({ state, setState, go }) {
               marginTop: 14, padding: '10px 12px',
               background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
             }}>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', lineHeight: 1.5 }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.5 }}>
                 Sample text: "Hey — {name || 'your dad'} just broke a streak on THE DAILY MAX. A little nudge goes a long way."
               </div>
             </div>
             <button onClick={() => { setSpouse(''); next(); }} className="mono uppercase" style={{
               marginTop: 14, background: 'transparent', border: 'none',
-              color: 'var(--text-mute)', fontSize: 11, letterSpacing: 2, cursor: 'pointer',
+              color: 'var(--text-mute)', fontSize: 12, letterSpacing: 2, cursor: 'pointer',
               padding: '8px 0', textDecoration: 'underline',
             }}>SKIP FOR NOW</button>
           </div>
@@ -245,17 +245,17 @@ function OnboardScreen({ state, setState, go }) {
 
         {current.id === 'oath' && (
           <div style={{ animation: 'fade-up 0.35s ease-out' }}>
-            <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 3, color: 'var(--accent)' }}>STEP 6 · THE ONLY RULE</div>
+            <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 3, color: 'var(--accent)' }}>STEP 6 · THE ONLY RULE</div>
             <div className="display" style={{ fontSize: 44, lineHeight: 0.95, marginTop: 10 }}>
               SIX<br/>MINUTES.<br/>EVERY DAY.
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-mute)', marginTop: 14, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 14, color: 'var(--text-mute)', marginTop: 14, lineHeight: 1.6 }}>
               Four stations. All you've got on each. Six-minute guide, not a wall clock.
               Don't break the chain. {spouse ? `${spouse} knows.` : 'Your crew shows up when you do.'}
             </div>
 
             <div style={{ marginTop: 24, padding: 16, background: 'var(--card)', border: '1px solid var(--border)' }}>
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--streak)' }}>YOUR SETUP</div>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--streak)' }}>YOUR SETUP</div>
               <div style={{ marginTop: 8, display: 'grid', gap: 6 }}>
                 <OathRow k="NAME"    v={name} />
                 <OathRow k="CITY"    v={`${city} · ${bracket}`} />
@@ -284,8 +284,8 @@ function OnboardScreen({ state, setState, go }) {
 function OathRow({ k, v }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-      <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)' }}>{k}</div>
-      <div className="mono" style={{ fontSize: 11, color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}>{v}</div>
+      <div className="mono uppercase" style={{ fontSize: 11, letterSpacing: 2, color: 'var(--text-mute)' }}>{k}</div>
+      <div className="mono" style={{ fontSize: 12, color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}>{v}</div>
     </div>
   );
 }

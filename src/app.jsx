@@ -108,6 +108,60 @@ function App() {
           }));
         }
       } catch {}
+      // Pull every workout row so history, lifetime totals, and the streak
+      // dots light up on a fresh device. Without this, the home calendar
+      // looks empty even though the server knows every day.
+      try {
+        const wRes = await api.client.from('workouts')
+          .select('day, pushups, squats, hollow_sec, pullups')
+          .eq('user_id', user.id)
+          .order('day', { ascending: true });
+        const rows = (wRes && wRes.data) || [];
+        if (rows.length) {
+          const server = rows.map(r => ({
+            date:    r.day,
+            pushups: r.pushups    || 0,
+            squats:  r.squats     || 0,
+            hollow:  r.hollow_sec || 0,
+            pullups: r.pullups    || 0,
+          }));
+          setState(s => {
+            // Merge: server wins on overlap (greatest), local-only days kept.
+            const byDate = new Map();
+            (s.history || []).forEach(h => { if (h && h.date) byDate.set(h.date, { ...h }); });
+            server.forEach(srv => {
+              const cur = byDate.get(srv.date) || {};
+              byDate.set(srv.date, {
+                date:    srv.date,
+                pushups: Math.max(cur.pushups || 0, srv.pushups),
+                squats:  Math.max(cur.squats  || 0, srv.squats),
+                hollow:  Math.max(cur.hollow  || 0, srv.hollow),
+                pullups: Math.max(cur.pullups || 0, srv.pullups),
+              });
+            });
+            const history = Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
+            const life = history.reduce((acc, h) => ({
+              pushups: acc.pushups + (h.pushups || 0),
+              squats:  acc.squats  + (h.squats  || 0),
+              hollow:  acc.hollow  + (h.hollow  || 0),
+              pullups: acc.pullups + (h.pullups || 0),
+            }), { pushups: 0, squats: 0, hollow: 0, pullups: 0 });
+            const totalReps = life.pushups + life.squats + life.hollow + life.pullups;
+            // If the most-recent server day is today, hydrate state.today too
+            // so the "LOGGED ✓" pill shows and the HOME streak dot fills.
+            const todayISO = new Date().toISOString().split('T')[0];
+            const todayRow = history.find(h => h.date === todayISO) || null;
+            return {
+              ...s,
+              history,
+              lifetimeBreakdown: life,
+              totalReps,
+              totalDays: Math.max(s.totalDays || 0, history.length),
+              today: todayRow || s.today,
+            };
+          });
+        }
+      } catch {}
       try {
         const stRes = await api.client.from('streaks')
           .select('current_len, longest_len, last_day')
@@ -220,6 +274,7 @@ function App() {
     case 'done':        view = <DoneScreen state={state} go={go} />; break;
     case 'share':       view = <MaxCardScreen state={state} go={go} />; break;
     case 'leaderboard': view = <LeaderboardScreen state={state} setState={setState} go={go} />; break;
+    case 'calendar':    view = <CalendarScreen state={state} go={go} />; break;
     case 'draft':       view = <DraftScreen state={state} go={go} />; break;
     case 'night':       view = <NightScreen state={state} go={go} />; break;
     case 'kickoff':     view = <KickoffScreen state={state} go={go} />; break;
@@ -318,6 +373,7 @@ function ScreenJumper({ current, go }) {
     { id: 'done',        label: 'DONE' },
     { id: 'share',       label: 'MAX CARD' },
     { id: 'leaderboard', label: 'LEADER' },
+    { id: 'calendar',    label: 'CALENDAR' },
     { id: 'draft',       label: 'DRAFT' },
     { id: 'night',       label: 'NIGHT' },
     { id: 'kickoff',     label: 'KICKOFF' },

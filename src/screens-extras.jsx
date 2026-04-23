@@ -1,5 +1,156 @@
 // Extra screens: Max Card share, Leaderboard, Draft (tier-matched), Night, Kickoff 24
 
+// Full-history calendar. Shows the last ~12 weeks as a GitHub-style grid with
+// gold cells on logged days. Tap a cell to see the day's totals.
+function CalendarScreen({ state, go }) {
+  const weeks = 14; // ~3 months visible
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  // Align grid so the rightmost column ends on today.
+  const end = new Date(today);
+  const start = new Date(end); start.setDate(start.getDate() - (weeks * 7 - 1));
+  const iso = (d) => d.toISOString().split('T')[0];
+  const byDate = {};
+  (state.history || []).forEach(h => { if (h && h.date) byDate[h.date] = h; });
+  if (state.today && state.today.date) byDate[state.today.date] = { ...(byDate[state.today.date] || {}), ...state.today };
+
+  const cells = [];
+  for (let i = 0; i < weeks * 7; i++) {
+    const d = new Date(start); d.setDate(d.getDate() + i);
+    const k = iso(d);
+    const hit = byDate[k];
+    cells.push({ k, d, hit });
+  }
+  const [sel, setSel] = useState(null);
+  const selHit = sel ? byDate[sel] : null;
+
+  const monthLabels = [];
+  let lastMonth = -1;
+  for (let col = 0; col < weeks; col++) {
+    const first = cells[col * 7];
+    const m = first.d.getMonth();
+    monthLabels.push(m !== lastMonth ? first.d.toLocaleString('en', { month: 'short' }).toUpperCase() : '');
+    lastMonth = m;
+  }
+
+  const logged = Object.keys(byDate).length;
+  const lastWeek = cells.slice(-7).filter(c => c.hit).length;
+
+  return (
+    <Shell>
+      <TopBar
+        left={<IconBtn onClick={() => go('home')}>←</IconBtn>}
+        title="CALENDAR"
+        sub={`${logged} TOTAL · ${lastWeek}/7 THIS WEEK`}
+      />
+      <HazardBar height={3} />
+      <div style={{ padding: 20, flex: 1 }}>
+
+        <div style={{
+          background: 'var(--card)', border: '1px solid var(--border)',
+          padding: 14, marginBottom: 14,
+        }}>
+          <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--text-mute)', marginBottom: 10 }}>
+            LAST {weeks} WEEKS
+          </div>
+
+          {/* month row */}
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${weeks}, 1fr)`, gap: 3, marginBottom: 4 }}>
+            {monthLabels.map((m, i) => (
+              <div key={i} className="mono" style={{ fontSize: 7, color: 'var(--text-mute)', letterSpacing: 0.5, textAlign: 'left' }}>{m}</div>
+            ))}
+          </div>
+
+          {/* grid: 7 rows × weeks columns */}
+          <div style={{ display: 'flex', gap: 3 }}>
+            {Array.from({ length: weeks }).map((_, col) => (
+              <div key={col} style={{ flex: 1, display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gap: 3 }}>
+                {Array.from({ length: 7 }).map((_, row) => {
+                  const c = cells[col * 7 + row];
+                  const isToday = c.k === iso(today);
+                  const isFuture = c.d > today;
+                  return (
+                    <button
+                      key={row}
+                      onClick={() => !isFuture && setSel(c.k)}
+                      disabled={isFuture}
+                      title={c.k}
+                      style={{
+                        aspectRatio: '1 / 1',
+                        background: isFuture
+                          ? 'transparent'
+                          : c.hit ? 'var(--streak)' : 'var(--card-2)',
+                        border: isToday
+                          ? '1px solid var(--accent)'
+                          : c.hit ? 'none' : '1px solid var(--border)',
+                        borderRadius: 2,
+                        padding: 0, cursor: isFuture ? 'default' : 'pointer',
+                        opacity: isFuture ? 0.2 : 1,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+            <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', letterSpacing: 1.5 }}>TAP A DAY FOR DETAIL</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div style={{ width: 10, height: 10, background: 'var(--card-2)', border: '1px solid var(--border)' }} />
+              <div style={{ width: 10, height: 10, background: 'var(--streak)' }} />
+              <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)' }}>LOGGED</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Day detail */}
+        {sel && (
+          <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border-2)', padding: 14, marginBottom: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text)' }}>{sel}</div>
+              <button onClick={() => setSel(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: 16, cursor: 'pointer' }}>×</button>
+            </div>
+            {selHit ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+                <DayStat label="PUSH"   v={selHit.pushups} />
+                <DayStat label="SQUAT"  v={selHit.squats} />
+                <DayStat label="HOLD"   v={selHit.hollow} unit="s" />
+                <DayStat label="PULL"   v={selHit.pullups} />
+              </div>
+            ) : (
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5 }}>NO ENTRY</div>
+            )}
+          </div>
+        )}
+
+        {/* Lifetime summary */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
+          {CORE_EXERCISES.map(ex => (
+            <div key={ex.id} style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '10px 8px' }}>
+              <div className="mono uppercase" style={{ fontSize: 7, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{ex.short} LIFE</div>
+              <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1, marginTop: 4 }}>
+                {(state.lifetimeBreakdown[ex.id] || 0).toLocaleString()}
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </Shell>
+  );
+}
+
+function DayStat({ label, v, unit }) {
+  return (
+    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', padding: '8px 6px', textAlign: 'center' }}>
+      <div className="mono uppercase" style={{ fontSize: 7, letterSpacing: 1.5, color: 'var(--text-mute)' }}>{label}</div>
+      <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1, marginTop: 4 }}>
+        {v || 0}{unit && <span className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginLeft: 1 }}>{unit}</span>}
+      </div>
+    </div>
+  );
+}
+
 function MaxCardScreen({ state, go }) {
   const t = state.today || { pushups: state.bests.pushups, squats: state.bests.squats, hollow: state.bests.hollow, pullups: state.bests.pullups };
   const total = t.pushups + t.squats + t.hollow + t.pullups;
@@ -526,4 +677,4 @@ function KickoffScreen({ state, go }) {
   );
 }
 
-Object.assign(window, { MaxCardScreen, LeaderboardScreen, DraftScreen, NightScreen, KickoffScreen });
+Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, DraftScreen, NightScreen, KickoffScreen });

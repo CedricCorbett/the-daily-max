@@ -70,8 +70,14 @@
   button { font-family: inherit; cursor: pointer; }
   input, textarea, select { font-family: inherit; }
 
-  /* scroll area */
-  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  /* scroll area — respect iOS safe area (Dynamic Island / notch + home indicator) */
+  .screen {
+    position: absolute; inset: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    display: flex; flex-direction: column;
+    overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+  }
   .screen::-webkit-scrollbar { display: none; }
 
   /* utility */

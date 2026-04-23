@@ -450,6 +450,340 @@ function LeaderboardScreen({ state, setState, go }) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// US STATE TILE MAP — 50 states + DC on a 12×8 brutalist grid.
+// Coordinates are [row, col]. Layout is ~geographically suggestive, not
+// exact. AK + HI tucked along the left column, ME top-right, FL bottom-
+// right. Passes the vibe check; not a cartography exam.
+// ═══════════════════════════════════════════════════════════════════════
+const STATE_TILES = {
+  ME: [0, 11],
+  AK: [1, 0],  VT: [1, 9],  NH: [1, 10],
+  WA: [2, 1],  ID: [2, 2],  MT: [2, 3],  ND: [2, 4],  MN: [2, 5],
+  WI: [2, 8],  MI: [2, 9],  NY: [2, 10], MA: [2, 11],
+  OR: [3, 1],  NV: [3, 2],  WY: [3, 3],  SD: [3, 4],  IA: [3, 5],
+  IL: [3, 6],  IN: [3, 7],  OH: [3, 8],  PA: [3, 9],  NJ: [3, 10], CT: [3, 11],
+  CA: [4, 1],  UT: [4, 2],  CO: [4, 3],  NE: [4, 4],  MO: [4, 5],
+  KY: [4, 6],  WV: [4, 7],  VA: [4, 8],  MD: [4, 9],  DE: [4, 10], RI: [4, 11],
+  AZ: [5, 2],  NM: [5, 3],  KS: [5, 4],  AR: [5, 5],  TN: [5, 6],
+  NC: [5, 7],  SC: [5, 8],  DC: [5, 9],
+  HI: [6, 0],  OK: [6, 4],  LA: [6, 5],  MS: [6, 6],  AL: [6, 7],  GA: [6, 8],
+  TX: [7, 4],  FL: [7, 9],
+};
+const STATE_NAMES = {
+  AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',
+  CT:'Connecticut',DE:'Delaware',DC:'D.C.',FL:'Florida',GA:'Georgia',HI:'Hawaii',
+  ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',
+  LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',
+  MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',
+  NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',
+  NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',
+  PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',
+  TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
+  WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',
+};
+
+// Tile grid. `myState` gets the gold ring + oxblood glow. Any state in
+// `champsByState` gets a gold corner dot. Tap to open the ladder modal.
+function StateMap({ myState, champsByState, onPick }) {
+  const ROWS = 8;
+  const COLS = 12;
+  const tiles = Object.entries(STATE_TILES);
+  return (
+    <div style={{
+      background: 'var(--bg-2)', border: '1px solid var(--border-2)',
+      padding: 10, marginBottom: 12, position: 'relative', overflow: 'hidden',
+    }}>
+      {/* faint radial scanner glow behind your state — makes it feel alive */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at 30% 30%, rgba(139,26,26,0.08) 0%, transparent 60%)',
+        pointerEvents: 'none',
+      }} />
+      <div className="mono uppercase" style={{
+        fontSize: 9, letterSpacing: 2.5, color: 'var(--text-mute)',
+        marginBottom: 8, display: 'flex', justifyContent: 'space-between',
+      }}>
+        <span>REGIONAL BATTLE MAP</span>
+        <span style={{ color: 'var(--streak)' }}>● CHAMP  <span style={{ color: 'var(--accent)' }}>◆ YOU</span></span>
+      </div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+        gridTemplateRows: `repeat(${ROWS}, 1fr)`,
+        gap: 3,
+        aspectRatio: `${COLS} / ${ROWS}`,
+        position: 'relative', zIndex: 1,
+      }}>
+        {tiles.map(([abbr, [r, c]]) => {
+          const isMine = abbr === myState;
+          const champ = champsByState && champsByState[abbr];
+          const hasChamp = !!champ;
+          return (
+            <button
+              key={abbr}
+              onClick={() => onPick && onPick(abbr)}
+              title={hasChamp ? `${STATE_NAMES[abbr]} · ${champ.name}` : STATE_NAMES[abbr]}
+              className="mono"
+              style={{
+                gridColumn: c + 1,
+                gridRow: r + 1,
+                aspectRatio: '1 / 1',
+                padding: 0,
+                background: isMine ? 'var(--accent-dim)'
+                          : hasChamp ? '#1A1313'
+                          : 'var(--card)',
+                border: isMine ? '1px solid var(--streak)'
+                      : hasChamp ? '1px solid var(--border-2)'
+                      : '1px solid var(--border)',
+                color: isMine ? 'var(--streak)'
+                     : hasChamp ? 'var(--text-dim)'
+                     : 'var(--text-mute)',
+                fontSize: 8,
+                fontWeight: 700,
+                letterSpacing: 0.5,
+                cursor: 'pointer',
+                position: 'relative',
+                boxShadow: isMine ? '0 0 16px rgba(139,26,26,0.45), inset 0 0 0 1px rgba(201,162,74,0.3)' : 'none',
+                transition: 'transform 120ms ease, box-shadow 120ms ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.zIndex = '2'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.zIndex = '1'; }}
+            >
+              {abbr}
+              {hasChamp && (
+                <span style={{
+                  position: 'absolute', top: 2, right: 2,
+                  width: 4, height: 4, borderRadius: '50%',
+                  background: 'var(--streak)',
+                  boxShadow: '0 0 4px var(--streak)',
+                }} />
+              )}
+              {isMine && (
+                <span style={{
+                  position: 'absolute', bottom: 1, left: 1,
+                  fontSize: 6, color: 'var(--accent)', fontWeight: 900,
+                }}>◆</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <div className="mono" style={{
+        fontSize: 9, color: 'var(--text-mute)', letterSpacing: 1.5,
+        marginTop: 8, textAlign: 'center',
+      }}>
+        TAP ANY STATE TO SEE THE REIGNING CHAMP & TOP 10 CONTENDERS
+      </div>
+    </div>
+  );
+}
+
+// 3D popup for a single state's ladder. Scales in from nowhere with
+// perspective + rotateX depth so it feels like the state lifted off the
+// grid. Champ is rank 1 (big card); contenders 2–10 list beneath.
+function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge, sentMap, busyId }) {
+  const title = STATE_NAMES[abbr] || abbr;
+  const champ = (rows || []).find(r => r.rank === 1);
+  const contenders = (rows || []).filter(r => r.rank > 1);
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'absolute', inset: 0,
+        background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+        zIndex: 50,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16, perspective: '1000px',
+        animation: 'fade-up 180ms ease-out',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%', maxHeight: '92%', overflowY: 'auto',
+          background: 'var(--card)',
+          border: '1px solid var(--streak)',
+          boxShadow: '0 40px 80px rgba(201,162,74,0.25), 0 0 0 1px rgba(201,162,74,0.15), inset 0 1px 0 rgba(255,255,255,0.04)',
+          transform: 'rotateX(6deg) translateZ(40px)',
+          transformStyle: 'preserve-3d',
+          animation: 'slide-up 260ms cubic-bezier(0.2, 0.9, 0.25, 1.1)',
+        }}
+      >
+        {/* gold stripe header w/ state name */}
+        <div className="gold-stripe" style={{ height: 5 }} />
+        <div style={{
+          padding: '14px 16px', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'linear-gradient(180deg, rgba(201,162,74,0.08) 0%, transparent 100%)',
+        }}>
+          <div>
+            <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2.5, color: 'var(--streak)' }}>
+              STATE · {abbr}
+            </div>
+            <div className="display" style={{ fontSize: 24, lineHeight: 1, marginTop: 2, color: 'var(--text)' }}>
+              {title.toUpperCase()}
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            background: 'none', border: 'none', color: 'var(--text-mute)',
+            fontSize: 24, cursor: 'pointer', padding: 4,
+          }}>×</button>
+        </div>
+
+        <div style={{ padding: '0 16px 16px' }}>
+          {loading && (
+            <div className="mono" style={{
+              padding: 20, textAlign: 'center', fontSize: 11, letterSpacing: 1.5,
+              color: 'var(--text-mute)',
+            }}>LOADING LADDER…</div>
+          )}
+
+          {!loading && (!rows || rows.length === 0) && (
+            <div style={{
+              background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
+              padding: 20, textAlign: 'center',
+            }}>
+              <div className="display" style={{ fontSize: 16, color: 'var(--text)' }}>NO CREWS YET.</div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5, marginTop: 6 }}>
+                THE THRONE IS UNCLAIMED. FOUND A CREW HERE FIRST.
+              </div>
+            </div>
+          )}
+
+          {/* CHAMP CARD — big, gold-edged, crown icon */}
+          {champ && (
+            <div style={{
+              background: 'linear-gradient(180deg, rgba(201,162,74,0.12) 0%, var(--card-2) 100%)',
+              border: '1px solid var(--streak)',
+              padding: 14,
+              marginBottom: 12,
+              position: 'relative',
+              boxShadow: '0 8px 20px rgba(201,162,74,0.15)',
+            }}>
+              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--streak)' }}>
+                ♛ REIGNING CHAMP
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 6 }}>
+                <div className="display" style={{
+                  width: 54, height: 54,
+                  background: 'var(--streak-dim)', color: 'var(--streak)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 24, border: '1px solid var(--streak)',
+                }}>◆</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="display" style={{ fontSize: 18, color: 'var(--text)', lineHeight: 1.1 }}>
+                    {champ.name}
+                    {champ.tag && <span className="mono" style={{ fontSize: 11, color: 'var(--streak)', marginLeft: 6 }}>[{champ.tag}]</span>}
+                  </div>
+                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 3 }}>
+                    {champ.member_count} · TOTAL PR {champ.total_pr} · AVG {champ.avg_pr} · {champ.active_today} TODAY
+                  </div>
+                </div>
+              </div>
+              {champ.description && (
+                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 10, lineHeight: 1.4 }}>
+                  {champ.description}
+                </div>
+              )}
+              {!champ.is_yours && yourClanId && (
+                <button
+                  onClick={() => onChallenge && onChallenge(champ)}
+                  disabled={sentMap[champ.clan_id] || busyId === champ.clan_id}
+                  className="mono uppercase"
+                  style={{
+                    width: '100%', marginTop: 12, padding: '12px 0',
+                    background: sentMap[champ.clan_id] ? 'var(--streak)' : 'var(--accent)',
+                    border: 'none', color: sentMap[champ.clan_id] ? '#0A0A0A' : '#F2ECE2',
+                    fontSize: 11, letterSpacing: 2.5, fontWeight: 700,
+                    cursor: (sentMap[champ.clan_id] || busyId === champ.clan_id) ? 'default' : 'pointer',
+                    opacity: busyId === champ.clan_id ? 0.6 : 1,
+                  }}
+                >
+                  {sentMap[champ.clan_id] ? '✓ CHALLENGE SENT' : busyId === champ.clan_id ? 'SENDING…' : '⚔ CHALLENGE THE THRONE'}
+                </button>
+              )}
+              {champ.is_yours && (
+                <div className="mono uppercase" style={{
+                  marginTop: 10, padding: '8px 10px', textAlign: 'center',
+                  background: 'var(--streak-dim)', border: '1px solid var(--streak)',
+                  fontSize: 10, letterSpacing: 2, color: 'var(--streak)',
+                }}>
+                  ♛ YOUR CREW HOLDS THE CROWN
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* CONTENDER LIST */}
+          {contenders.length > 0 && (
+            <>
+              <div className="mono uppercase" style={{
+                fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6,
+              }}>
+                CONTENDERS · TOP {contenders.length}
+              </div>
+              {contenders.map(r => {
+                const isSent = !!sentMap[r.clan_id];
+                const busy = busyId === r.clan_id;
+                const mine = r.is_yours;
+                return (
+                  <div key={r.clan_id} style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 12px',
+                    background: mine ? 'var(--accent-dim)' : 'var(--bg-2)',
+                    border: `1px solid ${mine ? 'var(--accent)' : 'var(--border)'}`,
+                    marginBottom: 4,
+                  }}>
+                    <div className="display" style={{
+                      width: 26, fontSize: 14,
+                      color: 'var(--text-mute)', textAlign: 'center',
+                    }}>{r.rank}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {r.name}{r.tag && <span className="mono" style={{ fontSize: 9, color: 'var(--streak)', marginLeft: 4 }}>[{r.tag}]</span>}
+                        {mine && <span className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginLeft: 6 }}>· YOU</span>}
+                      </div>
+                      <div className="mono" style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 1 }}>
+                        {r.member_count} · PR {r.total_pr} · AVG {r.avg_pr}
+                      </div>
+                    </div>
+                    {!mine && yourClanId && (
+                      <button
+                        onClick={() => onChallenge && onChallenge(r)}
+                        disabled={isSent || busy}
+                        className="mono uppercase"
+                        style={{
+                          padding: '6px 10px',
+                          background: isSent ? 'var(--streak)' : 'transparent',
+                          border: `1px solid ${isSent ? 'var(--streak)' : 'var(--accent)'}`,
+                          color: isSent ? '#0A0A0A' : 'var(--accent)',
+                          fontSize: 9, letterSpacing: 1.5, fontWeight: 700,
+                          cursor: (isSent || busy) ? 'default' : 'pointer',
+                          opacity: busy ? 0.6 : 1,
+                        }}
+                      >{isSent ? 'SENT' : busy ? '...' : 'CHALLENGE'}</button>
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          )}
+
+          <div className="mono" style={{
+            marginTop: 14, padding: 10,
+            background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
+            fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.2, lineHeight: 1.5,
+          }}>
+            CHALLENGES ARE OPEN ANYTIME. ROSTER LOCKS ON ACCEPT · 7 DAYS.
+            <br/>IN CLASS: RAW REPS WIN. CROSS CLASS: % OF PR (CAP 100%).
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // DRAFT — tier-matched 1v1.
 // In-class: opponent within ±10% of your PR total → raw reps wins.
 // Cross-class: auto-switches to % of PR scoring (effort scored, cap 1.0).
@@ -464,7 +798,7 @@ function BattleScreen({ state, go }) {
   const api = window.api;
   const apiOk = !!(api && api.enabled);
 
-  const [tab, setTab] = useState('solo');              // 'solo' | 'crew'
+  const [tab, setTab] = useState('solo');              // 'solo' | 'crew' | 'regional'
   const [mode, setMode] = useState('all');             // all | inclass | effort (solo only)
   const [bracketOnly, setBracketOnly] = useState(false); // solo bracket filter
   const [opponents, setOpponents] = useState(null);    // null = loading, [] = empty
@@ -472,6 +806,13 @@ function BattleScreen({ state, go }) {
   const [err, setErr] = useState('');
   const [sent, setSent] = useState({});                // { [userId|clanId]: true }
   const [sending, setSending] = useState(null);
+
+  // REGIONAL MAP state — one champ-per-state payload + the currently-open
+  // state's full ladder modal.
+  const [champsByState, setChampsByState] = useState({});
+  const [pickedState, setPickedState] = useState(null);
+  const [ladderRows, setLadderRows] = useState(null);
+  const [ladderLoading, setLadderLoading] = useState(false);
 
   const loadSolo = async () => {
     setErr('');
@@ -492,11 +833,38 @@ function BattleScreen({ state, go }) {
     setCrews(Array.isArray(data) ? data : []);
   };
 
+  const loadChamps = async () => {
+    setErr('');
+    if (!apiOk) { setChampsByState({}); return; }
+    const { data, error } = await api.mapStateChamps();
+    if (error) { setErr(error.message || 'Could not load champs.'); return; }
+    const map = {};
+    (Array.isArray(data) ? data : []).forEach(r => { if (r.state_code) map[r.state_code] = r; });
+    setChampsByState(map);
+  };
+
+  const loadLadder = async (abbr) => {
+    setLadderRows(null);
+    setLadderLoading(true);
+    if (!apiOk) { setLadderLoading(false); setLadderRows([]); return; }
+    const { data, error } = await api.listStateCrewLadder({ state: abbr, limit: 10 });
+    setLadderLoading(false);
+    if (error) { setErr(error.message || 'Could not load ladder.'); setLadderRows([]); return; }
+    setLadderRows(Array.isArray(data) ? data : []);
+  };
+
   useEffect(() => {
-    if (tab === 'solo') loadSolo();
-    else                loadCrews();
+    if (tab === 'solo')         loadSolo();
+    else if (tab === 'crew')    loadCrews();
+    else if (tab === 'regional') loadChamps();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, bracketOnly]);
+
+  // When the user taps a state, fetch its ladder.
+  useEffect(() => {
+    if (pickedState) loadLadder(pickedState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickedState]);
 
   // Shape the solo pool with in-class / cross-class flags against your PR.
   const soloPool = (opponents || []).map(p => {
@@ -563,8 +931,9 @@ function BattleScreen({ state, go }) {
         {/* TAB SWITCH */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
           {[
-            { id: 'solo', l: '1 vs 1' },
-            { id: 'crew', l: 'CREW vs CREW' },
+            { id: 'solo',     l: '1v1' },
+            { id: 'crew',     l: 'CREW' },
+            { id: 'regional', l: 'MAP' },
           ].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} className="mono uppercase" style={{
               flex: 1, padding: '10px 0',
@@ -778,6 +1147,42 @@ function BattleScreen({ state, go }) {
           </>
         )}
 
+        {/* ============= REGIONAL MAP TAB ============= */}
+        {tab === 'regional' && (
+          <>
+            <StateMap
+              myState={state.regionState || null}
+              champsByState={champsByState}
+              onPick={(abbr) => setPickedState(abbr)}
+            />
+            {Object.keys(champsByState).length === 0 && apiOk && (
+              <div className="mono" style={{
+                padding: 10, fontSize: 10, color: 'var(--text-mute)',
+                letterSpacing: 1.5, textAlign: 'center',
+              }}>
+                NO STATES CLAIMED YET · BE THE FIRST CREW IN YOUR STATE TO HOIST THE GOLD DOT
+              </div>
+            )}
+          </>
+        )}
+
+        {/* 3D modal overlay — lives above all tabs */}
+        {pickedState && (
+          <StateChampModal
+            abbr={pickedState}
+            rows={ladderRows}
+            loading={ladderLoading}
+            yourClanId={state.clanId}
+            onClose={() => { setPickedState(null); setLadderRows(null); }}
+            onChallenge={(crewLike) => {
+              // Reuse challengeCrew — it expects { clan_id } shape which ladder rows have.
+              challengeCrew(crewLike);
+            }}
+            sentMap={sent}
+            busyId={sending}
+          />
+        )}
+
         <div style={{ marginTop: 14, background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: 14 }}>
           <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>OR INVITE A FRIEND</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -919,4 +1324,4 @@ function KickoffScreen({ state, go }) {
   );
 }
 
-Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, BattleScreen, DraftScreen, NightScreen, KickoffScreen });
+Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, BattleScreen, DraftScreen, NightScreen, KickoffScreen, StateMap, StateChampModal });

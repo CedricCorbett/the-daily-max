@@ -3,7 +3,7 @@
 // below is also embedded in index.html as a cache-buster on the JSX src URLs,
 // so bumping it here AND in index.html kicks stale clients off the old code
 // without requiring the user to delete their bookmark.
-const CACHE_VERSION = 'dm-v18';
+const CACHE_VERSION = 'dm-v19';
 const SHELL = [
   '/',
   '/index.html',

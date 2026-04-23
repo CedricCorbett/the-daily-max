@@ -195,6 +195,22 @@
       return client.rpc('list_battle_crews', { p_limit: limit });
     },
 
+    // Map: one row per state with a reigning champ. Tiny payload for the tile
+    // grid so we can highlight states with crews without fetching every ladder.
+    async mapStateChamps() {
+      if (!client) return { data: null, error: null };
+      return client.rpc('map_state_champs');
+    },
+
+    // Full top-N ladder for a single state — champ is rank=1, contenders 2–N.
+    async listStateCrewLadder({ state, limit = 10 } = {}) {
+      if (!client) return { data: null, error: null };
+      return client.rpc('list_state_crew_ladder', {
+        p_state: state,
+        p_limit: limit,
+      });
+    },
+
     async sendRally(toUser, msg, cap = 7) {
       if (!client) return null;
       return client.rpc('send_rally', { p_to: toUser, p_msg: msg, p_cap: cap });

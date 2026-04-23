@@ -18,7 +18,6 @@
     });
   }
 
-  const SYNTH_DOMAIN = 'dailymax.app';
   const isEmail = (s) => typeof s === 'string' && s.includes('@');
 
   const api = {
@@ -27,7 +26,7 @@
 
     // ───────── auth ─────────
 
-    async signUp({ username, pin, displayName, recoveryEmail, regionState, ageBracket }) {
+    async signUp({ username, pin, displayName, email, regionState, ageBracket }) {
       if (!client) return null;
       const uname = String(username || '').trim().toLowerCase();
       if (!uname || !/^[a-z0-9_]{3,20}$/.test(uname)) {
@@ -36,19 +35,21 @@
       if (!/^\d{6}$/.test(pin)) {
         return { error: { message: 'PIN must be 6 digits.' } };
       }
+      const cleanEmail = String(email || '').trim().toLowerCase();
+      if (!cleanEmail || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
+        return { error: { message: 'Enter a valid email.' } };
+      }
       const { data: avail } = await client.rpc('username_available', { p_username: uname });
       if (avail === false) {
         return { error: { message: 'That username is taken.' } };
       }
-      const synthEmail = `${uname}@${SYNTH_DOMAIN}`;
       return client.auth.signUp({
-        email: synthEmail,
+        email: cleanEmail,
         password: pin,
         options: {
           data: {
             username: uname,
             display_name: displayName || uname,
-            recovery_email: recoveryEmail || null,
             region_state: regionState || null,
             age_bracket: ageBracket || null,
           },

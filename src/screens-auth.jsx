@@ -179,7 +179,8 @@ function AuthScreen({ onAuthed }) {
     if (pin.length !== 6) return 'PIN must be 6 digits.';
     if (BANNED_PINS.has(pin)) return 'Pick a less obvious PIN.';
     if (pin !== pin2) return "PINs don't match.";
-    if (recoveryEmail && !/^\S+@\S+\.\S+$/.test(recoveryEmail.trim())) return 'Recovery email looks off.';
+    if (!recoveryEmail.trim()) return 'Email is required.';
+    if (!/^\S+@\S+\.\S+$/.test(recoveryEmail.trim())) return "That email doesn't look right.";
     if (!regionState) return 'Pick a state (or OTHER).';
     if (!ageBracket) return 'Pick an age bracket.';
     return null;
@@ -232,7 +233,7 @@ function AuthScreen({ onAuthed }) {
         username: handle.trim(),
         pin,
         displayName: displayName.trim() || handle.trim(),
-        recoveryEmail: recoveryEmail.trim() || null,
+        email: recoveryEmail.trim(),
         regionState,
         ageBracket,
       });
@@ -382,20 +383,18 @@ function AuthScreen({ onAuthed }) {
               </div>
 
               <AuthField
-                label="RECOVERY EMAIL (OPTIONAL)"
+                label="EMAIL"
                 value={recoveryEmail}
                 onChange={setRecoveryEmail}
-                placeholder="only if you want PIN reset"
+                placeholder="you@mail.com"
                 type="email"
                 autoComplete="email"
               />
-              {!recoveryEmail && (
-                <div className="mono" style={{
-                  fontSize: 10, color: 'var(--text-mute, #8F857A)', letterSpacing: 1, marginTop: -6,
-                }}>
-                  Skip and there's no way back if you forget your PIN.
-                </div>
-              )}
+              <div className="mono" style={{
+                fontSize: 10, color: 'var(--text-mute, #8F857A)', letterSpacing: 1, marginTop: -6,
+              }}>
+                Used for sign-in and PIN recovery. Kept private.
+              </div>
             </>
           )}
 

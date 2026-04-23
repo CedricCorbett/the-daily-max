@@ -436,6 +436,12 @@ function AuthScreen({ onAuthed }) {
               </button>
             </div>
           )}
+
+          {/* THE MANIFESTO — shown on both sign-in and sign-up. First
+              impression copy. Stoic, crew-coded, zero fluff. Same voice
+              as the rotating header phrases so the page reads as one
+              sustained thought, not a landing blurb. */}
+          <Manifesto />
         </div>
 
         {!apiEnabled && (
@@ -451,4 +457,80 @@ function AuthScreen({ onAuthed }) {
   );
 }
 
+// ─────────────────────── MANIFESTO ───────────────────────
+// Permanent copy under the PIN form. Brutalist, stoic, on-brand.
+// Three blocks: THE METHOD (what you do) · THE POINT (why the cap
+// at 100% of your PR) · THE CREW (how races work). Keep each block
+// to two sentences max — this is a doorway, not a landing page.
+function Manifesto() {
+  const H = ({ children, color }) => (
+    <div className="mono uppercase" style={{
+      fontSize: 10, letterSpacing: 3, color: color || 'var(--accent, #8B1A1A)',
+      marginBottom: 6, marginTop: 16,
+    }}>
+      {children}
+    </div>
+  );
+  const P = ({ children }) => (
+    <div style={{
+      fontSize: 13, lineHeight: 1.55, color: 'var(--text-dim, #E5E0D6)',
+      letterSpacing: 0.2,
+    }}>
+      {children}
+    </div>
+  );
+  return (
+    <div style={{
+      marginTop: 24, paddingTop: 20,
+      borderTop: '1px solid var(--border, #2A1B1B)',
+    }}>
+      <div className="display" style={{
+        fontSize: 22, letterSpacing: '-0.01em',
+        color: 'var(--text, #FFFFFF)', textAlign: 'center',
+        marginBottom: 4,
+      }}>
+        THE DAILY MAX
+      </div>
+      <div className="mono uppercase" style={{
+        fontSize: 10, letterSpacing: 4, textAlign: 'center',
+        color: 'var(--gold, #C9A24A)', marginBottom: 18,
+      }}>
+        SIX MINUTES · FOUR STATIONS · EVERY DAY
+      </div>
+
+      <H>The Method</H>
+      <P>
+        Push-ups. Air squats. Hollow hold. Pull-ups. One trip through all four,
+        ninety seconds each. Whatever was in you today goes in the book — ten
+        reps counts, one set counts, partial counts. Zero is the only number
+        that breaks the streak.
+      </P>
+
+      <H color="var(--gold, #C9A24A)">The Point</H>
+      <P>
+        You compete against yourself. Effort is capped at 100% of your own PR,
+        so no one can out-work you by being bigger. Your ceiling rises every
+        time you beat it, and it never steps back down. Movement over ego.
+      </P>
+
+      <H>The Crew</H>
+      <P>
+        Train solo, race together. Crews claim states and dethrone each
+        other over three days. In class, raw reps win. Out of class, the
+        hungrier crew — measured by mean percent of PR — beats the quiet
+        giant. Show up for yourself. Show up for the crew.
+      </P>
+
+      <div className="mono uppercase" style={{
+        fontSize: 10, letterSpacing: 3, color: 'var(--text-mute, #8F857A)',
+        textAlign: 'center', marginTop: 20, lineHeight: 1.6,
+      }}>
+        TODAY'S MAX IS WHATEVER WAS IN YOU TODAY.<br/>
+        THAT IS ENOUGH.
+      </div>
+    </div>
+  );
+}
+
 window.AuthScreen = AuthScreen;
+window.Manifesto = Manifesto;

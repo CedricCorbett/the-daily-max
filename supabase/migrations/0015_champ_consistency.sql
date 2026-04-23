@@ -15,7 +15,15 @@
 -- `active_7d` is surfaced in the payload so the client can render the
 -- consistency gauge on the champ card.
 --
--- Safe to run twice. Pure CREATE OR REPLACE.
+-- Safe to run twice.
+--
+-- NOTE: both return tables gain a new column (`active_7d`), so Postgres
+-- requires a DROP first — CREATE OR REPLACE can't change the OUT signature.
+-- Dropping is safe: grants get re-issued at the bottom, and no other DB
+-- object holds a reference to either function.
+
+drop function if exists public.map_state_champs();
+drop function if exists public.list_state_crew_ladder(text, int);
 
 -- ───────────────────────── CHAMPS MAP ─────────────────────────
 

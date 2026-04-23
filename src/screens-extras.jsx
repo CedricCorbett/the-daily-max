@@ -681,6 +681,39 @@ function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge
                   </div>
                 </div>
               </div>
+              {/* CONSISTENCY GAUGE — how many of the champ's members have
+                  shown up this week. Below 2 they go yellow (warning);
+                  at 0 they can't even hold the crown (handled server-side). */}
+              {typeof champ.active_7d === 'number' && champ.member_count > 0 && (() => {
+                const ratio = champ.active_7d / Math.max(1, champ.member_count);
+                const warn = champ.active_7d <= 1;
+                const barColor = warn ? 'var(--accent)' : 'var(--streak)';
+                return (
+                  <div style={{ marginTop: 10 }}>
+                    <div className="mono uppercase" style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 4,
+                    }}>
+                      <span>CONSISTENCY · LAST 7 DAYS</span>
+                      <span style={{ color: barColor }}>
+                        {champ.active_7d}/{champ.member_count}{warn ? ' · DANGER' : ''}
+                      </span>
+                    </div>
+                    <div style={{
+                      height: 6, background: 'var(--bg-2)',
+                      border: '1px solid var(--border)', position: 'relative',
+                    }}>
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, bottom: 0,
+                        width: `${Math.min(100, Math.round(ratio * 100))}%`,
+                        background: barColor,
+                        boxShadow: warn ? '0 0 6px rgba(139,26,26,0.6)' : '0 0 6px rgba(201,162,74,0.5)',
+                        transition: 'width 400ms ease',
+                      }} />
+                    </div>
+                  </div>
+                );
+              })()}
               {champ.description && (
                 <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 10, lineHeight: 1.4 }}>
                   {champ.description}
@@ -770,13 +803,27 @@ function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge
             </>
           )}
 
-          <div className="mono" style={{
-            marginTop: 14, padding: 10,
-            background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
-            fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.2, lineHeight: 1.5,
+          {/* HONOR CODE — the rules that keep the crown honest without a ref. */}
+          <div style={{
+            marginTop: 14, padding: 12,
+            background: 'linear-gradient(180deg, rgba(201,162,74,0.06) 0%, var(--bg-2) 100%)',
+            border: '1px solid var(--border-2)',
+            position: 'relative',
           }}>
-            CHALLENGES ARE OPEN ANYTIME. ROSTER LOCKS ON ACCEPT · 7 DAYS.
-            <br/>IN CLASS: RAW REPS WIN. CROSS CLASS: % OF PR (CAP 100%).
+            <div className="mono uppercase" style={{
+              fontSize: 9, letterSpacing: 3, color: 'var(--streak)',
+              marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <span style={{ color: 'var(--streak)' }}>♛</span> HONOR CODE
+            </div>
+            <div className="mono" style={{
+              fontSize: 10, color: 'var(--text-dim)',
+              letterSpacing: 0.5, lineHeight: 1.6,
+            }}>
+              <div><span style={{ color: 'var(--accent)' }}>1.</span> Champs must stay warm. A crew with zero active members in the last 7 days loses the crown — the state re-opens automatically.</div>
+              <div style={{ marginTop: 4 }}><span style={{ color: 'var(--accent)' }}>2.</span> A champ who auto-declines a challenge has <span style={{ color: 'var(--streak)' }}>24 hours</span> to re-challenge the contender — or forfeits the crown.</div>
+              <div style={{ marginTop: 4 }}><span style={{ color: 'var(--accent)' }}>3.</span> Roster locks on accept. 7-day window. In class: raw reps win. Cross class: highest % of own PR wins (cap 100%).</div>
+            </div>
           </div>
         </div>
       </div>

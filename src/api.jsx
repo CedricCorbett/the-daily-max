@@ -180,6 +180,21 @@
       });
     },
 
+    // Battle opponent pool — everyone with a recorded PR, minus you.
+    async listBattleOpponents({ bracket = null, limit = 50 } = {}) {
+      if (!client) return { data: null, error: null };
+      return client.rpc('list_battle_opponents', {
+        p_bracket: bracket,
+        p_limit: limit,
+      });
+    },
+
+    // Crew vs Crew candidates — public crews ranked by summed PR total.
+    async listBattleCrews({ limit = 20 } = {}) {
+      if (!client) return { data: null, error: null };
+      return client.rpc('list_battle_crews', { p_limit: limit });
+    },
+
     async sendRally(toUser, msg, cap = 7) {
       if (!client) return null;
       return client.rpc('send_rally', { p_to: toUser, p_msg: msg, p_cap: cap });

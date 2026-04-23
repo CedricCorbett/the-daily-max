@@ -453,101 +453,330 @@ function LeaderboardScreen({ state, setState, go }) {
 // DRAFT — tier-matched 1v1.
 // In-class: opponent within ±10% of your PR total → raw reps wins.
 // Cross-class: auto-switches to % of PR scoring (effort scored, cap 1.0).
-function DraftScreen({ state, go }) {
-  const pool = (LEADERBOARD[state.ageBracket] || []).filter(p => !p.isYou);
+// THE BATTLE — 1v1 duels + crew-vs-crew challenges.
+// Replaces the old Draft screen which pulled from an empty client-side seed
+// (that's why real people like Dano never appeared). We now hit two live
+// RPCs: list_battle_opponents() for individuals and list_battle_crews()
+// for crew matchmaking. Everyone with a PR is always available — battles
+// are asynchronous 7-day windows, no one needs to be "online."
+function BattleScreen({ state, go }) {
   const yourPR = prSum(state.bests);
-  const [sent, setSent] = useState(null);
-  const [mode, setMode] = useState('auto'); // auto | inclass | effort
+  const api = window.api;
+  const apiOk = !!(api && api.enabled);
 
-  const opponents = pool.map(p => {
-    const theirPR = (p.pu || 0) + (p.sq || 0) + (p.ho || 0) + (p.pl || 0);
+  const [tab, setTab] = useState('solo');              // 'solo' | 'crew'
+  const [mode, setMode] = useState('all');             // all | inclass | effort (solo only)
+  const [bracketOnly, setBracketOnly] = useState(false); // solo bracket filter
+  const [opponents, setOpponents] = useState(null);    // null = loading, [] = empty
+  const [crews, setCrews] = useState(null);
+  const [err, setErr] = useState('');
+  const [sent, setSent] = useState({});                // { [userId|clanId]: true }
+  const [sending, setSending] = useState(null);
+
+  const loadSolo = async () => {
+    setErr('');
+    if (!apiOk) { setOpponents([]); return; }
+    const { data, error } = await api.listBattleOpponents({
+      bracket: bracketOnly ? (state.ageBracket || null) : null,
+      limit: 50,
+    });
+    if (error) { setErr(error.message || 'Could not load opponents.'); setOpponents([]); return; }
+    setOpponents(Array.isArray(data) ? data : []);
+  };
+
+  const loadCrews = async () => {
+    setErr('');
+    if (!apiOk) { setCrews([]); return; }
+    const { data, error } = await api.listBattleCrews({ limit: 20 });
+    if (error) { setErr(error.message || 'Could not load crews.'); setCrews([]); return; }
+    setCrews(Array.isArray(data) ? data : []);
+  };
+
+  useEffect(() => {
+    if (tab === 'solo') loadSolo();
+    else                loadCrews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, bracketOnly]);
+
+  // Shape the solo pool with in-class / cross-class flags against your PR.
+  const soloPool = (opponents || []).map(p => {
+    const theirPR = p.pr_total || 0;
     const inClass = draftInClass(yourPR, theirPR, 0.10);
     return { ...p, theirPR, inClass };
   });
+  const soloFiltered = mode === 'inclass' ? soloPool.filter(p => p.inClass)
+                     : mode === 'effort'  ? soloPool.filter(p => !p.inClass)
+                     : soloPool;
 
-  const filtered = mode === 'inclass' ? opponents.filter(p => p.inClass)
-                 : mode === 'effort'  ? opponents.filter(p => !p.inClass)
-                 : opponents;
+  // Challenge action: piggy-back on send_rally with a distinct ⚔ prefix.
+  // Their inbox gets it instantly; rally-fanout will push within 24h.
+  const challenge = async (p) => {
+    if (!apiOk || sent[p.user_id] || sending) return;
+    setSending(p.user_id);
+    try {
+      const msg = `⚔ Challenged to 7 days. Movement over ego.`;
+      const { error } = await api.sendRally(p.user_id, msg, 7);
+      if (error) { setErr(error.message || 'Could not send.'); return; }
+      setSent(s => ({ ...s, [p.user_id]: true }));
+    } finally {
+      setSending(null);
+    }
+  };
+
+  const challengeCrew = async (c) => {
+    if (!apiOk || sent[c.clan_id] || sending) return;
+    // Real crew-vs-crew booking needs leader ack from both sides; for now
+    // we ping whoever's the other crew's leader with a challenge rally.
+    setSending(c.clan_id);
+    try {
+      // We don't have a "leader of X clan" RPC, but the crew_members table
+      // is readable; pull the leader client-side.
+      const { data, error } = await api.client
+        .from('clan_members')
+        .select('user_id, role')
+        .eq('clan_id', c.clan_id)
+        .eq('role', 'leader')
+        .limit(1)
+        .maybeSingle();
+      if (error || !data) { setErr('Could not reach that crew\'s leader.'); return; }
+      const msg = `⚔ ${(state.clanName || 'A crew').toUpperCase()} wants a 7-day crew battle.`;
+      const res = await api.sendRally(data.user_id, msg, 7);
+      if (res?.error) { setErr(res.error.message || 'Could not send.'); return; }
+      setSent(s => ({ ...s, [c.clan_id]: true }));
+    } finally {
+      setSending(null);
+    }
+  };
 
   return (
     <Shell>
-      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="THE DRAFT" sub="TIER-MATCHED · 7-DAY DUEL" />
+      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="THE BATTLE" sub="7-DAY DUEL · SOLO OR CREW" />
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
-        <div className="display" style={{ fontSize: 28, lineHeight: 1, marginBottom: 8 }}>PICK YOUR<br/>OPPONENT.</div>
+        <div className="display" style={{ fontSize: 28, lineHeight: 1, marginBottom: 8 }}>PICK YOUR<br/>FIGHT.</div>
         <div className="mono" style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 14, lineHeight: 1.4 }}>
-          Within ±10% of your PR total: raw reps wins. Outside that class: scored on <span style={{ color: 'var(--accent)' }}>% of your own PR</span>. Movement over ego.
+          Everyone with a PR is always available. Battles are 7-day async windows —
+          no one has to be online. In class (±10% PR): raw reps wins.
+          Cross class: highest <span style={{ color: 'var(--accent)' }}>% of your own PR</span> wins.
         </div>
 
+        {/* TAB SWITCH */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
           {[
-            { id: 'auto',    l: 'ALL' },
-            { id: 'inclass', l: 'IN CLASS' },
-            { id: 'effort',  l: 'CROSS CLASS' },
+            { id: 'solo', l: '1 vs 1' },
+            { id: 'crew', l: 'CREW vs CREW' },
           ].map(t => (
-            <button key={t.id} onClick={() => setMode(t.id)} className="mono uppercase" style={{
-              flex: 1, padding: '8px 0',
-              background: mode === t.id ? 'var(--accent)' : 'var(--card)',
-              border: `1px solid ${mode === t.id ? 'var(--accent)' : 'var(--border)'}`,
-              color: mode === t.id ? '#0A0A0A' : 'var(--text-dim)',
-              fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+            <button key={t.id} onClick={() => setTab(t.id)} className="mono uppercase" style={{
+              flex: 1, padding: '10px 0',
+              background: tab === t.id ? 'var(--accent)' : 'var(--card)',
+              border: `1px solid ${tab === t.id ? 'var(--accent)' : 'var(--border)'}`,
+              color: tab === t.id ? '#0A0A0A' : 'var(--text-dim)',
+              fontSize: 11, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
             }}>{t.l}</button>
           ))}
         </div>
 
-        <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 10 }}>
-          YOUR PR TOTAL · {yourPR || '—'}
-        </div>
+        {err && (
+          <div className="mono" style={{
+            padding: '8px 10px', marginBottom: 10,
+            background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF9B8A',
+            fontSize: 10, letterSpacing: 1,
+          }}>{err}</div>
+        )}
 
-        {filtered.length === 0 && (
-          <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
-              {pool.length === 0
-                ? "NO CREW IN YOUR BRACKET YET.\nINVITE SOMEONE AND PICK A FIGHT."
-                : "NO OPPONENTS IN THIS BAND. TRY ANOTHER MODE."}
-            </div>
+        {!apiOk && (
+          <div className="mono" style={{
+            padding: '12px', marginBottom: 10,
+            background: 'var(--bg-2)', border: '1px dashed var(--border-2)', color: 'var(--text-mute)',
+            fontSize: 11, letterSpacing: 1, lineHeight: 1.5, textAlign: 'center',
+          }}>
+            SIGN IN TO SEE REAL OPPONENTS.
           </div>
         )}
 
-        {filtered.map(p => {
-          const isSent = sent === p.name;
-          const scoreMode = p.inClass ? 'RAW REPS' : '% OF PR';
-          return (
-            <div key={p.name} style={{ background: 'var(--card)', border: `1px solid ${isSent ? 'var(--streak)' : 'var(--border)'}`, padding: 14, marginBottom: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div className="display" style={{
-                  width: 44, height: 44, background: 'var(--accent-dim)', color: 'var(--accent)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-                }}>{p.name[0]}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600 }}>{p.name}</div>
-                  <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>{p.city} · PR {p.theirPR} · {p.streak}d</div>
-                </div>
-                <button onClick={() => setSent(p.name)} className="mono uppercase" style={{
-                  padding: '8px 12px',
-                  background: isSent ? 'var(--streak)' : 'transparent',
-                  border: `1px solid ${isSent ? 'var(--streak)' : 'var(--accent)'}`,
-                  color: isSent ? '#0A0A0A' : 'var(--accent)',
-                  fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
-                }}>{isSent ? 'CHALLENGED' : 'CHALLENGE'}</button>
-              </div>
-              <div style={{
-                marginTop: 10, padding: '6px 10px',
-                background: p.inClass ? 'var(--streak-dim)' : 'var(--accent-dim)',
-                border: `1px solid ${p.inClass ? 'var(--streak)' : 'var(--accent)'}`,
-              }}>
-                <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: p.inClass ? 'var(--streak)' : 'var(--accent)' }}>
-                  SCORING · {scoreMode}
-                </div>
-                <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2, lineHeight: 1.4 }}>
-                  {p.inClass
-                    ? `Within ±10% of your PR (${yourPR} vs ${p.theirPR}). Total reps over 7 days wins.`
-                    : `Outside your class (${yourPR} vs ${p.theirPR}). Whoever averages highest % of their own PR wins. Cap 100%.`}
-                </div>
-              </div>
+        {/* ============= SOLO TAB ============= */}
+        {tab === 'solo' && (
+          <>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
+              {[
+                { id: 'all',     l: 'ALL' },
+                { id: 'inclass', l: 'IN CLASS' },
+                { id: 'effort',  l: 'CROSS CLASS' },
+              ].map(t => (
+                <button key={t.id} onClick={() => setMode(t.id)} className="mono uppercase" style={{
+                  flex: 1, padding: '8px 0',
+                  background: mode === t.id ? 'var(--streak-dim)' : 'var(--card)',
+                  border: `1px solid ${mode === t.id ? 'var(--streak)' : 'var(--border)'}`,
+                  color: mode === t.id ? 'var(--streak)' : 'var(--text-dim)',
+                  fontSize: 10, letterSpacing: 1.5, fontWeight: 700, cursor: 'pointer',
+                }}>{t.l}</button>
+              ))}
             </div>
-          );
-        })}
+
+            <label className="mono uppercase" style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              fontSize: 10, letterSpacing: 1.5, color: 'var(--text-mute)',
+              marginBottom: 10, cursor: 'pointer',
+            }}>
+              <input
+                type="checkbox"
+                checked={bracketOnly}
+                onChange={(e) => setBracketOnly(e.target.checked)}
+                style={{ accentColor: 'var(--accent)' }}
+                disabled={!state.ageBracket}
+              />
+              MY BRACKET ONLY {state.ageBracket ? `(${state.ageBracket})` : '(SET BRACKET FIRST)'}
+            </label>
+
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 10 }}>
+              YOUR PR TOTAL · {yourPR || '—'}
+            </div>
+
+            {opponents === null && (
+              <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>LOADING OPPONENTS…</div>
+              </div>
+            )}
+
+            {opponents && soloFiltered.length === 0 && (
+              <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
+                  {opponents.length === 0
+                    ? 'NO OPPONENTS YET.\nINVITE SOMEONE AND PICK A FIGHT.'
+                    : 'NO OPPONENTS IN THIS BAND.\nTRY ANOTHER FILTER.'}
+                </div>
+              </div>
+            )}
+
+            {soloFiltered.map(p => {
+              const isSent = !!sent[p.user_id];
+              const busy = sending === p.user_id;
+              const scoreMode = p.inClass ? 'RAW REPS' : '% OF PR';
+              return (
+                <div key={p.user_id} style={{ background: 'var(--card)', border: `1px solid ${isSent ? 'var(--streak)' : 'var(--border)'}`, padding: 14, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="display" style={{
+                      width: 44, height: 44, background: 'var(--accent-dim)', color: 'var(--accent)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+                    }}>{(p.display_name || p.username || '?')[0].toUpperCase()}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{p.display_name || p.username}</div>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+                        {(p.city || p.region_state || '—')} · PR {p.theirPR} · {p.current_streak || 0}d
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => challenge(p)}
+                      disabled={isSent || busy}
+                      className="mono uppercase"
+                      style={{
+                        padding: '8px 12px',
+                        background: isSent ? 'var(--streak)' : 'transparent',
+                        border: `1px solid ${isSent ? 'var(--streak)' : 'var(--accent)'}`,
+                        color: isSent ? '#0A0A0A' : 'var(--accent)',
+                        fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+                        cursor: (isSent || busy) ? 'default' : 'pointer',
+                        opacity: busy ? 0.6 : 1,
+                      }}
+                    >{isSent ? 'CHALLENGED' : busy ? '...' : 'CHALLENGE'}</button>
+                  </div>
+                  <div style={{
+                    marginTop: 10, padding: '6px 10px',
+                    background: p.inClass ? 'var(--streak-dim)' : 'var(--accent-dim)',
+                    border: `1px solid ${p.inClass ? 'var(--streak)' : 'var(--accent)'}`,
+                  }}>
+                    <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: p.inClass ? 'var(--streak)' : 'var(--accent)' }}>
+                      SCORING · {scoreMode}
+                    </div>
+                    <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2, lineHeight: 1.4 }}>
+                      {p.inClass
+                        ? `Within ±10% of your PR (${yourPR} vs ${p.theirPR}). Total reps over 7 days wins.`
+                        : `Outside your class (${yourPR} vs ${p.theirPR}). Whoever averages highest % of their own PR wins. Cap 100%.`}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {/* ============= CREW TAB ============= */}
+        {tab === 'crew' && (
+          <>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
+              CREW vs CREW · 7 DAYS · SUMMED EFFORT. Your crew: <span style={{ color: state.clanName ? 'var(--accent)' : 'var(--text-mute)' }}>{(state.clanName || 'NONE').toUpperCase()}</span>
+            </div>
+
+            {!state.clanId && (
+              <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '14px', marginBottom: 10, textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                  JOIN A CREW FIRST.
+                </div>
+                <button onClick={() => go('clan-entry')} className="mono uppercase" style={{
+                  marginTop: 8, padding: '8px 14px',
+                  background: 'var(--accent)', border: 'none', color: '#F2ECE2',
+                  fontSize: 10, letterSpacing: 2, fontWeight: 700, cursor: 'pointer',
+                }}>FIND CREW</button>
+              </div>
+            )}
+
+            {crews === null && (
+              <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)' }}>LOADING CREWS…</div>
+              </div>
+            )}
+
+            {crews && crews.length === 0 && (
+              <div style={{ background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: '20px 14px', textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', whiteSpace: 'pre-line' }}>
+                  NO OTHER PUBLIC CREWS YET.
+                </div>
+              </div>
+            )}
+
+            {(crews || []).map(c => {
+              const isSent = !!sent[c.clan_id];
+              const busy = sending === c.clan_id;
+              return (
+                <div key={c.clan_id} style={{ background: 'var(--card)', border: `1px solid ${isSent ? 'var(--streak)' : 'var(--border)'}`, padding: 14, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="display" style={{
+                      width: 44, height: 44, background: 'var(--accent-dim)', color: 'var(--accent)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+                    }}>◆</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>
+                        {c.name} {c.tag && <span className="mono" style={{ color: 'var(--streak)', fontSize: 10, marginLeft: 4 }}>[{c.tag}]</span>}
+                      </div>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+                        {c.member_count} · TOTAL PR {c.total_pr} · AVG {c.avg_pr} · {c.active_today} TODAY
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => challengeCrew(c)}
+                      disabled={isSent || busy || !state.clanId}
+                      className="mono uppercase"
+                      style={{
+                        padding: '8px 12px',
+                        background: isSent ? 'var(--streak)' : 'transparent',
+                        border: `1px solid ${isSent ? 'var(--streak)' : state.clanId ? 'var(--accent)' : 'var(--border-2)'}`,
+                        color: isSent ? '#0A0A0A' : state.clanId ? 'var(--accent)' : 'var(--text-mute)',
+                        fontSize: 10, letterSpacing: 1.5, fontWeight: 700,
+                        cursor: (isSent || busy || !state.clanId) ? 'default' : 'pointer',
+                        opacity: busy ? 0.6 : 1,
+                      }}
+                    >{isSent ? 'SENT' : busy ? '...' : 'CHALLENGE'}</button>
+                  </div>
+                  {c.description && (
+                    <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 8, lineHeight: 1.4 }}>
+                      {c.description}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        )}
 
         <div style={{ marginTop: 14, background: 'var(--bg-2)', border: '1px dashed var(--border-2)', padding: 14 }}>
           <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>OR INVITE A FRIEND</div>
@@ -562,6 +791,9 @@ function DraftScreen({ state, go }) {
     </Shell>
   );
 }
+
+// Back-compat alias so existing routes/calls keep working.
+const DraftScreen = BattleScreen;
 
 function NightScreen({ state, go }) {
   const [idx, setIdx] = useState(0);
@@ -687,4 +919,4 @@ function KickoffScreen({ state, go }) {
   );
 }
 
-Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, DraftScreen, NightScreen, KickoffScreen });
+Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, BattleScreen, DraftScreen, NightScreen, KickoffScreen });

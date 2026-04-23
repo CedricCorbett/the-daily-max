@@ -289,7 +289,8 @@ function App() {
     case 'share':       view = <MaxCardScreen state={state} go={go} />; break;
     case 'leaderboard': view = <LeaderboardScreen state={state} setState={setState} go={go} />; break;
     case 'calendar':    view = <CalendarScreen state={state} go={go} />; break;
-    case 'draft':       view = <DraftScreen state={state} go={go} />; break;
+    case 'battle':      view = <BattleScreen state={state} go={go} />; break;
+    case 'draft':       view = <BattleScreen state={state} go={go} />; break; // legacy alias
     case 'night':       view = <NightScreen state={state} go={go} />; break;
     case 'kickoff':     view = <KickoffScreen state={state} go={go} />; break;
     case 'rally':       view = <RallyScreen state={state} setState={setState} go={go} />; break;
@@ -388,7 +389,7 @@ function ScreenJumper({ current, go }) {
     { id: 'share',       label: 'MAX CARD' },
     { id: 'leaderboard', label: 'LEADER' },
     { id: 'calendar',    label: 'CALENDAR' },
-    { id: 'draft',       label: 'DRAFT' },
+    { id: 'battle',      label: 'BATTLE' },
     { id: 'night',       label: 'NIGHT' },
     { id: 'kickoff',     label: 'KICKOFF' },
     { id: 'rally',       label: 'RALLY' },

@@ -221,12 +221,12 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           <CommunityTile
             onClick={() => go(state.clanIsSystem || !state.clanId ? 'clan-entry' : 'clan')}
             icon="◆"
-            label={state.clanIsSystem || !state.clanId ? 'FIND CREW' : 'CREW BATTLE'}
+            label={state.clanIsSystem || !state.clanId ? 'FIND CREW' : 'MY CREW'}
             sub={state.clanIsSystem || !state.clanId
               ? 'Join or create'
-              : (state.clan?.battleAgainst?.name ? `vs ${state.clan.battleAgainst.name}` : 'No battle')}
+              : (state.clanName ? state.clanName.toUpperCase() : 'Open ops')}
           />
-          <CommunityTile onClick={() => go('draft')} icon="⚔" label="DRAFT" sub="Tier-matched 1v1" />
+          <CommunityTile onClick={() => go('battle')} icon="⚔" label="BATTLE" sub="1v1 or crew vs crew" />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
           <CommunityTile onClick={() => go('kickoff')} icon={`${Math.min(state.kickoffDay, 30)}/30`} label="KICKOFF 30" sub="30-day ramp" />

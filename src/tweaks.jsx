@@ -1,6 +1,41 @@
 // Tweaks panel — aesthetic/voice/mods, plus spouse-notify config
 
 function TweaksPanel({ state, setState, onClose }) {
+  const [diag, setDiag] = useState({ email: null, userId: null, apiEnabled: false, lastWorkout: null, streak: null, probing: false });
+  useEffect(() => {
+    (async () => {
+      const api = window.api;
+      const apiEnabled = !!(api && api.enabled);
+      let email = null, userId = null;
+      try {
+        if (apiEnabled) {
+          const u = await api.getUser();
+          if (u) { email = u.email || null; userId = u.id || null; }
+        }
+      } catch {}
+      setDiag(d => ({ ...d, email, userId, apiEnabled }));
+    })();
+  }, []);
+  const probeServer = async () => {
+    setDiag(d => ({ ...d, probing: true }));
+    try {
+      const api = window.api;
+      if (!api || !api.enabled || !api.client) {
+        setDiag(d => ({ ...d, probing: false, lastWorkout: 'API DISABLED', streak: 'N/A' }));
+        return;
+      }
+      const u = await api.getUser();
+      if (!u) { setDiag(d => ({ ...d, probing: false, lastWorkout: 'NOT SIGNED IN', streak: 'N/A' })); return; }
+      const w = await api.client.from('workouts').select('day,pushups,squats,hollow_sec,pullups').eq('user_id', u.id).order('day', { ascending: false }).limit(1);
+      const s = await api.client.from('streaks').select('current_len,longest_len,last_day').eq('user_id', u.id).maybeSingle();
+      const lw = w && w.data && w.data[0];
+      const lastWorkout = lw ? `${lw.day} · P${lw.pushups} S${lw.squats} H${lw.hollow_sec} PU${lw.pullups}` : 'NO ROWS ON SERVER';
+      const streak = s && s.data ? `${s.data.current_len} (best ${s.data.longest_len}, last ${s.data.last_day})` : 'NO STREAK ROW';
+      setDiag(d => ({ ...d, probing: false, lastWorkout, streak }));
+    } catch (e) {
+      setDiag(d => ({ ...d, probing: false, lastWorkout: 'ERR: ' + (e.message || 'unknown'), streak: '—' }));
+    }
+  };
   const voices = [
     { id: 'auto',  label: 'AUTO (streak rotates)' },
     { id: 'dad',   label: 'DRY' },
@@ -91,6 +126,20 @@ function TweaksPanel({ state, setState, onClose }) {
                 fontSize: 13, letterSpacing: 2, color: 'var(--accent)',
               }}>{state.referralCode}</div>
               <GhostBtn onClick={() => { navigator.clipboard && navigator.clipboard.writeText(`dailymax.app/${state.referralCode}`); }}>COPY LINK</GhostBtn>
+            </div>
+          </Section>
+
+          <Section title="DIAGNOSTIC">
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+              API: <span style={{ color: diag.apiEnabled ? 'var(--streak)' : '#FF8E8E' }}>{diag.apiEnabled ? 'ENABLED' : 'DISABLED'}</span><br/>
+              Email: <span style={{ color: 'var(--text)' }}>{diag.email || '— (guest)'}</span><br/>
+              User ID: <span style={{ color: 'var(--text)' }}>{diag.userId ? diag.userId.slice(0, 8) + '…' : '—'}</span><br/>
+              Local streak: <span style={{ color: 'var(--streak)' }}>{state.streak}</span> · last log: <span style={{ color: 'var(--text)' }}>{state.lastLoggedDate || '—'}</span><br/>
+              Server last workout: <span style={{ color: 'var(--text)' }}>{diag.lastWorkout || '— (tap PROBE)'}</span><br/>
+              Server streak: <span style={{ color: 'var(--text)' }}>{diag.streak || '— (tap PROBE)'}</span>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <GhostBtn onClick={probeServer}>{diag.probing ? 'PROBING…' : 'PROBE SERVER'}</GhostBtn>
             </div>
           </Section>
 

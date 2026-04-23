@@ -13,6 +13,8 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
     pullups: draft?.pullups ?? 0,
   };
   const [reps, setReps] = useState(prefill);
+  const [saving, setSaving] = useState(false);
+  const [saveErr, setSaveErr] = useState('');
   const hadDraft = !!(draft && (draft.pushups || draft.squats || draft.hollow || draft.pullups));
 
   // Consume the draft after seeding — if the user comes back to this screen later
@@ -27,7 +29,10 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
   const setOne = (k, v) => setReps(r => ({ ...r, [k]: Math.max(0, Math.min(9999, Number(v) || 0)) }));
   const resetOne = (k) => setReps(r => ({ ...r, [k]: 0 }));
 
-  const commit = () => {
+  const commit = async () => {
+    if (saving) return;
+    setSaving(true);
+    setSaveErr('');
     const today = new Date().toISOString().split('T')[0];
     const entry = { date: today, ...reps, mode: state.mode, modifier: state.modifier };
     setState(s => {
@@ -77,13 +82,46 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
       };
     });
 
-    // Mirror to backend (fire-and-forget — client state already updated).
+    // Mirror to backend. We await so we can tell the user if the row never
+    // landed in public.workouts (guest session, expired token, RLS, offline).
+    // Client streak already updated above — this is just about the leaderboard
+    // and server truth.
+    let backendOk = true;
     try {
-      if (window.api && window.api.enabled && window.api.logWorkout) {
-        window.api.logWorkout(reps);
+      const api = window.api;
+      if (!api || !api.enabled) {
+        backendOk = false;
+        console.warn('[log_workout] api disabled — running in guest/local mode, workout NOT saved to server.');
+        setSaveErr('Signed out — saved locally only. Sign in to count on the leaderboard.');
+      } else {
+        const session = await api.getSession();
+        if (!session || !session.user) {
+          backendOk = false;
+          console.warn('[log_workout] no session — workout NOT saved to server.');
+          setSaveErr('Signed out — saved locally only. Sign in to count on the leaderboard.');
+        } else {
+          const res = await api.logWorkout(reps);
+          if (res && res.error) {
+            backendOk = false;
+            console.error('[log_workout] RPC error:', res.error);
+            setSaveErr('Server rejected the log: ' + (res.error.message || 'unknown'));
+          } else {
+            console.log('[log_workout] saved to server:', res && res.data);
+          }
+        }
       }
-    } catch {}
+    } catch (e) {
+      backendOk = false;
+      console.error('[log_workout] threw:', e);
+      setSaveErr('Network error — saved locally only. Will not appear on leaderboard.');
+    } finally {
+      setSaving(false);
+    }
 
+    // Still advance to done — local state is already updated.
+    // If backend failed, the error banner on Done tells them why they're not on the board.
+    try { sessionStorage.setItem('dm:lastLogBackendOk', backendOk ? '1' : '0'); } catch {}
+    try { sessionStorage.setItem('dm:lastLogErr', saveErr || ''); } catch {}
     go('done');
   };
 
@@ -181,7 +219,16 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
         })}
       </div>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 20px 24px', background: 'linear-gradient(to top, #0A0A0A 60%, rgba(10,10,10,0))' }}>
-        <PrimaryBtn onClick={commit}>LOCK IT IN →</PrimaryBtn>
+        {saveErr && (
+          <div className="mono uppercase" style={{
+            marginBottom: 10, padding: '8px 10px',
+            background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF8E8E',
+            fontSize: 9, letterSpacing: 1.5, lineHeight: 1.5,
+          }}>
+            ⚠ {saveErr}
+          </div>
+        )}
+        <PrimaryBtn onClick={commit}>{saving ? 'SAVING…' : 'LOCK IT IN →'}</PrimaryBtn>
       </div>
     </Shell>
   );

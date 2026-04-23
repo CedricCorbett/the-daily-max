@@ -515,10 +515,10 @@ function Manifesto() {
 
       <H>The Crew</H>
       <P>
-        Train solo, race together. Crews claim states and dethrone each
-        other over three days. In class, raw reps win. Out of class, the
-        hungrier crew — measured by mean percent of PR — beats the quiet
-        giant. Show up for yourself. Show up for the crew.
+        Train solo, challenge others together. Crews claim states and
+        dethrone each other over three days. In class, raw reps win. Out
+        of class, the hungrier crew — measured by mean percent of PR —
+        beats the quiet giant. Show up for yourself. Show up for the crew.
       </P>
 
       <div className="mono uppercase" style={{

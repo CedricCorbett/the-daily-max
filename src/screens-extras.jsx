@@ -484,8 +484,10 @@ const STATE_NAMES = {
 };
 
 // Tile grid. `myState` gets the gold ring + oxblood glow. Any state in
-// `champsByState` gets a gold corner dot. Tap to open the ladder modal.
-function StateMap({ myState, champsByState, onPick }) {
+// `champsByState` gets a gold corner dot. `claimsByState` overlays a
+// ⚑ (open claim) or ⚔ (dethrone race) badge and an oxblood border pulse
+// on contested states. Tap to open the ladder modal.
+function StateMap({ myState, champsByState, claimsByState, onPick }) {
   const ROWS = 8;
   const COLS = 12;
   const tiles = Object.entries(STATE_TILES);
@@ -505,7 +507,7 @@ function StateMap({ myState, champsByState, onPick }) {
         marginBottom: 8, display: 'flex', justifyContent: 'space-between',
       }}>
         <span>REGIONAL BATTLE MAP</span>
-        <span style={{ color: 'var(--streak)' }}>● CHAMP  <span style={{ color: 'var(--accent)' }}>◆ YOU</span></span>
+        <span style={{ color: 'var(--streak)' }}>● CHAMP  <span style={{ color: 'var(--accent)' }}>◆ YOU  ⚔ CONTESTED</span></span>
       </div>
       <div style={{
         display: 'grid',
@@ -519,24 +521,29 @@ function StateMap({ myState, champsByState, onPick }) {
           const isMine = abbr === myState;
           const champ = champsByState && champsByState[abbr];
           const hasChamp = !!champ;
+          const claim = claimsByState && claimsByState[abbr];
+          const contested = !!claim;
           return (
             <button
               key={abbr}
               onClick={() => onPick && onPick(abbr)}
-              title={hasChamp ? `${STATE_NAMES[abbr]} · ${champ.name}` : STATE_NAMES[abbr]}
+              title={hasChamp ? `${STATE_NAMES[abbr]} · ${champ.name}${contested ? ' · CONTESTED' : ''}` : `${STATE_NAMES[abbr]}${contested ? ' · CLAIM IN PROGRESS' : ''}`}
               className="mono"
               style={{
                 gridColumn: c + 1,
                 gridRow: r + 1,
                 aspectRatio: '1 / 1',
                 padding: 0,
-                background: isMine ? 'var(--accent-dim)'
+                background: contested ? '#1F0D0D'
+                          : isMine ? 'var(--accent-dim)'
                           : hasChamp ? '#1A1313'
                           : 'var(--card)',
-                border: isMine ? '1px solid var(--streak)'
+                border: contested ? '1px solid var(--accent-2)'
+                      : isMine ? '1px solid var(--streak)'
                       : hasChamp ? '1px solid var(--border-2)'
                       : '1px solid var(--border)',
-                color: isMine ? 'var(--streak)'
+                color: contested ? 'var(--accent-2)'
+                     : isMine ? 'var(--streak)'
                      : hasChamp ? 'var(--text-dim)'
                      : 'var(--text-mute)',
                 fontSize: 8,
@@ -544,6 +551,7 @@ function StateMap({ myState, champsByState, onPick }) {
                 letterSpacing: 0.5,
                 cursor: 'pointer',
                 position: 'relative',
+                animation: contested ? 'pulse-hazard 2s infinite' : 'none',
                 boxShadow: isMine ? '0 0 16px rgba(139,26,26,0.45), inset 0 0 0 1px rgba(201,162,74,0.3)' : 'none',
                 transition: 'transform 120ms ease, box-shadow 120ms ease',
               }}
@@ -551,13 +559,20 @@ function StateMap({ myState, champsByState, onPick }) {
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.zIndex = '1'; }}
             >
               {abbr}
-              {hasChamp && (
+              {hasChamp && !contested && (
                 <span style={{
                   position: 'absolute', top: 2, right: 2,
                   width: 4, height: 4, borderRadius: '50%',
                   background: 'var(--streak)',
                   boxShadow: '0 0 4px var(--streak)',
                 }} />
+              )}
+              {contested && (
+                <span style={{
+                  position: 'absolute', top: 1, right: 2,
+                  fontSize: 8, color: 'var(--accent-2)', fontWeight: 900,
+                  textShadow: '0 0 4px rgba(179,33,33,0.9)',
+                }}>{claim.kind === 'dethrone' ? '⚔' : '⚑'}</span>
               )}
               {isMine && (
                 <span style={{
@@ -579,13 +594,128 @@ function StateMap({ myState, champsByState, onPick }) {
   );
 }
 
+// Countdown formatter for claim deadline: 2d 4h, 14h 03m, 45s.
+function fmtCountdown(secs) {
+  if (secs == null || secs <= 0) return 'EXPIRED';
+  const d = Math.floor(secs / 86400);
+  const h = Math.floor((secs % 86400) / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  if (d > 0) return `${d}D ${h}H`;
+  if (h > 0) return `${h}H ${String(m).padStart(2,'0')}M`;
+  if (m > 0) return `${m}M ${String(s).padStart(2,'0')}S`;
+  return `${s}S`;
+}
+
+// Live race panel — shown above the ladder when a pending claim is in
+// progress. Two bars + scoreboard + countdown. The 3-day window means
+// there's always enough time to surface urgency without dying on day 1.
+function ClaimRacePanel({ claim }) {
+  const [tick, setTick] = useState(claim.seconds_left || 0);
+  useEffect(() => {
+    setTick(claim.seconds_left || 0);
+    const i = setInterval(() => setTick(t => Math.max(0, t - 1)), 1000);
+    return () => clearInterval(i);
+  }, [claim.id, claim.seconds_left]);
+  const isDethrone = claim.kind === 'dethrone';
+  const cScore = claim.claimant_score || 0;
+  const dScore = claim.defender_score || 0;
+  const top = Math.max(cScore, dScore, 1);
+  const WINDOW_SECS = 3 * 24 * 3600;
+  const elapsedPct = Math.min(100, Math.max(0, (1 - tick / WINDOW_SECS) * 100));
+  return (
+    <div style={{
+      background: 'linear-gradient(180deg, rgba(179,33,33,0.14) 0%, var(--card-2) 100%)',
+      border: '1px solid var(--accent-2)',
+      padding: 12, marginBottom: 12,
+      boxShadow: '0 8px 20px rgba(179,33,33,0.2)',
+      animation: 'pulse-hazard 2.4s infinite',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 3, color: 'var(--accent-2)', fontWeight: 700 }}>
+          {isDethrone ? '⚔ DETHRONE IN PROGRESS' : '⚑ OPEN CLAIM IN PROGRESS'}
+        </div>
+        <div className="mono" style={{ fontSize: 10, color: 'var(--streak)', letterSpacing: 1.5, fontWeight: 700 }}>
+          {fmtCountdown(tick)}
+        </div>
+      </div>
+      <div className="mono" style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4, letterSpacing: 0.5 }}>
+        3-DAY WINDOW · POST A NUMBER · HIGHER TOTAL WINS{isDethrone ? ' · TIES GO TO THE DEFENDER' : ''}
+      </div>
+
+      {/* SCORES */}
+      <div style={{ marginTop: 10, display: 'grid', gap: 6 }}>
+        <ClaimBar
+          label={`${claim.claimant_name || 'CLAIMANT'}${claim.claimant_tag ? ` [${claim.claimant_tag}]` : ''}`}
+          score={cScore}
+          ratio={cScore / top}
+          color="var(--accent)"
+          role={isDethrone ? 'CLAIMANT' : 'CLAIMING'}
+        />
+        {isDethrone && (
+          <ClaimBar
+            label={`${claim.defender_name || 'DEFENDER'}${claim.defender_tag ? ` [${claim.defender_tag}]` : ''}`}
+            score={dScore}
+            ratio={dScore / top}
+            color="var(--streak)"
+            role="DEFENDER"
+          />
+        )}
+      </div>
+
+      {/* elapsed progress */}
+      <div style={{ marginTop: 10 }}>
+        <div className="mono uppercase" style={{ fontSize: 8, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 3 }}>
+          WINDOW ELAPSED
+        </div>
+        <div style={{ height: 4, background: 'var(--bg-2)', border: '1px solid var(--border)', position: 'relative' }}>
+          <div style={{
+            position: 'absolute', top: 0, left: 0, bottom: 0,
+            width: `${elapsedPct}%`,
+            background: 'var(--accent-2)',
+            transition: 'width 1s linear',
+          }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClaimBar({ label, score, ratio, color, role }) {
+  return (
+    <div>
+      <div className="mono uppercase" style={{
+        display: 'flex', justifyContent: 'space-between',
+        fontSize: 9, letterSpacing: 1.5, color: 'var(--text-dim)', marginBottom: 3,
+      }}>
+        <span>{role} · {label}</span>
+        <span className="display" style={{ fontSize: 14, color, letterSpacing: '-0.01em' }}>{score.toLocaleString()}</span>
+      </div>
+      <div style={{ height: 8, background: 'var(--bg-2)', border: '1px solid var(--border)', position: 'relative' }}>
+        <div style={{
+          position: 'absolute', top: 0, left: 0, bottom: 0,
+          width: `${Math.min(100, Math.max(3, ratio * 100))}%`,
+          background: color,
+          boxShadow: `0 0 8px ${color}`,
+          transition: 'width 600ms ease',
+        }} />
+      </div>
+    </div>
+  );
+}
+
 // 3D popup for a single state's ladder. Scales in from nowhere with
 // perspective + rotateX depth so it feels like the state lifted off the
 // grid. Champ is rank 1 (big card); contenders 2–10 list beneath.
-function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge, sentMap, busyId }) {
+function StateChampModal({
+  abbr, rows, loading, yourClanId, onClose, onChallenge, sentMap, busyId,
+  claim, onClaim, onDethrone, claimBusy, claimErr,
+}) {
   const title = STATE_NAMES[abbr] || abbr;
   const champ = (rows || []).find(r => r.rank === 1);
   const contenders = (rows || []).filter(r => r.rank > 1);
+  const hasPendingClaim = !!(claim && claim.status === 'pending');
+  const inMyCrew = yourClanId && champ && champ.clan_id === yourClanId;
   return (
     <div
       onClick={onClose}
@@ -639,14 +769,62 @@ function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge
             }}>LOADING LADDER…</div>
           )}
 
-          {!loading && (!rows || rows.length === 0) && (
+          {/* LIVE RACE PANEL — lives above everything when contested */}
+          {hasPendingClaim && <ClaimRacePanel claim={claim} />}
+
+          {/* ERROR — claim/dethrone RPC responses */}
+          {claimErr && (
+            <div className="mono" style={{
+              padding: '8px 10px', marginBottom: 10,
+              background: '#1F0D0D', border: '1px solid #5A1F1F', color: '#FF9B8A',
+              fontSize: 10, letterSpacing: 1,
+            }}>{claimErr}</div>
+          )}
+
+          {/* OPEN STATE · CLAIM BUTTON — no champ, no pending claim */}
+          {!loading && !champ && !hasPendingClaim && (
+            <div style={{
+              background: 'linear-gradient(180deg, rgba(201,162,74,0.08) 0%, var(--card-2) 100%)',
+              border: '1px dashed var(--streak)',
+              padding: 16, textAlign: 'center', marginBottom: 12,
+            }}>
+              <div className="display" style={{ fontSize: 18, color: 'var(--text)' }}>
+                THRONE IS OPEN.
+              </div>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5, marginTop: 6, lineHeight: 1.5 }}>
+                NO CREW HOLDS {abbr}. PLANT YOUR FLAG AND PUT UP A NUMBER.<br/>
+                <span style={{ color: 'var(--streak)' }}>3 DAYS. ANY NUMBER &gt; 0 CLAIMS IT.</span>
+              </div>
+              {yourClanId ? (
+                <button
+                  onClick={() => onClaim && onClaim(abbr)}
+                  disabled={claimBusy}
+                  className="mono uppercase"
+                  style={{
+                    marginTop: 12, padding: '12px 20px',
+                    background: 'var(--streak)', border: 'none', color: '#0A0A0A',
+                    fontSize: 11, letterSpacing: 2.5, fontWeight: 700,
+                    cursor: claimBusy ? 'default' : 'pointer',
+                    opacity: claimBusy ? 0.6 : 1,
+                  }}
+                >{claimBusy ? 'STARTING…' : '⚑ CLAIM STATE'}</button>
+              ) : (
+                <div className="mono uppercase" style={{
+                  marginTop: 12, padding: '8px 12px', display: 'inline-block',
+                  background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
+                  fontSize: 10, letterSpacing: 1.5, color: 'var(--text-mute)',
+                }}>JOIN A CREW FIRST</div>
+              )}
+            </div>
+          )}
+
+          {!loading && champ === undefined && rows && rows.length === 0 && hasPendingClaim && (
             <div style={{
               background: 'var(--bg-2)', border: '1px dashed var(--border-2)',
-              padding: 20, textAlign: 'center',
+              padding: 16, textAlign: 'center', marginBottom: 12,
             }}>
-              <div className="display" style={{ fontSize: 16, color: 'var(--text)' }}>NO CREWS YET.</div>
-              <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', letterSpacing: 1.5, marginTop: 6 }}>
-                THE THRONE IS UNCLAIMED. FOUND A CREW HERE FIRST.
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-mute)', letterSpacing: 1.5 }}>
+                RACE IS LIVE. FIRST NUMBER UP TAKES THE CROWN.
               </div>
             </div>
           )}
@@ -719,21 +897,21 @@ function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge
                   {champ.description}
                 </div>
               )}
-              {!champ.is_yours && yourClanId && (
+              {!champ.is_yours && yourClanId && !hasPendingClaim && (
                 <button
-                  onClick={() => onChallenge && onChallenge(champ)}
-                  disabled={sentMap[champ.clan_id] || busyId === champ.clan_id}
+                  onClick={() => onDethrone && onDethrone(abbr)}
+                  disabled={claimBusy}
                   className="mono uppercase"
                   style={{
                     width: '100%', marginTop: 12, padding: '12px 0',
-                    background: sentMap[champ.clan_id] ? 'var(--streak)' : 'var(--accent)',
-                    border: 'none', color: sentMap[champ.clan_id] ? '#0A0A0A' : '#F2ECE2',
+                    background: 'var(--accent)',
+                    border: 'none', color: '#F2ECE2',
                     fontSize: 11, letterSpacing: 2.5, fontWeight: 700,
-                    cursor: (sentMap[champ.clan_id] || busyId === champ.clan_id) ? 'default' : 'pointer',
-                    opacity: busyId === champ.clan_id ? 0.6 : 1,
+                    cursor: claimBusy ? 'default' : 'pointer',
+                    opacity: claimBusy ? 0.6 : 1,
                   }}
                 >
-                  {sentMap[champ.clan_id] ? '✓ CHALLENGE SENT' : busyId === champ.clan_id ? 'SENDING…' : '⚔ CHALLENGE THE THRONE'}
+                  {claimBusy ? 'STARTING…' : '⚔ DETHRONE · 3-DAY RACE'}
                 </button>
               )}
               {champ.is_yours && (
@@ -795,7 +973,7 @@ function StateChampModal({ abbr, rows, loading, yourClanId, onClose, onChallenge
                           cursor: (isSent || busy) ? 'default' : 'pointer',
                           opacity: busy ? 0.6 : 1,
                         }}
-                      >{isSent ? 'SENT' : busy ? '...' : 'CHALLENGE'}</button>
+                      >{isSent ? 'SENT' : busy ? '...' : '⚔ CHALLENGE'}</button>
                     )}
                   </div>
                 );
@@ -857,9 +1035,13 @@ function BattleScreen({ state, go }) {
   // REGIONAL MAP state — one champ-per-state payload + the currently-open
   // state's full ladder modal.
   const [champsByState, setChampsByState] = useState({});
+  const [claimsByState, setClaimsByState] = useState({}); // { abbr: { kind, seconds_left, ... } }
   const [pickedState, setPickedState] = useState(null);
   const [ladderRows, setLadderRows] = useState(null);
   const [ladderLoading, setLadderLoading] = useState(false);
+  const [activeClaim, setActiveClaim] = useState(null);   // live claim for the picked state
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [claimErr, setClaimErr] = useState('');
 
   const loadSolo = async () => {
     setErr('');
@@ -882,22 +1064,37 @@ function BattleScreen({ state, go }) {
 
   const loadChamps = async () => {
     setErr('');
-    if (!apiOk) { setChampsByState({}); return; }
-    const { data, error } = await api.mapStateChamps();
-    if (error) { setErr(error.message || 'Could not load champs.'); return; }
-    const map = {};
-    (Array.isArray(data) ? data : []).forEach(r => { if (r.state_code) map[r.state_code] = r; });
-    setChampsByState(map);
+    if (!apiOk) { setChampsByState({}); setClaimsByState({}); return; }
+    const [champRes, claimRes] = await Promise.all([
+      api.mapStateChamps(),
+      api.mapStateClaims(),
+    ]);
+    if (champRes && champRes.error) { setErr(champRes.error.message || 'Could not load champs.'); }
+    const champMap = {};
+    (Array.isArray(champRes?.data) ? champRes.data : []).forEach(r => { if (r.state_code) champMap[r.state_code] = r; });
+    setChampsByState(champMap);
+    const claimMap = {};
+    (Array.isArray(claimRes?.data) ? claimRes.data : []).forEach(r => { if (r.state_code) claimMap[r.state_code] = r; });
+    setClaimsByState(claimMap);
   };
 
   const loadLadder = async (abbr) => {
     setLadderRows(null);
     setLadderLoading(true);
+    setActiveClaim(null);
+    setClaimErr('');
     if (!apiOk) { setLadderLoading(false); setLadderRows([]); return; }
-    const { data, error } = await api.listStateCrewLadder({ state: abbr, limit: 10 });
+    const [ladderRes, claimRes] = await Promise.all([
+      api.listStateCrewLadder({ state: abbr, limit: 10 }),
+      api.stateClaimStatus(abbr),
+    ]);
     setLadderLoading(false);
-    if (error) { setErr(error.message || 'Could not load ladder.'); setLadderRows([]); return; }
-    setLadderRows(Array.isArray(data) ? data : []);
+    if (ladderRes?.error) { setErr(ladderRes.error.message || 'Could not load ladder.'); setLadderRows([]); }
+    else setLadderRows(Array.isArray(ladderRes?.data) ? ladderRes.data : []);
+    // state_claim_status returns 0–3 rows; pick the pending one if any, else the latest.
+    const claims = Array.isArray(claimRes?.data) ? claimRes.data : [];
+    const pending = claims.find(c => c.status === 'pending');
+    setActiveClaim(pending || claims[0] || null);
   };
 
   useEffect(() => {
@@ -907,11 +1104,52 @@ function BattleScreen({ state, go }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, bracketOnly]);
 
-  // When the user taps a state, fetch its ladder.
+  // Poll the regional overlay every 60s so claims auto-expire / countdowns
+  // keep feeling alive without a manual refresh.
+  useEffect(() => {
+    if (tab !== 'regional') return;
+    const i = setInterval(() => loadChamps(), 60000);
+    return () => clearInterval(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
+  // When the user taps a state, fetch its ladder + claim status.
   useEffect(() => {
     if (pickedState) loadLadder(pickedState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickedState]);
+
+  // Inside an open modal, refresh claim status every 20s so live scores
+  // tick up as the other crew logs work.
+  useEffect(() => {
+    if (!pickedState || !activeClaim || activeClaim.status !== 'pending') return;
+    const i = setInterval(async () => {
+      const { data } = await api.stateClaimStatus(pickedState);
+      const claims = Array.isArray(data) ? data : [];
+      const pending = claims.find(c => c.status === 'pending');
+      setActiveClaim(pending || claims[0] || null);
+    }, 20000);
+    return () => clearInterval(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickedState, activeClaim?.id]);
+
+  // CLAIM / DETHRONE handlers. Both refresh the map + ladder on success.
+  const startClaim = async (abbr) => {
+    if (!apiOk || claimBusy) return;
+    setClaimBusy(true); setClaimErr('');
+    const { error } = await api.startStateClaim(abbr);
+    setClaimBusy(false);
+    if (error) { setClaimErr(error.message || 'Could not start claim.'); return; }
+    await Promise.all([loadChamps(), loadLadder(abbr)]);
+  };
+  const startDethrone = async (abbr) => {
+    if (!apiOk || claimBusy) return;
+    setClaimBusy(true); setClaimErr('');
+    const { error } = await api.startStateDethrone(abbr);
+    setClaimBusy(false);
+    if (error) { setClaimErr(error.message || 'Could not start dethrone.'); return; }
+    await Promise.all([loadChamps(), loadLadder(abbr)]);
+  };
 
   // Shape the solo pool with in-class / cross-class flags against your PR.
   const soloPool = (opponents || []).map(p => {
@@ -1200,6 +1438,7 @@ function BattleScreen({ state, go }) {
             <StateMap
               myState={state.regionState || null}
               champsByState={champsByState}
+              claimsByState={claimsByState}
               onPick={(abbr) => setPickedState(abbr)}
             />
             {Object.keys(champsByState).length === 0 && apiOk && (
@@ -1220,13 +1459,18 @@ function BattleScreen({ state, go }) {
             rows={ladderRows}
             loading={ladderLoading}
             yourClanId={state.clanId}
-            onClose={() => { setPickedState(null); setLadderRows(null); }}
+            onClose={() => { setPickedState(null); setLadderRows(null); setActiveClaim(null); setClaimErr(''); }}
             onChallenge={(crewLike) => {
               // Reuse challengeCrew — it expects { clan_id } shape which ladder rows have.
               challengeCrew(crewLike);
             }}
             sentMap={sent}
             busyId={sending}
+            claim={activeClaim}
+            onClaim={startClaim}
+            onDethrone={startDethrone}
+            claimBusy={claimBusy}
+            claimErr={claimErr}
           />
         )}
 
@@ -1371,4 +1615,4 @@ function KickoffScreen({ state, go }) {
   );
 }
 
-Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, BattleScreen, DraftScreen, NightScreen, KickoffScreen, StateMap, StateChampModal });
+Object.assign(window, { CalendarScreen, MaxCardScreen, LeaderboardScreen, BattleScreen, DraftScreen, NightScreen, KickoffScreen, StateMap, StateChampModal, ClaimRacePanel, ClaimBar });

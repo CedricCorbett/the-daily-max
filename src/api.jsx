@@ -211,6 +211,24 @@
       });
     },
 
+    // State claim ops — 3-day "put up a number" races.
+    async startStateClaim(state) {
+      if (!client) return null;
+      return client.rpc('start_state_claim', { p_state: state });
+    },
+    async startStateDethrone(state) {
+      if (!client) return null;
+      return client.rpc('start_state_dethrone', { p_state: state });
+    },
+    async stateClaimStatus(state) {
+      if (!client) return { data: null, error: null };
+      return client.rpc('state_claim_status', { p_state: state });
+    },
+    async mapStateClaims() {
+      if (!client) return { data: null, error: null };
+      return client.rpc('map_state_claims');
+    },
+
     async sendRally(toUser, msg, cap = 7) {
       if (!client) return null;
       return client.rpc('send_rally', { p_to: toUser, p_msg: msg, p_cap: cap });

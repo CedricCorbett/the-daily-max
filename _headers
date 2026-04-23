@@ -21,3 +21,8 @@
 # every request or users get wedged on a stale bundle until they clear storage.
 /src/*
   Cache-Control: no-cache
+
+# Version beacon — polled by the app to decide whether to show
+# "NEW VERSION · TAP TO RELOAD". Must NOT be cached or the banner never fires.
+/version.txt
+  Cache-Control: no-cache, no-store, must-revalidate

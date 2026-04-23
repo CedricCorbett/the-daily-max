@@ -210,6 +210,19 @@ function TweaksPanel({ state, setState, onClose }) {
             }}>↻ FORCE REFRESH</GhostBtn>
           </Section>
 
+          <Section title="ACCOUNT">
+            <div className="mono" style={{ fontSize: 10, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.5 }}>
+              {diag.email ? <>Signed in as <span style={{ color: 'var(--text)' }}>{diag.email}</span>.</> : 'Not signed in.'}
+            </div>
+            <GhostBtn onClick={async () => {
+              if (!confirm('Sign out of The Daily Max?')) return;
+              try { window.api && window.api.signOut && (await window.api.signOut()); } catch {}
+              // Clear the auth-only session key so re-entry hits the entrance.
+              try { localStorage.removeItem('dailymax:entrance'); } catch {}
+              location.reload();
+            }}>↩ SIGN OUT</GhostBtn>
+          </Section>
+
           <Section title="RESET">
             <GhostBtn onClick={() => {
               if (confirm('Wipe all progress?')) {

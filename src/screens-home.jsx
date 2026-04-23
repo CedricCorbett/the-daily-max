@@ -156,13 +156,14 @@ function HomeScreen({ state, setState, go, openTweaks }) {
                 border: '1px solid var(--border-2)', color: 'var(--text-dim)',
                 fontSize: 11, letterSpacing: 2, cursor: 'pointer',
               }}>ALREADY DID IT? QUICK LOG</button>
-              <button onClick={() => setHowOpen(true)} className="mono uppercase" style={{
-                width: '100%', padding: '10px 0', background: 'transparent',
-                border: '1px dashed var(--border-2)', color: 'var(--text-mute)',
-                fontSize: 10, letterSpacing: 2.5, cursor: 'pointer',
-              }}>◇ HOW TO DO THE DAILY MAX</button>
             </div>
           )}
+          {/* HOW-TO always accessible, whether logged today or not. */}
+          <button onClick={() => setHowOpen(true)} className="mono uppercase" style={{
+            width: '100%', padding: '10px 0', marginTop: 6, background: 'transparent',
+            border: '1px dashed var(--border-2)', color: 'var(--text-mute)',
+            fontSize: 10, letterSpacing: 2.5, cursor: 'pointer',
+          }}>◇ HOW TO DO THE DAILY MAX</button>
         </div>
 
         {/* TODAY'S 4 STATIONS PREVIEW */}

@@ -88,6 +88,64 @@ function App() {
           }));
         }
       } catch {}
+      // Pull server PBs + streak into local state so a returning user on a
+      // new device sees their real personal records, not the zero defaults.
+      try {
+        const pbRes = await api.client.from('pbs')
+          .select('pushups, squats, hollow_sec, pullups')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        const pb = pbRes && pbRes.data;
+        if (pb) {
+          setState(s => ({
+            ...s,
+            bests: {
+              pushups: Math.max(s.bests?.pushups || 0, pb.pushups    || 0),
+              squats:  Math.max(s.bests?.squats  || 0, pb.squats     || 0),
+              hollow:  Math.max(s.bests?.hollow  || 0, pb.hollow_sec || 0),
+              pullups: Math.max(s.bests?.pullups || 0, pb.pullups    || 0),
+            },
+          }));
+        }
+      } catch {}
+      try {
+        const stRes = await api.client.from('streaks')
+          .select('current_len, longest_len, last_day')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        const st = stRes && stRes.data;
+        if (st) {
+          setState(s => ({
+            ...s,
+            streak:         Math.max(s.streak     || 0, st.current_len || 0),
+            bestStreak:     Math.max(s.bestStreak || 0, st.longest_len || 0),
+            lastLoggedDate: st.last_day || s.lastLoggedDate,
+          }));
+        }
+      } catch {}
+      // Pull saved profile prefs so voice/aesthetic/slot follow the user.
+      try {
+        const prof = await api.myProfile();
+        const p = prof && prof.data;
+        if (p) {
+          setState(s => ({
+            ...s,
+            voice:     p.voice     || s.voice,
+            aesthetic: p.aesthetic || s.aesthetic,
+            slot:      p.slot      || s.slot,
+            partner:   p.partner   || s.partner,
+            city:      p.city      || s.city,
+          }));
+          if (p.aesthetic) {
+            const map = { oxblood: '#8B1A1A', gold: '#C9A24A', crimson: '#B32121', graphite: '#6B6159' };
+            const hex = map[p.aesthetic];
+            if (hex) {
+              document.documentElement.style.setProperty('--accent', hex);
+              document.documentElement.style.setProperty('--accent-dim', hex + '22');
+            }
+          }
+        }
+      } catch {}
     };
     api.getSession().then(session => {
       if (cancelled) return;
@@ -104,6 +162,26 @@ function App() {
     });
     return () => { cancelled = true; unsub && unsub(); };
   }, []);
+
+  // Sync profile preferences (voice/aesthetic/slot/partner/city) to server
+  // whenever they change locally. Debounced so rapid toggles don't flood the
+  // RPC. Only fires when signed in — guests stay local-only.
+  useEffect(() => {
+    if (authStatus !== 'authed') return;
+    const api = window.api;
+    if (!api || !api.enabled) return;
+    const t = setTimeout(() => {
+      const patch = {
+        voice:     state.voice     || null,
+        aesthetic: state.aesthetic || null,
+        slot:      state.slot      || null,
+        partner:   state.partner   || null,
+        city:      state.city      || null,
+      };
+      try { api.upsertProfile(patch).catch(() => {}); } catch {}
+    }, 800);
+    return () => clearTimeout(t);
+  }, [authStatus, state.voice, state.aesthetic, state.slot, state.partner, state.city]);
 
   const go = (s) => setScreen(s);
 
@@ -156,8 +234,76 @@ function App() {
     <>
       {view}
       {tweaksOpen && <TweaksPanel state={state} setState={setState} onClose={() => setTweaksOpen(false)} />}
+      <UpdateBanner />
       <ScreenJumper current={screen} go={go} />
     </>
+  );
+}
+
+// Polls /version.txt for a build newer than window.APP_BUILD. When a new
+// version lands, shows a top banner the user can tap to wipe caches and reload.
+// Triggers: mount, window focus, visibilitychange, and a 60s heartbeat.
+function UpdateBanner() {
+  const [latest, setLatest] = useState(null);
+  const current = (typeof window !== 'undefined' && window.APP_BUILD) || '';
+
+  useEffect(() => {
+    let alive = true;
+    const check = async () => {
+      try {
+        const res = await fetch('/version.txt?t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return;
+        const txt = (await res.text()).trim();
+        if (alive && txt) setLatest(txt);
+      } catch {}
+    };
+    check();
+    const onFocus = () => check();
+    const onVis = () => { if (!document.hidden) check(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVis);
+    const id = setInterval(check, 60 * 1000);
+    return () => {
+      alive = false;
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVis);
+      clearInterval(id);
+    };
+  }, []);
+
+  const stale = latest && current && latest !== current;
+  if (!stale) return null;
+
+  const hardReload = async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+    } catch {}
+    try {
+      if (window.caches) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch {}
+    location.reload();
+  };
+
+  return (
+    <button onClick={hardReload} style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 60,
+      padding: '10px 14px',
+      background: '#C9A24A', color: '#0A0707',
+      border: 'none', borderBottom: '2px solid #0A0707',
+      fontFamily: 'JetBrains Mono, monospace',
+      fontSize: 11, letterSpacing: 2.2, fontWeight: 800,
+      textTransform: 'uppercase', textAlign: 'center',
+      cursor: 'pointer',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+    }}>
+      ◇ NEW VERSION · TAP TO RELOAD
+    </button>
   );
 }
 

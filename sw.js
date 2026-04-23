@@ -1,12 +1,13 @@
 // Service worker — shell cache + push handler.
 // Bump CACHE_VERSION to invalidate the cache on deploy.
-const CACHE_VERSION = 'dm-v1';
+const CACHE_VERSION = 'dm-v2';
 const SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icons/icon.svg',
-  '/icons/icon-maskable.svg',
+  '/favicon.png',
+  '/icons/icon-512.png',
+  '/icons/icon-maskable.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -64,8 +65,8 @@ self.addEventListener('push', (event) => {
       body: payload.body,
       tag: payload.tag,
       renotify: false,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
+      icon: '/icons/icon-512.png',
+      badge: '/icons/icon-512.png',
       data: { url: payload.url || '/' },
     })
   );

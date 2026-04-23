@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Daily Max">
-  <!-- Full-bleed oxblood. Android masks into circles / squircles / rounded-rects.
-       Keep the glyph inside the 40%-radius safe zone (centered 204px circle). -->
-  <rect width="512" height="512" fill="#8B1A1A"/>
-  <g fill="#F2ECE2" transform="translate(160 160) scale(0.75)">
-    <path d="M128 128 L256 256 L128 384 L170 426 L298 298 L426 426 L468 384 L340 256 L468 128 L426 86 L298 214 L170 86 Z"/>
-  </g>
-</svg>

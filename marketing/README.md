@@ -13,7 +13,7 @@ app** in the repo root:
 cd marketing
 npm install
 npm run dev
-# → http://localhost:3000
+# → http://localhost:4000
 ```
 
 ## Static export (for deploy)

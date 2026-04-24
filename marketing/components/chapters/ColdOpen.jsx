@@ -57,16 +57,18 @@ export default function ColdOpen() {
   }, []);
 
   // Scroll hook + video scrubbing.
-  // rAF loop smooths scrub: scroll handler only records the target progress,
-  // and the rAF ticker lerps the video's currentTime toward it. This avoids
-  // the "one seek per scroll event" jitter and hides small scroll twitches.
+  // rAF loop runs always; scroll handler just records the target. We lerp
+  // the video's currentTime toward target with a soft factor so that small
+  // scroll twitches don't translate into seek-stutter. We also throttle
+  // seeks so the browser has time to actually render between them.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
 
     let rafId = 0;
     let target = 0; // target progress in [0,1]
-    let shown = 0; // lerped progress actually applied
+    let shown = 0; // lerped progress actually applied to the <video>
+    let lastSeekTs = 0; // performance.now() of last currentTime set
 
     const computeTarget = () => {
       const rect = el.getBoundingClientRect();
@@ -75,23 +77,27 @@ export default function ColdOpen() {
       target = total > 0 ? scrolled / total : 0;
     };
 
-    const tick = () => {
-      // Lerp toward target. 0.22 feels responsive without jitter.
-      shown += (target - shown) * 0.22;
-      if (Math.abs(target - shown) < 0.0005) shown = target;
+    const tick = (now) => {
+      // Soft lerp (0.10) — much smoother visual, a touch of lag vs scroll.
+      shown += (target - shown) * 0.10;
+      if (Math.abs(target - shown) < 0.0004) shown = target;
 
       const v = videoRef.current;
       const d = durationRef.current;
       if (v && videoReady && d > 0) {
         const t = shown * d;
-        if (Math.abs(v.currentTime - t) > 0.016) {
+        const delta = Math.abs(v.currentTime - t);
+        // Throttle seeks to ~33Hz so the decoder can actually render frames
+        // between requests; bigger seeks get priority.
+        const throttle = delta > 0.25 ? 0 : 30;
+        if (delta > 0.03 && now - lastSeekTs >= throttle) {
           try {
             v.currentTime = t;
+            lastSeekTs = now;
           } catch (_) {}
         }
       }
 
-      // Update progress-bar state; React will batch within a frame.
       setP(shown);
       rafId = requestAnimationFrame(tick);
     };
@@ -113,7 +119,7 @@ export default function ColdOpen() {
     <section
       ref={wrapRef}
       className="chapter"
-      style={{ height: '270vh' }}
+      style={{ height: '360vh' }}
       aria-label="Opening — scroll-scrubbed film"
     >
       <div className="pin-stage overflow-hidden bg-void">

@@ -56,34 +56,56 @@ export default function ColdOpen() {
     };
   }, []);
 
-  // Scroll hook + video scrubbing
+  // Scroll hook + video scrubbing.
+  // rAF loop smooths scrub: scroll handler only records the target progress,
+  // and the rAF ticker lerps the video's currentTime toward it. This avoids
+  // the "one seek per scroll event" jitter and hides small scroll twitches.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const onScroll = () => {
+
+    let rafId = 0;
+    let target = 0; // target progress in [0,1]
+    let shown = 0; // lerped progress actually applied
+
+    const computeTarget = () => {
       const rect = el.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      const progress = total > 0 ? scrolled / total : 0;
-      setP(progress);
+      target = total > 0 ? scrolled / total : 0;
+    };
+
+    const tick = () => {
+      // Lerp toward target. 0.22 feels responsive without jitter.
+      shown += (target - shown) * 0.22;
+      if (Math.abs(target - shown) < 0.0005) shown = target;
 
       const v = videoRef.current;
       const d = durationRef.current;
       if (v && videoReady && d > 0) {
-        const target = progress * d;
-        if (Math.abs(v.currentTime - target) > 0.008) {
+        const t = shown * d;
+        if (Math.abs(v.currentTime - t) > 0.016) {
           try {
-            v.currentTime = target;
+            v.currentTime = t;
           } catch (_) {}
         }
       }
+
+      // Update progress-bar state; React will batch within a frame.
+      setP(shown);
+      rafId = requestAnimationFrame(tick);
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+
+    computeTarget();
+    shown = target;
+    rafId = requestAnimationFrame(tick);
+
+    window.addEventListener('scroll', computeTarget, { passive: true });
+    window.addEventListener('resize', computeTarget);
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', computeTarget);
+      window.removeEventListener('resize', computeTarget);
     };
   }, [videoReady]);
 

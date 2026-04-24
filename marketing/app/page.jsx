@@ -2,6 +2,8 @@ import ColdOpen from '@/components/chapters/ColdOpen';
 import TheBody from '@/components/chapters/TheBody';
 import TheBar from '@/components/chapters/TheBar';
 import HazardWipe from '@/components/chapters/HazardWipe';
+import TheCrew from '@/components/chapters/TheCrew';
+import TheRally from '@/components/chapters/TheRally';
 import TheVerdict from '@/components/chapters/TheVerdict';
 import HazardStripe from '@/components/ui/HazardStripe';
 import MuteToggle from '@/components/ui/MuteToggle';
@@ -15,6 +17,8 @@ export default function Page() {
       <TheBody />
       <TheBar />
       <HazardWipe />
+      <TheCrew />
+      <TheRally />
       <TheVerdict />
       <HazardStripe />
       <footer className="py-10 text-center">

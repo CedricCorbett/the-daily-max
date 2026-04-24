@@ -113,7 +113,7 @@ export default function ColdOpen() {
     <section
       ref={wrapRef}
       className="chapter"
-      style={{ height: '540vh' }}
+      style={{ height: '270vh' }}
       aria-label="Opening — scroll-scrubbed film"
     >
       <div className="pin-stage overflow-hidden bg-void">

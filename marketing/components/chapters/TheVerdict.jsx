@@ -28,13 +28,15 @@ export default function TheVerdict() {
   }, []);
 
   const words = MANTRA.split(' ');
-  const reveal = Math.min(1, p * 1.3);
+  // Reveal completes at ~65% scroll, leaving room for the full mantra to hold
+  // on screen + the ENTER CTA to fade in before the section ends.
+  const reveal = Math.min(1, p * 1.55);
 
   return (
     <section
       ref={wrapRef}
       className="chapter"
-      style={{ height: '200vh' }}
+      style={{ height: '260vh' }}
       aria-label="The verdict"
     >
       <div className="pin-stage flex flex-col items-center justify-center px-6">
@@ -44,9 +46,11 @@ export default function TheVerdict() {
           {words.map((w, i) => {
             const perWord = 1 / words.length;
             const start = i * perWord;
+            // window is exactly perWord so the last word completes within
+            // reveal ∈ [0,1]; prior +1.2x overflow cut off the final letter.
             const local = Math.min(
               1,
-              Math.max(0, (reveal - start) / (perWord * 1.2))
+              Math.max(0, (reveal - start) / perWord)
             );
             return (
               <span
@@ -67,8 +71,8 @@ export default function TheVerdict() {
         <div
           className="mt-16 w-full max-w-md"
           style={{
-            opacity: reveal > 0.9 ? 1 : 0,
-            transform: reveal > 0.9 ? 'translateY(0)' : 'translateY(12px)',
+            opacity: reveal >= 1 ? 1 : 0,
+            transform: reveal >= 1 ? 'translateY(0)' : 'translateY(12px)',
             transition: 'opacity 0.6s cubic-bezier(.22,1,.36,1), transform 0.6s cubic-bezier(.22,1,.36,1)',
           }}
         >

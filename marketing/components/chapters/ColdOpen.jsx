@@ -13,21 +13,45 @@ export default function ColdOpen() {
   const [videoReady, setVideoReady] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
-  // Video readiness
+  // Video readiness. Use multiple events + an immediate check, since the
+  // <video> can finish loading metadata before this effect runs and we'd
+  // otherwise miss the event entirely.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const onLoaded = () => {
-      durationRef.current = v.duration || 0;
-      setVideoReady(true);
-      v.pause();
-      v.currentTime = 0;
+
+    const markReady = () => {
+      if (v.duration && !isNaN(v.duration) && v.duration > 0) {
+        durationRef.current = v.duration;
+        setVideoReady(true);
+        try {
+          v.pause();
+          v.currentTime = 0;
+        } catch (_) {}
+        return true;
+      }
+      return false;
     };
+
+    // Already loaded?
+    if (markReady()) return;
+
+    const handler = () => markReady();
     const onError = () => setVideoError(true);
-    v.addEventListener('loadedmetadata', onLoaded);
+
+    v.addEventListener('loadedmetadata', handler);
+    v.addEventListener('loadeddata', handler);
+    v.addEventListener('canplay', handler);
+    v.addEventListener('durationchange', handler);
     v.addEventListener('error', onError);
+
+    if (v.readyState === 0) v.load();
+
     return () => {
-      v.removeEventListener('loadedmetadata', onLoaded);
+      v.removeEventListener('loadedmetadata', handler);
+      v.removeEventListener('loadeddata', handler);
+      v.removeEventListener('canplay', handler);
+      v.removeEventListener('durationchange', handler);
       v.removeEventListener('error', onError);
     };
   }, []);

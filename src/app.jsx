@@ -7,7 +7,7 @@ function App() {
   const [screen, setScreen] = useState(() => {
     try {
       const last = localStorage.getItem('dailymax:entrance');
-      const today = todayET();
+      const today = todayLocal();
       return last === today ? 'home' : 'entrance';
     } catch { return 'entrance'; }
   });
@@ -20,12 +20,12 @@ function App() {
   // the bar walks forward 14 days at a time from this date.
   useEffect(() => {
     if (state.cycleStart) return;
-    const todayISO = todayET();
+    const todayISO = todayLocal();
     setState(s => s.cycleStart ? s : { ...s, cycleStart: todayISO });
   }, [state.cycleStart]);
   useEffect(() => {
     if (screen !== 'entrance') {
-      try { localStorage.setItem('dailymax:entrance', todayET()); } catch {}
+      try { localStorage.setItem('dailymax:entrance', todayLocal()); } catch {}
     }
   }, [screen]);
 
@@ -159,7 +159,7 @@ function App() {
             const totalReps = life.pushups + life.squats + life.hollow + life.pullups;
             // If the most-recent server day is today, hydrate state.today too
             // so the "LOGGED ✓" pill shows and the HOME streak dot fills.
-            const todayISO = todayET();
+            const todayISO = todayLocal();
             const todayRow = history.find(h => h.date === todayISO) || null;
             return {
               ...s,

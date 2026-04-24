@@ -4,16 +4,16 @@
 // gold cells on logged days. Tap a cell to see the day's totals.
 function CalendarScreen({ state, go }) {
   const weeks = 14; // ~3 months visible
-  // ET-anchored grid so every cell's key matches the ET keys in history.
-  const todayKey = todayET();
-  const startKey = etKeyOffset(todayKey, -(weeks * 7 - 1));
+  // Local-calendar grid so every cell's key matches the local keys in history.
+  const todayKey = todayLocal();
+  const startKey = localKeyOffset(todayKey, -(weeks * 7 - 1));
   const byDate = {};
   (state.history || []).forEach(h => { if (h && h.date) byDate[h.date] = h; });
   if (state.today && state.today.date) byDate[state.today.date] = { ...(byDate[state.today.date] || {}), ...state.today };
 
   const cells = [];
   for (let i = 0; i < weeks * 7; i++) {
-    const k = etKeyOffset(startKey, i);
+    const k = localKeyOffset(startKey, i);
     // Date object purely for month-label display (no timezone math needed).
     const d = new Date(k + 'T12:00:00Z');
     const hit = byDate[k];

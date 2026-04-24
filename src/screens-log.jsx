@@ -33,7 +33,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
     if (saving) return;
     setSaving(true);
     setSaveErr('');
-    const today = todayET();
+    const today = todayLocal();
     const entry = { date: today, ...reps, mode: state.mode, modifier: state.modifier };
     setState(s => {
       const newBests = { ...s.bests };
@@ -51,7 +51,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
         // already logged today — no double-count on streak / totalDays
         streak = streak;
       } else {
-        const yStr = etKeyOffset(today, -1);
+        const yStr = localKeyOffset(today, -1);
         if (prev === yStr) streak = streak + 1;
         else streak = 1;
       }

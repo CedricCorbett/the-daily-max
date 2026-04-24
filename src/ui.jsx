@@ -103,9 +103,9 @@ function BigNum({ n, unit, color = 'var(--text)', size = 72 }) {
 //   · oxblood ring   → today
 //   · outlined       → future day in this cycle
 function Cycle14Bar({ history, cycleStart }) {
-  // ET-anchored grid. All date keys here must match the ET-anchored keys
-  // in state.history so the gold cells land on the right days.
-  const todayISO = todayET();
+  // Local-calendar grid. All date keys here must match the local-calendar
+  // keys in state.history so the gold cells land on the right days.
+  const todayISO = todayLocal();
   const anchor = cycleStart || todayISO;
 
   // Key-space arithmetic (YYYY-MM-DD strings), not Date objects. Calendar
@@ -117,7 +117,7 @@ function Cycle14Bar({ history, cycleStart }) {
   const daysSince = Math.floor((keyToUTC(todayISO) - keyToUTC(anchor)) / 86400000);
   const cycleNum = Math.max(0, Math.floor(daysSince / 14));
   const startIdx = cycleNum * 14;
-  const cycleStartISO = etKeyOffset(anchor, startIdx);
+  const cycleStartISO = localKeyOffset(anchor, startIdx);
 
   const logged = new Set(
     (history || [])
@@ -127,7 +127,7 @@ function Cycle14Bar({ history, cycleStart }) {
 
   const boxes = [];
   for (let i = 0; i < 14; i++) {
-    const iso = etKeyOffset(cycleStartISO, i);
+    const iso = localKeyOffset(cycleStartISO, i);
     const isFuture = iso > todayISO;
     const isToday = iso === todayISO;
     const hit = logged.has(iso);

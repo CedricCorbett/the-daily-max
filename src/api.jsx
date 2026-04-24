@@ -3,26 +3,23 @@
 // SUPABASE_URL / SUPABASE_ANON_KEY are missing, api.enabled is false and calls return null.
 
 // ───────── time helpers (loaded first, used everywhere) ─────────
-// Every "today" key in the app is anchored to America/New_York so the day
-// rolls over at midnight Eastern for every user regardless of their local
-// timezone. Plain new Date().toISOString() gives UTC and was flipping the
-// day at 8PM EDT / 7PM EST, which is not when anyone wants their day to
-// end. One global reset keeps streaks and crew leaderboards coherent.
+// Every "today" key in the app is anchored to the USER'S LOCAL midnight —
+// so wherever you are in the world, your day rolls at 00:00 on your own
+// clock. Plain new Date().toISOString() gives UTC, which was flipping the
+// calendar at 8PM EDT / 4PM PDT / etc — nobody wants their "today" to end
+// mid-evening. Local anchoring gives every user a full day to log.
 (function () {
-  const ET = 'America/New_York';
-  function dateToETKey(d) {
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: ET, year: 'numeric', month: '2-digit', day: '2-digit',
-    }).formatToParts(d instanceof Date ? d : new Date(d));
-    const y = parts.find(p => p.type === 'year').value;
-    const m = parts.find(p => p.type === 'month').value;
-    const day = parts.find(p => p.type === 'day').value;
+  function dateToLocalKey(d) {
+    const dt = d instanceof Date ? d : new Date(d);
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, '0');
+    const day = String(dt.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
-  function todayET() { return dateToETKey(new Date()); }
+  function todayLocal() { return dateToLocalKey(new Date()); }
   // Add n days to a YYYY-MM-DD key using UTC arithmetic on the raw calendar
   // date — DST-safe because we never touch clock-hours, only y/m/d.
-  function etKeyOffset(key, n) {
+  function localKeyOffset(key, n) {
     const [y, m, d] = String(key).split('-').map(Number);
     const base = new Date(Date.UTC(y, m - 1, d));
     base.setUTCDate(base.getUTCDate() + n);
@@ -31,9 +28,13 @@
     const dd = String(base.getUTCDate()).padStart(2, '0');
     return `${yy}-${mm}-${dd}`;
   }
-  window.dateToETKey = dateToETKey;
-  window.todayET = todayET;
-  window.etKeyOffset = etKeyOffset;
+  window.dateToLocalKey = dateToLocalKey;
+  window.todayLocal = todayLocal;
+  window.localKeyOffset = localKeyOffset;
+  // Back-compat aliases so any lingering caller keeps working.
+  window.dateToETKey = dateToLocalKey;
+  window.todayET = todayLocal;
+  window.etKeyOffset = localKeyOffset;
 })();
 
 (function () {
@@ -272,7 +273,7 @@
       if (!client) return null;
       return client.rpc('clan_score', {
         p_clan_id: clanId,
-        p_day: day ?? window.todayET(),
+        p_day: day ?? window.todayLocal(),
       });
     },
 
@@ -282,7 +283,7 @@
       if (!client) return null;
       return client.rpc('crew_totals', {
         p_clan_id: clanId,
-        p_day: day ?? window.todayET(),
+        p_day: day ?? window.todayLocal(),
       });
     },
 
@@ -290,7 +291,7 @@
       if (!client) return null;
       return client.rpc('crew_roster', {
         p_clan_id: clanId,
-        p_day: day ?? window.todayET(),
+        p_day: day ?? window.todayLocal(),
       });
     },
 

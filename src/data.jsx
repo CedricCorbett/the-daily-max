@@ -186,9 +186,9 @@ function pickMantra(streak, queue = []) {
 // misleading numbers like "53" when you logged one PR-setting day.
 function showedUpScore(history, _bests) {
   if (!history || !history.length) return 0;
-  const todayKey = todayET();
+  const todayKey = todayLocal();
   const set = new Set();
-  for (let i = 0; i < 7; i++) set.add(etKeyOffset(todayKey, -i));
+  for (let i = 0; i < 7; i++) set.add(localKeyOffset(todayKey, -i));
   let n = 0;
   for (const h of history) {
     if (h && h.date && set.has(h.date) && dayTotal(h) > 0) n++;
@@ -364,8 +364,8 @@ const defaultState = {
 };
 
 function dateOffset(n) {
-  // All date keys are ET-anchored; offsets walk the ET calendar.
-  return etKeyOffset(todayET(), n);
+  // All date keys are local-calendar-anchored; offsets walk that calendar.
+  return localKeyOffset(todayLocal(), n);
 }
 
 function loadState() {

@@ -9,19 +9,24 @@ import { CREWS, STATE_FIPS } from '@/lib/crews';
 const WIDTH = 960;
 const HEIGHT = 600;
 
+// Claimed state claim-order map: FIPS → plant index
+const CLAIM_INDEX = Object.fromEntries(
+  CREWS.map((c, i) => [STATE_FIPS[c.state], i])
+);
+
+// Small states where a centered icon would overflow the state shape.
+// For these we skip the "contested" swords to avoid visual chatter.
+const TINY_FIPS = new Set(['09', '10', '11', '24', '25', '33', '34', '44', '50']);
+
 export default function TheCrew() {
   const wrapRef = useRef(null);
   const [p, setP] = useState(0);
 
-  // Convert TopoJSON → GeoJSON once
   const { paths, centroidsByFips } = useMemo(() => {
     const geo = feature(statesTopo, statesTopo.objects.states);
     const projection = geoAlbersUsa().fitSize([WIDTH, HEIGHT], geo);
     const pathGen = geoPath(projection);
-    const paths = geo.features.map((f) => ({
-      id: f.id,
-      d: pathGen(f),
-    }));
+    const paths = geo.features.map((f) => ({ id: f.id, d: pathGen(f) }));
     const centroidsByFips = {};
     geo.features.forEach((f) => {
       centroidsByFips[f.id] = projection(geoCentroid(f));
@@ -47,21 +52,17 @@ export default function TheCrew() {
     };
   }, []);
 
-  // How many crews are planted at current scroll
   const planted = Math.min(
     CREWS.length,
     Math.floor(p * CREWS.length * 1.1 + 0.001)
   );
-
-  // Active crew = most recently planted (for the right-side card)
   const activeIdx = Math.max(0, planted - 1);
   const activeCrew = CREWS[activeIdx];
 
-  // Connecting line path through planted pins
+  // Dashed gold line through planted flags, in plant order
   const linePoints = CREWS.slice(0, planted)
     .map((c) => centroidsByFips[STATE_FIPS[c.state]])
     .filter(Boolean);
-
   const linePath =
     linePoints.length > 1
       ? 'M ' + linePoints.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' L ')
@@ -75,11 +76,11 @@ export default function TheCrew() {
       aria-label="The Crew — states claimed"
     >
       <div className="pin-stage">
-        {/* Top rail */}
+        {/* Rail */}
         <div className="absolute top-0 left-0 right-0 flex justify-between px-6 sm:px-12 py-6 z-20">
           <div className="mono-label text-ash">CHAPTER · 04</div>
           <div className="mono-gold text-[11px]">
-            {planted} · STATES · CLAIMED
+            {planted} · OF · {CREWS.length} · STATES · CLAIMED
           </div>
         </div>
 
@@ -92,9 +93,9 @@ export default function TheCrew() {
             Crews claim states and dethrone each other over three days.
           </p>
           <p className="mt-3 text-ash text-sm leading-relaxed">
-            In class, raw reps win. Out of class, the hungrier crew — measured
-            by <span className="text-gold">mean percent of PR</span> — beats
-            the quiet giant.
+            Claimed territory flies the flag. Everything else is{' '}
+            <span className="text-bone">under contention</span> — measured by{' '}
+            <span className="text-gold">mean percent of PR</span>.
           </p>
         </div>
 
@@ -115,63 +116,153 @@ export default function TheCrew() {
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+
+              {/* ===== Battle flag (gold, for claimed states) ===== */}
+              <symbol id="flag" viewBox="-14 -18 28 28" overflow="visible">
+                {/* pole */}
+                <line
+                  x1="-6" y1="-14" x2="-6" y2="10"
+                  stroke="#C9A24A" strokeWidth="1.3" strokeLinecap="round"
+                />
+                {/* finial */}
+                <circle cx="-6" cy="-15" r="1.4" fill="#C9A24A" />
+                {/* pennant */}
+                <polygon
+                  points="-6,-14 10,-11 -6,-6"
+                  fill="#C9A24A"
+                />
+                {/* base notch */}
+                <line
+                  x1="-9" y1="10" x2="-3" y2="10"
+                  stroke="#C9A24A" strokeWidth="1.2" strokeLinecap="round"
+                />
+              </symbol>
+
+              {/* ===== Active battle flag (larger + oxblood banner field) ===== */}
+              <symbol id="flag-active" viewBox="-18 -22 36 34" overflow="visible">
+                <line
+                  x1="-7" y1="-18" x2="-7" y2="12"
+                  stroke="#C9A24A" strokeWidth="1.6" strokeLinecap="round"
+                />
+                <circle cx="-7" cy="-19" r="1.8" fill="#C9A24A" />
+                <polygon
+                  points="-7,-18 14,-13 -7,-7"
+                  fill="#C9A24A"
+                  stroke="#C9A24A" strokeWidth="0.8"
+                />
+                {/* oxblood chevron inset on the banner */}
+                <polygon
+                  points="-7,-15.5 4,-13 -7,-10"
+                  fill="#8B1A1A"
+                />
+                <line
+                  x1="-11" y1="12" x2="-3" y2="12"
+                  stroke="#C9A24A" strokeWidth="1.4" strokeLinecap="round"
+                />
+              </symbol>
+
+              {/* ===== Crossed swords (oxblood, for contested states) ===== */}
+              <symbol id="swords" viewBox="-10 -10 20 20" overflow="visible">
+                {/* Sword 1: top-left → bottom-right */}
+                <line
+                  x1="-7.5" y1="-7.5" x2="7.5" y2="7.5"
+                  stroke="#8B1A1A" strokeWidth="1.3" strokeLinecap="round"
+                />
+                {/* Sword 2: top-right → bottom-left */}
+                <line
+                  x1="7.5" y1="-7.5" x2="-7.5" y2="7.5"
+                  stroke="#8B1A1A" strokeWidth="1.3" strokeLinecap="round"
+                />
+                {/* Crossguards */}
+                <line
+                  x1="-4.8" y1="-6.6" x2="-6.6" y2="-4.8"
+                  stroke="#8B1A1A" strokeWidth="1" strokeLinecap="round"
+                />
+                <line
+                  x1="6.6" y1="-4.8" x2="4.8" y2="-6.6"
+                  stroke="#8B1A1A" strokeWidth="1" strokeLinecap="round"
+                />
+                {/* Pommels */}
+                <circle cx="-7.8" cy="-7.8" r="0.9" fill="#8B1A1A" />
+                <circle cx="7.8" cy="-7.8" r="0.9" fill="#8B1A1A" />
+              </symbol>
             </defs>
 
-            {/* State outlines */}
+            {/* State shapes */}
             {paths.map(({ id, d }) => {
-              const isClaimed = CREWS.slice(0, planted).some(
-                (c) => STATE_FIPS[c.state] === id
-              );
+              const claimIdx = CLAIM_INDEX[id];
+              const isClaimed = claimIdx !== undefined && claimIdx < planted;
+              const isActive = isClaimed && claimIdx === activeIdx;
               return (
                 <path
                   key={id}
                   d={d}
-                  fill={isClaimed ? '#8B1A1A' : '#14090A'}
-                  stroke="#2A1B1B"
-                  strokeWidth={0.6}
+                  fill={isClaimed ? '#8B1A1A' : '#7A7068'}
+                  stroke={isActive ? '#C9A24A' : '#8B1A1A'}
+                  strokeWidth={isActive ? 1.3 : 0.7}
                   style={{
-                    transition: 'fill 0.4s cubic-bezier(.22,1,.36,1)',
+                    transition: 'fill 0.4s cubic-bezier(.22,1,.36,1), stroke 0.3s',
                   }}
                 />
               );
             })}
 
-            {/* Connecting line */}
+            {/* Connecting dashed gold line (plant order) */}
             {linePath && (
               <path
                 d={linePath}
                 fill="none"
                 stroke="#C9A24A"
-                strokeWidth={1}
+                strokeWidth={1.1}
                 strokeDasharray="3 4"
-                opacity={0.75}
+                opacity={0.8}
                 filter="url(#goldglow)"
               />
             )}
 
-            {/* Pins */}
-            {CREWS.slice(0, planted).map((crew, i) => {
-              const c = centroidsByFips[STATE_FIPS[crew.state]];
+            {/* Icons — one pass per state */}
+            {paths.map(({ id }) => {
+              const c = centroidsByFips[id];
               if (!c) return null;
               const [x, y] = c;
-              const isActive = i === activeIdx;
+              const claimIdx = CLAIM_INDEX[id];
+              const isClaimed = claimIdx !== undefined && claimIdx < planted;
+              const isActive = isClaimed && claimIdx === activeIdx;
+
+              if (isClaimed) {
+                // Battle flag (active = bigger + glow)
+                return (
+                  <use
+                    key={id}
+                    href={isActive ? '#flag-active' : '#flag'}
+                    x={x}
+                    y={y}
+                    width={isActive ? 36 : 28}
+                    height={isActive ? 34 : 28}
+                    style={{
+                      transform: `translate(${isActive ? -18 : -14}px, ${isActive ? -22 : -18}px)`,
+                      filter: isActive ? 'url(#goldglow)' : 'none',
+                      transition: 'all 0.35s cubic-bezier(.22,1,.36,1)',
+                    }}
+                  />
+                );
+              }
+
+              // Crossed swords on contested (skip tiny states to avoid chatter)
+              if (TINY_FIPS.has(id)) return null;
               return (
-                <g key={crew.state} transform={`translate(${x},${y})`}>
-                  <circle
-                    r={isActive ? 9 : 4}
-                    fill="#C9A24A"
-                    filter="url(#goldglow)"
-                    style={{ transition: 'r 0.3s cubic-bezier(.22,1,.36,1)' }}
-                  />
-                  <circle
-                    r={isActive ? 14 : 0}
-                    fill="none"
-                    stroke="#C9A24A"
-                    strokeWidth={1}
-                    opacity={0.55}
-                    style={{ transition: 'r 0.3s cubic-bezier(.22,1,.36,1)' }}
-                  />
-                </g>
+                <use
+                  key={id}
+                  href="#swords"
+                  x={x}
+                  y={y}
+                  width={14}
+                  height={14}
+                  style={{
+                    transform: 'translate(-7px, -7px)',
+                    opacity: 0.8,
+                  }}
+                />
               );
             })}
           </svg>
@@ -203,9 +294,24 @@ export default function TheCrew() {
               />
             </div>
           </div>
+          {/* Legend */}
+          <div className="mt-5 border border-border bg-void/60 p-3 space-y-2">
+            <div className="flex items-center gap-2">
+              <svg width="20" height="20" viewBox="-14 -18 28 28">
+                <use href="#flag" />
+              </svg>
+              <span className="mono-label">CLAIMED</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg width="18" height="18" viewBox="-10 -10 20 20">
+                <use href="#swords" />
+              </svg>
+              <span className="mono-label">UNDER · CONTENTION</span>
+            </div>
+          </div>
         </div>
 
-        {/* Bottom: tape line */}
+        {/* Bottom tape */}
         <div className="absolute bottom-0 left-0 right-0">
           <div className="hazard-stripe h-[10px] opacity-80" />
           <div className="text-center py-3 mono-label">

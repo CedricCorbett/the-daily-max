@@ -1,7 +1,7 @@
 // HOME screen — consolidated layout + forge score + calendar entry + break-reason modal
 
 function HomeScreen({ state, setState, go, openTweaks }) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayET();
   const doneToday = state.today && state.today.date === today;
   const line = useMemo(() => voiceLine('morning', state.streak, state.voice), [state.streak, state.voice, today]);
   const nightUnlocked = state.streak >= 7;

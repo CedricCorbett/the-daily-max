@@ -4,19 +4,18 @@
 // gold cells on logged days. Tap a cell to see the day's totals.
 function CalendarScreen({ state, go }) {
   const weeks = 14; // ~3 months visible
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  // Align grid so the rightmost column ends on today.
-  const end = new Date(today);
-  const start = new Date(end); start.setDate(start.getDate() - (weeks * 7 - 1));
-  const iso = (d) => d.toISOString().split('T')[0];
+  // ET-anchored grid so every cell's key matches the ET keys in history.
+  const todayKey = todayET();
+  const startKey = etKeyOffset(todayKey, -(weeks * 7 - 1));
   const byDate = {};
   (state.history || []).forEach(h => { if (h && h.date) byDate[h.date] = h; });
   if (state.today && state.today.date) byDate[state.today.date] = { ...(byDate[state.today.date] || {}), ...state.today };
 
   const cells = [];
   for (let i = 0; i < weeks * 7; i++) {
-    const d = new Date(start); d.setDate(d.getDate() + i);
-    const k = iso(d);
+    const k = etKeyOffset(startKey, i);
+    // Date object purely for month-label display (no timezone math needed).
+    const d = new Date(k + 'T12:00:00Z');
     const hit = byDate[k];
     cells.push({ k, d, hit });
   }
@@ -66,8 +65,8 @@ function CalendarScreen({ state, go }) {
               <div key={col} style={{ flex: 1, display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gap: 3 }}>
                 {Array.from({ length: 7 }).map((_, row) => {
                   const c = cells[col * 7 + row];
-                  const isToday = c.k === iso(today);
-                  const isFuture = c.d > today;
+                  const isToday = c.k === todayKey;
+                  const isFuture = c.k > todayKey;
                   return (
                     <button
                       key={row}

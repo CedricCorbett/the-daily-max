@@ -103,18 +103,21 @@ function BigNum({ n, unit, color = 'var(--text)', size = 72 }) {
 //   · oxblood ring   → today
 //   · outlined       → future day in this cycle
 function Cycle14Bar({ history, cycleStart }) {
-  const todayISO = new Date().toISOString().split('T')[0];
+  // ET-anchored grid. All date keys here must match the ET-anchored keys
+  // in state.history so the gold cells land on the right days.
+  const todayISO = todayET();
   const anchor = cycleStart || todayISO;
 
-  const toDate = (iso) => { const d = new Date(iso + 'T00:00:00'); d.setHours(0,0,0,0); return d; };
-  const toISO = (d) => d.toISOString().split('T')[0];
-
-  const today = toDate(todayISO);
-  const a = toDate(anchor);
-  const daysSince = Math.floor((today - a) / 86400000);
+  // Key-space arithmetic (YYYY-MM-DD strings), not Date objects. Calendar
+  // day diffs via UTC conversion of the key components — DST-safe.
+  const keyToUTC = (k) => {
+    const [y, m, d] = k.split('-').map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  const daysSince = Math.floor((keyToUTC(todayISO) - keyToUTC(anchor)) / 86400000);
   const cycleNum = Math.max(0, Math.floor(daysSince / 14));
   const startIdx = cycleNum * 14;
-  const cycleStartDate = new Date(a); cycleStartDate.setDate(a.getDate() + startIdx);
+  const cycleStartISO = etKeyOffset(anchor, startIdx);
 
   const logged = new Set(
     (history || [])
@@ -124,9 +127,8 @@ function Cycle14Bar({ history, cycleStart }) {
 
   const boxes = [];
   for (let i = 0; i < 14; i++) {
-    const d = new Date(cycleStartDate); d.setDate(cycleStartDate.getDate() + i);
-    const iso = toISO(d);
-    const isFuture = d > today;
+    const iso = etKeyOffset(cycleStartISO, i);
+    const isFuture = iso > todayISO;
     const isToday = iso === todayISO;
     const hit = logged.has(iso);
     boxes.push({ iso, isFuture, isToday, hit, dayNum: startIdx + i + 1 });

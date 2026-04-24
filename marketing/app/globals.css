@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #0A0707;
+  --oxblood: #8B1A1A;
+  --oxblood-bright: #B32121;
+  --gold: #C9A24A;
+  --bone: #F2ECE2;
+  --ash: #8F857A;
+  --border: #2A1B1B;
+}
+
+html,
+body {
+  background: var(--void);
+  color: var(--bone);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.hazard-stripe {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--oxblood) 0 14px,
+    var(--void) 14px 28px
+  );
+}
+
+.hazard-stripe-gold {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--gold) 0 14px,
+    var(--void) 14px 28px
+  );
+}
+
+.chapter {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.pin-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.mono-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+  color: var(--ash);
+}
+
+.mono-gold {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+}
+
+.display {
+  font-family: 'Archivo Black', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--oxblood);
+  color: var(--bone);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

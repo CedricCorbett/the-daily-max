@@ -3,15 +3,12 @@
 // the user taps into the app.
 
 function EntranceScreen({ state, setState, go }) {
-  const [phase, setPhase] = useState('logo'); // 'logo' → 'mantra' → auto-advances
+  // Go straight to the mantra phase so the READ · THEN ENTER button is
+  // visible immediately on mount. A delay here used to read as "the screen
+  // is broken" — no mystery pause between login and a tappable CTA.
+  const [phase, setPhase] = useState('mantra');
   const [revealed, setRevealed] = useState(0); // how many mantras have appeared
   const feedRef = useRef(null);
-
-  // Logo → mantra handoff
-  useEffect(() => {
-    const t = setTimeout(() => setPhase('mantra'), 1400);
-    return () => clearTimeout(t);
-  }, []);
 
   // Reveal mantras one at a time after the mantra phase starts.
   useEffect(() => {

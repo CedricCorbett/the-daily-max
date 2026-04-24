@@ -132,7 +132,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
         sub="WHATEVER YOU HAD TODAY"
       />
       <HazardBar height={4} />
-      <div style={{ padding: '18px 20px 120px', flex: 1 }}>
+      <div style={{ padding: '18px 20px 20px', flex: 1 }}>
 
         <div style={{ marginBottom: 14 }}>
           <BigNum n={total} unit="WORK" color="var(--accent)" size={56} />
@@ -217,7 +217,7 @@ function LogScreen({ state, setState, draft, setDraft, go }) {
           );
         })}
       </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 20px 24px', background: 'linear-gradient(to top, #0A0A0A 60%, rgba(10,10,10,0))' }}>
+      <div style={{ padding: '16px 20px 24px', background: 'linear-gradient(to top, #0A0A0A 60%, rgba(10,10,10,0))' }}>
         {saveErr && (
           <div className="mono uppercase" style={{
             marginBottom: 10, padding: '8px 10px',

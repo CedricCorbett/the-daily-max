@@ -1567,7 +1567,8 @@ function KickoffScreen({ state, go }) {
   // At kickoffDay = 1, nothing is done yet — day 1 is the one to open.
   const TOTAL = 30;
   const bonuses = (typeof KICKOFF_BONUSES !== 'undefined' && KICKOFF_BONUSES) ? KICKOFF_BONUSES : [];
-  const today = Math.min(Math.max(1, state.kickoffDay || 1), TOTAL);
+  // Kickoff day tracks the current streak — day 1 before you've logged, day N on streak N.
+  const today = Math.min(Math.max(1, state.streak || 1), TOTAL);
   const days = Array.from({ length: TOTAL }, (_, i) => ({
     day: i + 1,
     done: i + 1 < today,

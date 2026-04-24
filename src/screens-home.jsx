@@ -229,7 +229,7 @@ function HomeScreen({ state, setState, go, openTweaks }) {
           <CommunityTile onClick={() => go('battle')} icon="⚔" label="BATTLE" sub="1v1 or crew vs crew" />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-          <CommunityTile onClick={() => go('kickoff')} icon={`${Math.min(state.kickoffDay, 30)}/30`} label="KICKOFF 30" sub="30-day ramp" />
+          <CommunityTile onClick={() => go('kickoff')} icon={`${Math.min(Math.max(1, state.streak || 1), 30)}/30`} label="KICKOFF 30" sub="30-day ramp" />
           <CommunityTile
             onClick={() => go('rally')}
             icon="✊"

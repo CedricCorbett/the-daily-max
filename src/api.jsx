@@ -208,9 +208,12 @@
 
     async listLeaderboard({ bracket = null, day = null, limit = 25 } = {}) {
       if (!client) return { data: null, error: null };
+      // Anchor to the user's LOCAL day — workouts are stored at local midnight,
+      // so leaving p_day null would make the RPC compare against UTC and miss
+      // rows logged late evening / early morning in non-UTC timezones.
       return client.rpc('list_leaderboard', {
         p_bracket: bracket,
-        p_day: day,
+        p_day: day ?? window.todayLocal(),
         p_limit: limit,
       });
     },

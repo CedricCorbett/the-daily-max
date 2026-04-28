@@ -277,7 +277,7 @@ function MaxCardScreen({ state, go, mode = 'daily' }) {
         await navigator.share({
           files: [file],
           title: 'The Daily Max',
-          text: `${caption}\n${mode === 'weekly' ? `${daysHit}/7 days · ${total} reps` : mode === 'cycle' ? `${sub} · ${total} reps` : `Day ${state.streak}`} · dailymax.app/${state.referralCode}`,
+          text: `${caption}\n${mode === 'weekly' ? `${daysHit}/7 days · ${total} reps` : mode === 'cycle' ? `${sub} · ${total} reps` : `Day ${state.streak}`} · ${shareLinkFor(state.referralCode)}`,
         });
         setStatus('shared');
       } else {
@@ -372,16 +372,11 @@ function MaxCardScreen({ state, go, mode = 'daily' }) {
             </div>
           </div>
           <div style={{ marginTop: 14, fontSize: 12, fontStyle: 'italic', color: '#333' }}>"{caption}"</div>
-          <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, borderTop: '1px dashed #999', paddingTop: 10 }}>
-            <div style={{ width: 44, height: 44, background: '#0A0A0A', position: 'relative' }}>
-              <div style={{ position: 'absolute', inset: 4, background: 'var(--bone)' }} />
-              <div style={{ position: 'absolute', inset: 8, background: '#0A0A0A' }} />
-              <div style={{ position: 'absolute', inset: 12, background: 'var(--bone)' }} />
-              <div style={{ position: 'absolute', inset: 16, background: '#0A0A0A' }} />
-            </div>
+          <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px dashed #999', paddingTop: 10 }}>
+            <QrCode value={shareLinkFor(state.referralCode)} size={56} dark="#0A0A0A" light="#F2ECE2" />
             <div>
-              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>JOIN THE CREW</div>
-              <div className="mono" style={{ fontSize: 11, fontWeight: 700, color: '#0A0A0A' }}>dailymax.app/{state.referralCode}</div>
+              <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>JOIN THE CREW · SCAN OR TAP</div>
+              <div className="mono" style={{ fontSize: 11, fontWeight: 700, color: '#0A0A0A' }}>{shareLinkLabelFor(state.referralCode)}</div>
             </div>
           </div>
         </div>
@@ -1590,9 +1585,12 @@ function BattleScreen({ state, go }) {
           <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-mute)', marginBottom: 6 }}>OR INVITE A FRIEND</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ flex: 1, padding: '10px 12px', background: 'var(--card)', border: '1px solid var(--border)', fontSize: 13 }} className="mono">
-              dailymax.app/{state.referralCode}
+              {shareLinkLabelFor(state.referralCode)}
             </div>
-            <GhostBtn onClick={() => alert('Link copied')}>COPY</GhostBtn>
+            <GhostBtn onClick={() => {
+              try { navigator.clipboard && navigator.clipboard.writeText(shareLinkFor(state.referralCode)); } catch {}
+              alert('Link copied');
+            }}>COPY</GhostBtn>
           </div>
         </div>
       </div>

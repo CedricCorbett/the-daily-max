@@ -2,6 +2,51 @@
 
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
+// Real QR code, rendered as an inline SVG so html2canvas captures it
+// crisply on the Max Card. Uses qrcode-generator (loaded from CDN in
+// index.html). If the lib isn't available yet, falls back to a solid
+// dark square — better than rendering an empty hole on the card.
+function QrCode({ value, size = 56, dark = '#0A0A0A', light = 'var(--bone)' }) {
+  const matrix = useMemo(() => {
+    if (!value || typeof window === 'undefined' || !window.qrcode) return null;
+    try {
+      // typeNumber 0 = auto-pick smallest; 'M' error correction is plenty for a URL.
+      const qr = window.qrcode(0, 'M');
+      qr.addData(value);
+      qr.make();
+      const n = qr.getModuleCount();
+      const rows = [];
+      for (let r = 0; r < n; r++) {
+        const row = [];
+        for (let c = 0; c < n; c++) row.push(qr.isDark(r, c) ? 1 : 0);
+        rows.push(row);
+      }
+      return rows;
+    } catch { return null; }
+  }, [value]);
+
+  if (!matrix) {
+    return <div style={{ width: size, height: size, background: dark }} />;
+  }
+  const n = matrix.length;
+  const cell = size / n;
+  // Build paths for the dark cells. One <rect> per cell — crisp and tiny.
+  const cells = [];
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (matrix[r][c]) {
+        cells.push(<rect key={`${r}-${c}`} x={c * cell} y={r * cell} width={cell} height={cell} fill={dark} />);
+      }
+    }
+  }
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block' }}>
+      <rect width={size} height={size} fill={light} />
+      {cells}
+    </svg>
+  );
+}
+
 function Shell({ children, bg }) {
   return (
     <div className="screen" style={{ background: bg || 'var(--bg)' }}>
@@ -374,5 +419,5 @@ function HowStation({ n, name, detail }) {
 
 Object.assign(window, {
   Shell, TopBar, IconBtn, HazardBar, Chip, Stat, PrimaryBtn, GhostBtn, BigNum, StreakDots, Cycle14Bar, HistoryBars,
-  HowToModal,
+  HowToModal, QrCode,
 });

@@ -31,6 +31,14 @@
   window.dateToLocalKey = dateToLocalKey;
   window.todayLocal = todayLocal;
   window.localKeyOffset = localKeyOffset;
+  // Canonical public URL for the app — used on Max Cards, share text, the
+  // QR code, and the in-app referral link. Single source of truth so the
+  // domain swap is a one-line change.
+  window.APP_URL = 'https://the-daily-max.pages.dev';
+  window.shareLinkFor = (referralCode) =>
+    referralCode ? `${window.APP_URL}/?ref=${referralCode}` : window.APP_URL;
+  window.shareLinkLabelFor = (referralCode) =>
+    referralCode ? `the-daily-max.pages.dev/?ref=${referralCode}` : 'the-daily-max.pages.dev';
   // Back-compat aliases so any lingering caller keeps working.
   window.dateToETKey = dateToLocalKey;
   window.todayET = todayLocal;

@@ -164,7 +164,7 @@ function TweaksPanel({ state, setState, onClose }) {
                 flex: 1, padding: '10px 12px', background: 'var(--card)', border: '1px solid var(--border)',
                 fontSize: 14, letterSpacing: 2, color: 'var(--accent)',
               }}>{state.referralCode}</div>
-              <GhostBtn onClick={() => { navigator.clipboard && navigator.clipboard.writeText(`dailymax.app/${state.referralCode}`); }}>COPY LINK</GhostBtn>
+              <GhostBtn onClick={() => { navigator.clipboard && navigator.clipboard.writeText(shareLinkFor(state.referralCode)); }}>COPY LINK</GhostBtn>
             </div>
           </Section>
 

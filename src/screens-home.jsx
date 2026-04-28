@@ -160,6 +160,18 @@ function HomeScreen({ state, setState, go, openTweaks }) {
                 </div>
               </div>
               <PrimaryBtn onClick={() => go('share')} color="var(--bone)">SHARE MAX CARD →</PrimaryBtn>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                <button onClick={() => go('share-week')} className="mono uppercase" style={{
+                  width: '100%', padding: '12px 0', background: 'transparent',
+                  border: '1px solid var(--streak)', color: 'var(--streak)',
+                  fontSize: 11, letterSpacing: 2, cursor: 'pointer', fontWeight: 700,
+                }}>WEEKLY MAX →</button>
+                <button onClick={() => go('share-cycle')} className="mono uppercase" style={{
+                  width: '100%', padding: '12px 0', background: 'transparent',
+                  border: '1px solid var(--streak)', color: 'var(--streak)',
+                  fontSize: 11, letterSpacing: 2, cursor: 'pointer', fontWeight: 700,
+                }}>CYCLE MAX →</button>
+              </div>
             </div>
           ) : (
             <div style={{ display: 'grid', gap: 6 }}>

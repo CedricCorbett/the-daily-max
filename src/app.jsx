@@ -303,7 +303,9 @@ function App() {
     case 'timer':       view = <TimerScreen state={state} setState={setState} go={go} setDraft={setDraft} />; break;
     case 'log':         view = <LogScreen state={state} setState={setState} draft={draft} setDraft={setDraft} go={go} />; break;
     case 'done':        view = <DoneScreen state={state} go={go} />; break;
-    case 'share':       view = <MaxCardScreen state={state} go={go} />; break;
+    case 'share':       view = <MaxCardScreen state={state} go={go} mode="daily" />; break;
+    case 'share-week':  view = <MaxCardScreen state={state} go={go} mode="weekly" />; break;
+    case 'share-cycle': view = <MaxCardScreen state={state} go={go} mode="cycle" />; break;
     case 'leaderboard': view = <LeaderboardScreen state={state} setState={setState} go={go} />; break;
     case 'calendar':    view = <CalendarScreen state={state} go={go} />; break;
     case 'battle':      view = <BattleScreen state={state} go={go} />; break;

@@ -150,9 +150,83 @@ function DayStat({ label, v, unit }) {
   );
 }
 
-function MaxCardScreen({ state, go }) {
-  const t = state.today || { pushups: state.bests.pushups, squats: state.bests.squats, hollow: state.bests.hollow, pullups: state.bests.pullups };
-  const total = t.pushups + t.squats + t.hollow + t.pullups;
+function MaxCardScreen({ state, go, mode = 'daily' }) {
+  // ── Build the rep set the card displays based on mode ────────────────
+  // daily  → today's log (or PBs if not logged yet)
+  // weekly → last 7 days summed, plus distinct-day count + best day
+  // cycle  → current 14-day cycle summed, plus distinct-day count
+  const todayKey = todayLocal();
+  const allHistory = (state.history || []).concat(
+    state.today && state.today.date === todayKey ? [state.today] : []
+  );
+  // Dedup by date in case state.today and state.history both contain today.
+  const histByDate = new Map();
+  allHistory.forEach(h => {
+    if (h && h.date && h.date <= todayKey) histByDate.set(h.date, h);
+  });
+
+  const dayWindow = (n) => {
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const k = localKeyOffset(todayKey, -i);
+      const h = histByDate.get(k);
+      if (h) out.push(h);
+    }
+    return out;
+  };
+
+  const cycleWindow = () => {
+    const anchor = state.cycleStart || todayKey;
+    const keyToUTC = (k) => { const [y,m,d] = k.split('-').map(Number); return Date.UTC(y, m-1, d); };
+    const daysSince = Math.floor((keyToUTC(todayKey) - keyToUTC(anchor)) / 86400000);
+    const cycleNum = Math.max(0, Math.floor(daysSince / 14));
+    const startISO = localKeyOffset(anchor, cycleNum * 14);
+    const out = [];
+    for (let i = 0; i < 14; i++) {
+      const k = localKeyOffset(startISO, i);
+      if (k > todayKey) break;
+      const h = histByDate.get(k);
+      if (h) out.push(h);
+    }
+    return { rows: out, cycleNum: cycleNum + 1, dayOf: Math.min(14, Math.max(1, daysSince - cycleNum * 14 + 1)) };
+  };
+
+  const sumRows = (rows) => rows.reduce((acc, r) => ({
+    pushups: acc.pushups + (r.pushups || 0),
+    squats:  acc.squats  + (r.squats  || 0),
+    hollow:  acc.hollow  + (r.hollow  || 0),
+    pullups: acc.pullups + (r.pullups || 0),
+  }), { pushups: 0, squats: 0, hollow: 0, pullups: 0 });
+  const repsOfRow = (r) => (r.pushups||0) + (r.squats||0) + (r.hollow||0) + (r.pullups||0);
+
+  let t, total, daysHit, label, sub, bestDayReps, periodKey;
+  if (mode === 'weekly') {
+    const rows = dayWindow(7);
+    t = sumRows(rows);
+    total = repsOfRow(t);
+    daysHit = rows.length;
+    bestDayReps = rows.reduce((m, r) => Math.max(m, repsOfRow(r)), 0);
+    label = 'WEEKLY MAX';
+    sub = '7-DAY TOTALS';
+    periodKey = `week-${todayKey}`;
+  } else if (mode === 'cycle') {
+    const { rows, cycleNum, dayOf } = cycleWindow();
+    t = sumRows(rows);
+    total = repsOfRow(t);
+    daysHit = rows.length;
+    bestDayReps = rows.reduce((m, r) => Math.max(m, repsOfRow(r)), 0);
+    label = 'CYCLE MAX';
+    sub = `CYCLE ${cycleNum} · DAY ${dayOf}/14`;
+    periodKey = `cycle-${cycleNum}`;
+  } else {
+    t = state.today || { pushups: state.bests.pushups, squats: state.bests.squats, hollow: state.bests.hollow, pullups: state.bests.pullups };
+    total = t.pushups + t.squats + t.hollow + t.pullups;
+    daysHit = 1;
+    bestDayReps = total;
+    label = 'MAX CARD';
+    sub = 'SHARE TO THE CREW';
+    periodKey = `day-${state.streak || 0}`;
+  }
   const caption = MAX_CARD_CAPTIONS[state.streak % MAX_CARD_CAPTIONS.length].replace('%STREAK%', state.streak);
   const [status, setStatus] = useState(''); // '', 'rendering', 'saved', 'shared', 'error'
   const cardRef = useRef(null);
@@ -168,7 +242,7 @@ function MaxCardScreen({ state, go }) {
     });
   };
 
-  const filename = `daily-max-day-${state.streak || 0}-${(state.name || 'crew').replace(/\s+/g, '-').toLowerCase()}.png`;
+  const filename = `daily-max-${periodKey}-${(state.name || 'crew').replace(/\s+/g, '-').toLowerCase()}.png`;
 
   const download = async () => {
     setStatus('rendering');
@@ -203,7 +277,7 @@ function MaxCardScreen({ state, go }) {
         await navigator.share({
           files: [file],
           title: 'The Daily Max',
-          text: `${caption}\nDay ${state.streak} · dailymax.app/${state.referralCode}`,
+          text: `${caption}\n${mode === 'weekly' ? `${daysHit}/7 days · ${total} reps` : mode === 'cycle' ? `${sub} · ${total} reps` : `Day ${state.streak}`} · dailymax.app/${state.referralCode}`,
         });
         setStatus('shared');
       } else {
@@ -230,7 +304,7 @@ function MaxCardScreen({ state, go }) {
 
   return (
     <Shell>
-      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title="MAX CARD" sub="SHARE TO THE CREW" />
+      <TopBar left={<IconBtn onClick={() => go('home')}>←</IconBtn>} title={label} sub={sub} />
       <HazardBar height={4} />
       <div style={{ padding: 20, flex: 1 }}>
         <div ref={cardRef} style={{
@@ -255,11 +329,22 @@ function MaxCardScreen({ state, go }) {
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div className="mono" style={{ fontSize: 10, color: '#666' }}>DAY</div>
-              <div className="display" style={{ fontSize: 28, color: 'var(--accent)', lineHeight: 1 }}>{state.streak}</div>
+              <div className="mono" style={{ fontSize: 10, color: '#666' }}>
+                {mode === 'weekly' ? 'WEEK' : mode === 'cycle' ? 'CYCLE' : 'DAY'}
+              </div>
+              <div className="display" style={{ fontSize: 28, color: 'var(--accent)', lineHeight: 1 }}>
+                {mode === 'weekly' ? `${daysHit}/7` : mode === 'cycle' ? sub.match(/CYCLE (\d+)/)[1] : state.streak}
+              </div>
+              {mode !== 'daily' && (
+                <div className="mono" style={{ fontSize: 9, color: '#666', marginTop: 2 }}>DAYS HIT</div>
+              )}
             </div>
           </div>
           <div style={{ margin: '18px 0', borderTop: '2px solid #0A0A0A' }} />
+          {/* Period label so the screenshot is unambiguous out of context */}
+          <div className="mono uppercase" style={{ fontSize: 10, letterSpacing: 2.5, color: 'var(--accent)', fontWeight: 700, marginBottom: 10 }}>
+            {mode === 'weekly' ? '◆ LAST 7 DAYS · TOTAL WORK' : mode === 'cycle' ? `◆ ${sub} · TOTAL WORK` : '◆ TODAY\'S MAX'}
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {CORE_EXERCISES.map(ex => (
               <div key={ex.id}>
@@ -275,6 +360,12 @@ function MaxCardScreen({ state, go }) {
               <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>TOTAL WORK</div>
               <div className="display" style={{ fontSize: 26, color: 'var(--accent)', lineHeight: 1 }}>{total}</div>
             </div>
+            {mode !== 'daily' && (
+              <div style={{ textAlign: 'center' }}>
+                <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>BEST DAY</div>
+                <div className="display" style={{ fontSize: 18, color: '#0A0A0A', lineHeight: 1, marginTop: 4 }}>{bestDayReps}</div>
+              </div>
+            )}
             <div style={{ textAlign: 'right' }}>
               <div className="mono uppercase" style={{ fontSize: 9, letterSpacing: 2, color: '#666' }}>LIFETIME</div>
               <div className="display" style={{ fontSize: 16, color: '#0A0A0A', lineHeight: 1, marginTop: 4 }}>{state.totalReps.toLocaleString()}</div>

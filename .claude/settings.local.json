@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__6a1dc678-b85e-40f5-82ee-ed5c34b4d3e4__execute_sql",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(gh run *)",
+      "Bash(curl -s -m 10 \"https://dailymax.app/version.txt\")",
+      "Bash(curl -s -m 10 -o /dev/null -w \"%{http_code}\" \"https://dailymax.app/version.txt\")",
+      "Bash(curl -s -m 10 \"https://the-daily-max.pages.dev/version.txt\")",
+      "Bash(curl -s -m 10 \"https://daily-max.pages.dev/version.txt\")",
+      "Bash(curl -s -m 10 -I \"https://the-daily-max.pages.dev/\")",
+      "Bash(wrangler --version)",
+      "Bash(cp -f index.html sw.js version.txt manifest.json favicon.png _headers _pages_dist/)",
+      "Bash(cp -rf icons _pages_dist/)",
+      "Bash(cp -f src/*.jsx _pages_dist/src/)",
+      "Bash(wrangler pages *)",
+      "Bash(curl -s -m 10 \"https://the-daily-max.pages.dev/\")",
+      "Bash(wrangler whoami *)",
+      "Bash(supabase projects *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(supabase db *)",
+      "Bash(sed -i 's/dm-v34/dm-v35/g' index.html sw.js version.txt)"
+    ]
+  }
+}

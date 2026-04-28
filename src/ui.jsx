@@ -119,9 +119,13 @@ function Cycle14Bar({ history, cycleStart }) {
   const startIdx = cycleNum * 14;
   const cycleStartISO = localKeyOffset(anchor, startIdx);
 
+  // Distinct-day set, gated to past-or-today only. A future-dated entry
+  // (stale localStorage, clock skew, hand-edited row) can't fill a gold
+  // box and can't pad the LOGGED count past the streak.
   const logged = new Set(
     (history || [])
-      .filter(h => h && h.date && ((h.pushups||0)+(h.squats||0)+(h.hollow||0)+(h.pullups||0)) > 0)
+      .filter(h => h && h.date && h.date <= todayISO
+        && ((h.pushups||0)+(h.squats||0)+(h.hollow||0)+(h.pullups||0)) > 0)
       .map(h => h.date)
   );
 
@@ -130,7 +134,7 @@ function Cycle14Bar({ history, cycleStart }) {
     const iso = localKeyOffset(cycleStartISO, i);
     const isFuture = iso > todayISO;
     const isToday = iso === todayISO;
-    const hit = logged.has(iso);
+    const hit = !isFuture && logged.has(iso);
     boxes.push({ iso, isFuture, isToday, hit, dayNum: startIdx + i + 1 });
   }
 

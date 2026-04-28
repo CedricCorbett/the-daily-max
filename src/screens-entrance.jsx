@@ -15,7 +15,9 @@ function EntranceScreen({ state, setState, go }) {
     if (phase !== 'mantra') return;
     if (revealed >= MANTRAS.length) return;
     // First one comes in fast, rest stagger slower so each lands.
-    const delay = revealed === 0 ? 350 : 750;
+    // Generous reveal cadence so people can actually read the line —
+    // the ENTER button is up the whole time for anyone who wants to skip.
+    const delay = revealed === 0 ? 350 : 1600;
     const t = setTimeout(() => setRevealed(r => r + 1), delay);
     return () => clearTimeout(t);
   }, [phase, revealed]);
@@ -151,18 +153,18 @@ function EntranceScreen({ state, setState, go }) {
           onClick={dismiss}
           style={{
             width: '100%', padding: '18px 0',
-            background: allShown ? 'rgba(201,162,74,0.08)' : 'transparent',
+            background: allShown ? 'rgba(201,162,74,0.08)' : 'rgba(201,162,74,0.04)',
             border: '1px solid var(--streak)',
             color: 'var(--streak)',
             fontFamily: 'Archivo Black, sans-serif',
             fontSize: 15, letterSpacing: 4,
             cursor: 'pointer',
-            opacity: allShown ? 1 : 0.55,
-            transition: 'opacity 0.6s, background 0.6s',
+            opacity: 1,
+            transition: 'background 0.6s',
             animation: allShown ? 'crosshair 2.4s ease-in-out infinite' : undefined,
           }}
         >
-          {allShown ? 'TAP TO ENTER ◇' : 'READ · THEN ENTER'}
+          {allShown ? 'TAP TO ENTER ◇' : 'SKIP · OR READ ON ◇'}
         </button>
         <div className="mono uppercase" style={{
           fontSize: 10, letterSpacing: 3, color: 'var(--text-mute)',

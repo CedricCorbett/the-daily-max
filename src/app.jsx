@@ -16,6 +16,20 @@ function App() {
 
   useEffect(() => { saveState(state); }, [state]);
 
+  // One-shot cleanup: drop any history rows dated past today (clock-skew
+  // leftovers, hand-edited localStorage, stale rows). These would otherwise
+  // light up future cells in the cycle bar and inflate LOGGED past streak.
+  useEffect(() => {
+    const todayISO = todayLocal();
+    setState(s => {
+      const hist = Array.isArray(s.history) ? s.history : [];
+      const cleaned = hist.filter(h => h && h.date && h.date <= todayISO);
+      const todayStale = s.today && s.today.date && s.today.date > todayISO;
+      if (cleaned.length === hist.length && !todayStale) return s;
+      return { ...s, history: cleaned, today: todayStale ? null : s.today };
+    });
+  }, []);
+
   // Anchor the 14-day cycle on first app open. Once set, it never moves —
   // the bar walks forward 14 days at a time from this date.
   useEffect(() => {
@@ -128,13 +142,16 @@ function App() {
           .order('day', { ascending: true });
         const rows = (wRes && wRes.data) || [];
         if (rows.length) {
-          const server = rows.map(r => ({
-            date:    r.day,
-            pushups: r.pushups    || 0,
-            squats:  r.squats     || 0,
-            hollow:  r.hollow_sec || 0,
-            pullups: r.pullups    || 0,
-          }));
+          const todayCutoff = todayLocal();
+          const server = rows
+            .filter(r => r && r.day && r.day <= todayCutoff)
+            .map(r => ({
+              date:    r.day,
+              pushups: r.pushups    || 0,
+              squats:  r.squats     || 0,
+              hollow:  r.hollow_sec || 0,
+              pullups: r.pullups    || 0,
+            }));
           setState(s => {
             // Merge: server wins on overlap (greatest), local-only days kept.
             const byDate = new Map();
